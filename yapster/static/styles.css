@@ -1,0 +1,109 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body, html {
+    height: 100%;
+}
+
+/* Background: WILL HAVE TO CHANGE THE BG SAME AS FIGMA - ZED*/
+body {
+    background: linear-gradient(to bottom right, #f16a5e, #b83280);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container sa form */
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+/* Signin box */
+.sign-in-box {
+    background-color: white;
+    padding: 40px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Title */
+.sign-in-box h2 {
+    color: #611b1b;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Input*/
+.input-box {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-box label {
+    color: #333;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Forgot password */
+.forgot {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    margin-top: 5px;
+    color: #c0392b;
+    text-decoration: none;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
+
+/* Button */
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #b83280;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #9b59b6;
+}
+
+/* Sign up link */
+p {
+    margin-top: 20px;
+    font-size: 12px;
+}
+
+p a {
+    color: #b83280;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
