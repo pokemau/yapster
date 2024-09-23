@@ -11,7 +11,8 @@ body, html {
 
 /* Background: WILL HAVE TO CHANGE THE BG SAME AS FIGMA - ZED*/
 body {
-    background: linear-gradient(to bottom right, #f16a5e, #b83280);
+    background: url(images/BG_LOGIN_IMG.png) no-repeat center center fixed;
+    background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
