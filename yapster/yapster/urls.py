@@ -21,5 +21,5 @@ from yapster.views import login_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', login_view, name='login'),
+    path('', login_view, name='login'),
 ]
