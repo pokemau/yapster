@@ -5,10 +5,6 @@
     font-family: 'Arial', sans-serif;
 }
 
-body, html {
-    height: 100%;
-}
-
 /* Background: WILL HAVE TO CHANGE THE BG SAME AS FIGMA - ZED*/
 body {
     background: url(images/BG_LOGIN_IMG.png) no-repeat center center fixed;
@@ -21,13 +17,18 @@ body {
 /* Container sa form */
 .container {
     width: 100%;
-    max-width: 400px;
     padding: 20px;
+    margin: 1rem 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Signin box */
 .sign-in-box {
     background-color: white;
+    min-width: 400px;
     padding: 40px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
@@ -54,7 +55,8 @@ body {
     margin-bottom: 5px;
 }
 
-.input-box input {
+.input-box input,
+#gender {
     width: 100%;
     padding: 10px;
     font-size: 14px;
@@ -107,4 +109,22 @@ p a {
 
 p a:hover {
     text-decoration: underline;
+}
+
+/* Signup name */
+#name-cont {
+    display: flex;
+    gap: 5px;
+}
+
+/* Signup gender */
+#gender {
+    width: 100%;
+}
+
+/* Signup password */
+#password-cont {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }

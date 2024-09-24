@@ -1,61 +1,68 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
+    <title>Register</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
+
 <body>
     <div class="container">
         <div class="sign-in-box">
             <h2>REGISTER</h2>
-            <form action="#">
+            <form action="" method="POST">
+                {% csrf_token %}
                 <div class="input-box">
-                    <label for="username">User Name</label>
-                    <input type="text" id="username" placeholder="Enter your username">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" placeholder="Enter your username" required>
                 </div>
                 <div class="input-box">
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email">
+                    <input type="email" name="email" id="email" placeholder="Enter your email" required>
                 </div>
-                <div class="input-box">
-                    <label for="firstName">First Name</label>
-                    <input type="text" id="firstName" placeholder="Enter your first name">
-                </div>
-                <div class="input-box">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName" placeholder="Enter your last name">
-                </div>
-                <div class="input-box">
-                    <label for="gender">Gender</label>
-        
-                    <input type="radio" name="gender" id="gender" value="Male">
-                    <label for="Male">Male</label>
 
-                    <input type="radio" name="gender" id="gender" value="Female">
-                    <label for="Female">Female</label>
+                <div class="input-box">
+                    <label for="">Name</label>
 
-                    <input type="radio" name="gender" id="gender" value="Non-binary">
-                    <label for="Non-binary">Non-binary</label>
-
-                    <input type="radio" name="gender" id="gender" value="PreferNotToSay">
-                    <label for="PreferNotToSay">Prefer not to say</label>
+                    <div id="name-cont">
+                        <input type="text" name="fname" id="firstName" placeholder="First name" required>
+                        <input type="text" name="lname" id="lastName" placeholder="Last name" required>
+                    </div>
                 </div>
+
+                <div class="input-box">
+                    <label for="cars">Gender:</label>
+
+                    <select name="gender" id="gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+
                 <div class="input-box">
                     <label for="birthday">Birthday</label>
-                    <input type="date" id="birthday" placeholder="Enter your birthday">
+                    <input type="date" name="birthday" id="birthday" placeholder="Enter your birthday" required>
                 </div>
                 <div class="input-box">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password">
-                    <a href="#" class="forgot">Forgot?</a>
+                    <div id="password-cont">
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                        <input type="password" name="password2" placeholder="Retype your password" required>
+                    </div>
                 </div>
-                <button type="submit" class="btn">SIGN IN</button>
+
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+                <button type="submit" class="btn">REGISTER</button>
             </form>
-            <p>Don't have an account? <a href="{% url 'login' %}">Sign Up</a></p>
+            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
         </div>
     </div>
 </body>
+
 </html>
