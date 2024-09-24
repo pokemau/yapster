@@ -15,12 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
-from yapster.views import login_view, register_view
+from django.urls import include, path
 
 urlpatterns = [
+    path('', include('user.urls')),
     path('admin/', admin.site.urls),
-    path('', login_view, name='login'),
-    path('register/', register_view, name='register'),
 ]
