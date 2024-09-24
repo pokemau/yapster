@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="sign-in-box">
+            <h2>REGISTER</h2>
+            <form action="#">
+                <div class="input-box">
+                    <label for="username">User Name</label>
+                    <input type="text" id="username" placeholder="Enter your username">
+                </div>
+                <div class="input-box">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email">
+                </div>
+                <div class="input-box">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" placeholder="Enter your first name">
+                </div>
+                <div class="input-box">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="Enter your last name">
+                </div>
+                <div class="input-box">
+                    <label for="gender">Gender</label>
+        
+                    <input type="radio" name="gender" id="gender" value="Male">
+                    <label for="Male">Male</label>
+
+                    <input type="radio" name="gender" id="gender" value="Female">
+                    <label for="Female">Female</label>
+
+                    <input type="radio" name="gender" id="gender" value="Non-binary">
+                    <label for="Non-binary">Non-binary</label>
+
+                    <input type="radio" name="gender" id="gender" value="PreferNotToSay">
+                    <label for="PreferNotToSay">Prefer not to say</label>
+                </div>
+                <div class="input-box">
+                    <label for="birthday">Birthday</label>
+                    <input type="date" id="birthday" placeholder="Enter your birthday">
+                </div>
+                <div class="input-box">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                    <a href="#" class="forgot">Forgot?</a>
+                </div>
+                <button type="submit" class="btn">SIGN IN</button>
+            </form>
+            <p>Don't have an account? <a href="{% url 'login' %}">Sign Up</a></p>
+        </div>
+    </div>
+</body>
+</html>
