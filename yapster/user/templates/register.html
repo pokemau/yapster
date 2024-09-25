@@ -56,7 +56,9 @@
                 </div>
 
                 {% for message in messages %}
-                {{ message }}
+                <p id="signup-error-msg">
+                    {{ message }}
+                </p>
                 {% endfor %}
                 <button type="submit" class="btn">REGISTER</button>
             </form>
