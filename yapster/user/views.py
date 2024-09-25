@@ -69,7 +69,13 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
 
-        user_login = auth.authenticate(username=username,password=password)
+        if ("@" and ".com") in username:
+            user_obj = User.objects.filter(email=username).first()
+            user_login = auth.authenticate(username=user_obj,password=password)
+        else:
+            user_login = auth.authenticate(username=username,password=password)
+
+        #TO ADD: Notif for incorrect password
 
         if user_login is not None:
             auth.login(request, user_login)
