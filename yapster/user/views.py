@@ -65,7 +65,16 @@ def register_view(request):
 
 
 def login_view(request):
-    return render(request, 'login.html')
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user_login = auth.authenticate(username=username,password=password)
+        auth.login(request, user_login)
+        
+        return redirect('chat')
+    else:
+        return render(request, 'login.html')
 
 def chat_view(request):
     return render(request, 'chat_view.html')

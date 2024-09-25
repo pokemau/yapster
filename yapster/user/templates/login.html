@@ -11,14 +11,15 @@
     <div class="container">
         <div class="sign-in-box">
             <h2>SIGN IN</h2>
-            <form action="#">
+            <form action="" method="POST">
+                {% csrf_token %}
                 <div class="input-box">
                     <label for="username">User Name</label>
-                    <input type="text" id="username" placeholder="Enter your username">
+                    <input type="text" name="username" id="username" placeholder="Enter your username" required>
                 </div>
                 <div class="input-box">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password">
+                    <input type="password" name="password" id="password" placeholder="Enter your password" required>
                     <a href="#" class="forgot">Forgot?</a>
                 </div>
                 <button type="submit" class="btn">SIGN IN</button>
