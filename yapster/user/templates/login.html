@@ -22,6 +22,11 @@
                     <input type="password" name="password" id="password" placeholder="Enter your password" required>
                     <a href="#" class="forgot">Forgot?</a>
                 </div>
+                {% for message in messages %}
+                <p id="signup-error-msg">
+                    {{ message }}
+                </p>
+                {% endfor %}
                 <button type="submit" class="btn">SIGN IN</button>
             </form>
             <p>Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>

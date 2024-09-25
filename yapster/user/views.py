@@ -70,9 +70,13 @@ def login_view(request):
         password = request.POST['password']
 
         user_login = auth.authenticate(username=username,password=password)
-        auth.login(request, user_login)
-        
-        return redirect('chat')
+
+        if user_login is not None:
+            auth.login(request, user_login)
+            return redirect('chat')
+        else:
+            messages.info(request, 'Incorrect username or password')
+            return redirect('login')
     else:
         return render(request, 'login.html')
 
