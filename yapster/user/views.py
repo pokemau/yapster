@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from django.http import HttpResponse
+from datetime import datetime
 from .models import YapsterUser
 
 
@@ -26,7 +27,7 @@ def register_view(request):
         password2 = request.POST['password2']
         email = request.POST['email']
         gender = request.POST['gender']
-        birthday = request.POST['birthday']
+        birthday = datetime.strptime(request.POST['birthday'], "%Y-%m-%d")
 
         if password == password2:
             if User.objects.filter(email=email).exists():

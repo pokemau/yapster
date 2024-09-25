@@ -5,7 +5,7 @@ User = get_user_model()
 
 class YapsterUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    birthdate = models.DateField('birthdate')
+    birthdate = models.DateField('birthdate',null=True)
     gender = models.CharField(max_length=10)
 
     def __str__(self):
