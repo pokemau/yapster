@@ -55,7 +55,7 @@ def register_view(request):
 
                 # TODO
                 # redirect to home_view / chat_view
-                return redirect('register')
+                return redirect('chat')
         else:
             messages.info(request, 'Passwords do not match')
             return redirect('register')
@@ -65,3 +65,6 @@ def register_view(request):
 
 def login_view(request):
     return render(request, 'login.html')
+
+def chat_view(request):
+    return render(request, 'chat_view.html')
