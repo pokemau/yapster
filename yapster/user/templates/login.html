@@ -9,18 +9,19 @@
 </head>
 <body>
     <div class="container">
+        <div class="background-text-container">
+            <div class="background-text">Yapster</div>
+        </div>
         <div class="sign-in-box">
             <h2>SIGN IN</h2>
             <form action="" method="POST">
                 {% csrf_token %}
                 <div class="input-box">
-                    <label for="username">Username or Email</label>
-                    <input type="text" name="username" id="username" placeholder="Enter your username" required>
+                    <input type="text" name="username" id="username" placeholder="User Name" required>
                 </div>
                 <div class="input-box">
-                    <label for="password">Password</label>
-                    <input type="password" name="password" id="password" placeholder="Enter your password" required>
-                    <a href="#" class="forgot">Forgot?</a>
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <a href="#" class="forgot">Forgot Password?</a>
                 </div>
                 {% for message in messages %}
                 <p id="signup-error-msg">
@@ -29,7 +30,9 @@
                 {% endfor %}
                 <button type="submit" class="btn">SIGN IN</button>
             </form>
-            <p>Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
+            <div class="last-question">
+                Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
+            </div>
         </div>
     </div>
 </body>
