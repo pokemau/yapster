@@ -112,14 +112,44 @@ body {
     font-weight: 500;
 }
 
-/* Input*/
+/* Input box with icon */
 .input-box {
+    position: relative;
     margin-bottom: 20px;
     text-align: left;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+.input-box .icon_user {
+    position: absolute;
+    left: 50px;
+    top: 20%;
+    font-size: 20px;
+}
+
+.input-box .icon_password {
+    position: absolute;
+    left: 50px;
+    top: 15%;
+    font-size: 20px;
+}
+
+.input-box input {
+    width: 80%;
+    font-size: 20px;
+    border-radius: 10px;
+    background-color: #f5f5f5;
+    border: none;
+    margin-bottom: 10px;
+    font-weight: 400;
+}
+
+.input-box input::placeholder {
+    padding-left: 30px;
+    font-weight: 300;
 }
 
 .input-box label {
