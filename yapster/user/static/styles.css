@@ -66,7 +66,7 @@ body {
     min-width: 500px;
     height: 600px;
     padding: 40px;
-    box-shadow: 0 8px 200px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 200px rgba(0, 0, 0, 0.4);
     text-align: center;
 }
 
@@ -74,7 +74,7 @@ body {
 .rectangle-container {
     position: absolute;
     bottom: 246px;
-    width: 100%;
+    width: 20px;
     height: 20px;
     display: flex;
     justify-content: center;
@@ -83,8 +83,8 @@ body {
 
 /* Base rectangle style */
 .rectangle {
-    width: 20%;
-    height: 100%;
+    width: 400px;
+    height: 20px;
     position: absolute;
 }
 
@@ -92,14 +92,14 @@ body {
 .transparent-rectangle {
     background-color: rgba(235, 162, 162, 0.8);
     z-index: 1;
-    width: 22%;
+    width: 450px;
 }
 
 /* Under solid rectangle */
 .solid-rectangle {
     background-color: #F47C7C;
     z-index: 0;
-    top: 0px;
+    top: 0;
     height: 35px;
 }
 
@@ -125,14 +125,14 @@ body {
 
 .input-box .icon_user {
     position: absolute;
-    left: 50px;
+    left: 55px;
     top: 20%;
     font-size: 20px;
 }
 
 .input-box .icon_password {
     position: absolute;
-    left: 50px;
+    left: 55px;
     top: 15%;
     font-size: 20px;
 }
@@ -145,10 +145,11 @@ body {
     border: none;
     margin-bottom: 10px;
     font-weight: 400;
+    padding-left: 80px;
 }
 
 .input-box input::placeholder {
-    padding-left: 30px;
+    padding-left: 40px;
     font-weight: 300;
 }
 
@@ -187,8 +188,24 @@ body {
     text-decoration: underline;
 }
 
-/* Button */
+.button-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.line-image {
+    position: absolute;
+    width: 400px;
+    height: auto;
+    z-index: 0;
+    top: 50px;
+    transform: translateY(-50%);
+}
+
 .btn {
+    position: relative;
     width: 70%;
     padding: 10px;
     background: linear-gradient(90deg, #963E4C, #6D314A);
@@ -199,6 +216,8 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 20px;
+    z-index: 1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .btn:hover {

@@ -30,7 +30,10 @@
                     {{ message }}
                 </p>
                 {% endfor %}
-                <button type="submit" class="btn">SIGN IN</button>
+                <div class="button-container">
+                    <img src="{% static 'images/Line 1.png' %}" class="line-image" alt="Line Image">
+                    <button type="submit" class="btn">SIGN IN</button>
+                </div>
             </form>
             <div class="last-question">
                 Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
