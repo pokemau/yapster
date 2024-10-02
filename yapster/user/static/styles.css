@@ -11,9 +11,6 @@
 body {
     background: url(images/BG_LOGIN_IMG.png) no-repeat center center fixed;
     background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* Keyframes */
@@ -58,6 +55,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 /* Signin box */
@@ -72,35 +70,36 @@ body {
 
 /* Container for the rectangles */
 .rectangle-container {
-    position: absolute;
-    bottom: 246px;
-    width: 20px;
-    height: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/* Base rectangle style */
-.rectangle {
-    width: 400px;
-    height: 20px;
-    position: absolute;
+    width: 100%;
+    height: 55px;
+    position: relative;
 }
 
 /* Transparent rectangle */
 .transparent-rectangle {
     background-color: rgba(235, 162, 162, 0.8);
-    z-index: 1;
+    z-index: 2;
     width: 450px;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-/* Under solid rectangle */
+/* Solid rectangle */
 .solid-rectangle {
     background-color: #F47C7C;
-    z-index: 0;
-    top: 0;
+    z-index: 1;
     height: 35px;
+    width: 400px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Title */
