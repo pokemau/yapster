@@ -68,6 +68,15 @@ body {
     text-align: center;
 }
 
+.sign-up-box {
+    background-color: white;
+    min-width: 500px;
+    height: 700px;
+    padding: 40px;
+    box-shadow: 0 8px 200px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
 /* Container for the rectangles */
 .rectangle-container {
     display: flex;
@@ -106,6 +115,14 @@ body {
 .sign-in-box h2 {
     color: #611b1b;
     font-size: 40px;
+    margin-bottom: 40px;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+.sign-up-box h2 {
+    color: #611b1b;
+    font-size: 40px;
     margin-bottom: 30px;
     margin-top: 20px;
     font-weight: 500;
@@ -114,7 +131,7 @@ body {
 /* Input box with icon */
 .input-box {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     text-align: left;
     display: flex;
     justify-content: center;
@@ -130,6 +147,13 @@ body {
 }
 
 .input-box .icon_password {
+    position: absolute;
+    left: 55px;
+    top: 15%;
+    font-size: 20px;
+}
+
+.input-box .icon_card {
     position: absolute;
     left: 55px;
     top: 15%;
@@ -179,6 +203,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 10px;
 }
 
 .line-image {
@@ -188,6 +213,7 @@ body {
     z-index: 0;
     top: 50px;
     transform: translateY(-50%);
+    margin-top: 10px;
 }
 
 .btn {
@@ -201,7 +227,7 @@ body {
     border-radius: 50px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 20px;
+    margin-top: 30px;
     z-index: 1;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
@@ -212,7 +238,7 @@ body {
 
 /* Last question */
 .last-question {
-    margin-top: 30px;
+    margin-top: 20px;
     font-size: 20px;
     text-align: center;
     font-weight: 300;
