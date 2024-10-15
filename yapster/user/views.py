@@ -73,12 +73,17 @@ def login_view(request):
             user_obj = User.objects.filter(email=username).first()
             user_login = auth.authenticate(username=user_obj,password=password)
         else:
+            user_obj = User.objects.filter(username=username).first()
             user_login = auth.authenticate(username=username,password=password)
 
         #TO ADD: Notif for incorrect password
 
         if user_login is not None:
             auth.login(request, user_login)
+            # naa guro ni mas better
+            # mag add pa add pa sad kos register
+            request.session['logged_user'] = user_obj.id
+            print(user_obj.id)
             return redirect('chat')
         else:
             messages.info(request, 'Incorrect username or password')

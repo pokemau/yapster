@@ -11,5 +11,4 @@ class YapsterUser(models.Model):
     def __str__(self):
         return self.user.username
     
-class Message(models.Model):
-    pass
+    
