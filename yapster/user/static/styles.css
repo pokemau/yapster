@@ -8,7 +8,7 @@
 }
 
 /* Background: WILL HAVE TO CHANGE THE BG SAME AS FIGMA - ZED*/
-body {
+.login_body {
     background: url(images/BG_LOGIN_IMG.png) no-repeat center center fixed;
     background-size: cover;
 }
@@ -51,7 +51,7 @@ body {
     width: 100%;
     padding: 20px;
     margin: 1rem 0;
-    height: 97vh;
+    height: 85vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -293,4 +293,109 @@ p a:hover {
     font-size: 15px;
     margin: 2px 0;
     color: rgb(253, 33, 33);
+}
+
+/* Landing Page */
+
+/* Header */
+.header1 {
+    width: 60%;
+    padding: 15px 30px;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 40px;
+    margin: 20px auto;
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.4);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.brand-name {
+    font-size: 35px;
+    font-weight: 400;
+    color: white;
+}
+
+.nav {
+    display: flex;
+    gap: 30px;
+    margin-right: 50px;
+}
+
+.nav-link {
+    margin: 0;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.login-btn {
+    padding: 10px 30px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 25px;
+    font-weight: 500;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+}
+
+.login-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Landing Body */
+.landing_body {
+    background: linear-gradient(180deg, #E6B09E, #E89686, #D2736F) no-repeat center center fixed;
+    background-size: cover;
+    text-align: center;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 50px 20px;
+    margin-top: -30px;
+}
+
+.hero-title {
+    font-size: 55px;
+    color: black;
+    margin-bottom: 20px;
+    font-weight: 450;
+}
+
+.get-started-btn {
+    padding: 10px 25px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+/* Chat preview section */
+.chat-preview-section {
+    margin-top: -40px;
+    bottom: 0;
+}
+
+.chat-preview-img {
+    width: 100%;
+    max-width: 1200px;
 }
