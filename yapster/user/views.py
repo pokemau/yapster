@@ -73,7 +73,7 @@ def login_view(request):
             return redirect('chat')
         else:
             messages.info(request, 'Incorrect username or password')
-            return red
+            return redirect('login')
         irect('login')
     else:
         return render(request, 'login.html')
