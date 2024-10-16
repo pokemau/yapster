@@ -21,4 +21,5 @@ def test_chat_view(request):
         if 'logged_user' in request.session:
             sender = User.objects.get(id=request.session['logged_user'])
             new_message = Message.objects.create(sender=sender, content=content)
+            print("works")
     return render(request, 'test_chat.html')
