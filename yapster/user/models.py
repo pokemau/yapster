@@ -1,11 +1,7 @@
-# models.py
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth import get_user_model
 
-
-class User(AbstractUser):
-    groups = models.ManyToManyField(Group, related_name='custom_user_set')
-    user_permissions = models.ManyToManyField(Permission, related_name='custom_user_set')
+User = get_user_model()
 
 class YapsterUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='yapsteruser')

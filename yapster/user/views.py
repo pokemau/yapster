@@ -23,28 +23,29 @@ def register_view(request):
         password = request.POST['password']
         password2 = request.POST['password2']
 
-        if password == password2:
-            if User.objects.filter(username=username).exists():
-                messages.info(request, 'Username exists')
-                return redirect('register')
-            else:
-                user = User.objects.create_user(username=username,
-                                                password=password)
-                user.first_name = fname
-                user.last_name = lname
-                user.save()
-
-                user_login = auth.authenticate(username=username,password=password)
-                auth.login(request, user_login)
-
-                user_ref = User.objects.get(username=username)
-                yapster_user = YapsterUser.objects.create(user=user_ref)
-                yapster_user.save()
-
-                return redirect('chat')
-        else:
+        if password != password2:
             messages.info(request, 'Passwords do not match')
             return redirect('register')
+        
+        if User.objects.filter(username=username).exists():
+            messages.info(request, 'Username exists')
+            return redirect('register')
+
+        user = User.objects.create_user(username=username,
+                                        password=password)
+        user.first_name = fname
+        user.last_name = lname
+        user.save()
+        user_login = auth.authenticate(username=username,password=password)
+
+        if user_login is not None:
+            auth.login(request, user_login)
+            yapster_user = YapsterUser.objects.create(user=user)
+            yapster_user.save()
+            return redirect('chat')
+        else:
+            messages.info(request, 'Error after registration.')
+            return redirect('login')
     else:
         return render(request, 'register.html')
 
@@ -72,7 +73,8 @@ def login_view(request):
             return redirect('chat')
         else:
             messages.info(request, 'Incorrect username or password')
-            return redirect('login')
+            return red
+        irect('login')
     else:
         return render(request, 'login.html')
 
