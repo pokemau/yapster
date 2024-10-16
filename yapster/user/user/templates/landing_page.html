@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yapster</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="landing_body">
+        <header class="header1">
+            <div class="logo-container">
+                <img src="{% static 'images/logo.png' %}" alt="Yapster Logo" class="logo">
+                <span class="brand-name">Yapster</span>
+            </div>
+            <nav class="nav">
+                <a href="{% url 'landing_page' %}" class="nav-link">Home</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+            </nav>
+            <a href="{% url 'login' %}" class="login-btn">Login</a>
+        </header>
+
+    <main class="main-content">
+        <section class="hero-section">
+            <h1 class="hero-title">Make your conversations better <br> with state-of-the-art messaging <br> dashboard</h1>
+            <a href="{% url 'register' %}" class="get-started-btn">Get Started</a>
+        </section>
+
+        <section class="chat-preview-section">
+            <img src="{% static 'images/CHAT.png' %}" alt="Chat preview" class="chat-preview-img">
+        </section>
+    </main>
+</body>
+</html>
+

@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="login_body">
+        <header class="header1">
+            <div class="logo-container">
+                <img src="{% static 'images/logo.png' %}" alt="Yapster Logo" class="logo">
+                <span class="brand-name">Yapster</span>
+            </div>
+            <nav class="nav">
+                <a href="{% url 'landing_page' %}" class="nav-link">Home</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+            </nav>
+            <a href="{% url 'login' %}" class="login-btn">Login</a>
+        </header>
+    <div class="container">
+        <div class="background-text-container">
+            <div class="background-text">Yapster</div>
+        </div>
+
+        <div class="sign-in-box">
+            <h2>SIGN IN</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="input-box">
+                    <img src="{% static 'images/USER.png' %}" class="icon_user" alt="User Icon">
+                    <input type="text" name="username" id="username" placeholder="User Name" required>
+                </div>
+                <div class="input-box">
+                    <img src="{% static 'images/PADLOCK.png' %}" class="icon_password" alt="Password Icon">
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <a href="#" class="forgot">Forgot Password?</a>
+                </div>
+                {% for message in messages %}
+                <p id="signup-error-msg">
+                    {{ message }}
+                </p>
+                {% endfor %}
+                <div class="button-container">
+                    <img src="{% static 'images/Line 1.png' %}" class="line-image" alt="Line Image">
+                    <button type="submit" class="btn">SIGN IN</button>
+                </div>
+            </form>
+            <div class="last-question">
+                Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
+            </div>
+        </div>
+        <div class="rectangle-container">
+            <div class="rectangle transparent-rectangle"></div>
+            <div class="rectangle solid-rectangle"></div>
+        </div>
+    </div>
+</body>
+</html>

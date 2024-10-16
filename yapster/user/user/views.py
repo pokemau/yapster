@@ -7,16 +7,13 @@ from .models import YapsterUser, User
 from .forms import UpdateUserForm
 from django.contrib.auth.decorators import login_required
 
-
 def landing_page_view(request):
     return render(request, 'landing_page.html')
-
 
 def index_view(request):
     if request.user.is_authenticated:
         return redirect('chat')
     return redirect('landing_page')
-
 
 def register_view(request):
     if request.method == 'POST':
@@ -29,7 +26,7 @@ def register_view(request):
         if password != password2:
             messages.info(request, 'Passwords do not match')
             return redirect('register')
-
+        
         if User.objects.filter(username=username).exists():
             messages.info(request, 'Username exists')
             return redirect('register')
@@ -39,7 +36,7 @@ def register_view(request):
         user.first_name = fname
         user.last_name = lname
         user.save()
-        user_login = auth.authenticate(username=username, password=password)
+        user_login = auth.authenticate(username=username,password=password)
 
         if user_login is not None:
             auth.login(request, user_login)
@@ -60,12 +57,12 @@ def login_view(request):
 
         if ("@" and ".com") in username:
             user_obj = User.objects.filter(email=username).first()
-            user_login = auth.authenticate(username=user_obj, password=password)
+            user_login = auth.authenticate(username=user_obj,password=password)
         else:
             user_obj = User.objects.filter(username=username).first()
-            user_login = auth.authenticate(username=username, password=password)
+            user_login = auth.authenticate(username=username,password=password)
 
-        # TO ADD: Notif for incorrect password
+        #TO ADD: Notif for incorrect password
 
         if user_login is not None:
             auth.login(request, user_login)
@@ -80,10 +77,8 @@ def login_view(request):
     else:
         return render(request, 'login.html')
 
-
 def chat_view(request):
     return render(request, 'chat_view.html')
-
 
 @login_required
 def update_user(request):
@@ -98,14 +93,12 @@ def update_user(request):
         form.fields['gender'].initial = request.user.yapsteruser.gender
     return render(request, 'profile_page.html', {'user': request.user, 'form': form})
 
-
 @login_required
 def delete_user(request):
     user = request.user
     user.is_deleted = True
     user.save()
     return redirect('logout')
-
 
 @login_required
 def profile_page(request):
