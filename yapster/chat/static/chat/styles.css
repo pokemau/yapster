@@ -8,6 +8,11 @@
     font-optical-sizing: auto;
     font-style: normal;
 }
+img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
 
 body {
     background-color: rgb(246, 246, 246);
@@ -16,7 +21,7 @@ body {
 /* NAV BAR */
 nav {
     width: 100%;
-    height: 3.5rem;
+    height: 55px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -24,6 +29,22 @@ nav {
     border-bottom: 1px solid #CDD5DE;
     position: fixed;
     background-color: rgb(245, 245, 245);
+}
+.option {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.1s ease-in-out;
+}
+.option img {
+    width: 80%;
+    height: auto;
+}
+.option:hover {
+    transform: scale(1.1);
 }
 
 #logo-name-cont {
@@ -71,11 +92,15 @@ nav {
 #search-bar {
     width: 90%;
     margin: 10px auto;
+}
+#search-bar input {
     color: #8FA0AF;
     border: 1px solid #CDD5DE;
-    font-size: .8rem;
-    padding: 5px;
     border-radius: 8px;
+    width: 100%;
+    font-size: .8rem;
+    padding: 5px 8px;
+    outline: none;
 }
 
 /* USER */
@@ -160,8 +185,14 @@ nav {
 #right-name-x {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid #CDD5DE;
     padding: 15px 5px;
+}
+#close-icon {
+    width: 15px; 
+    height: 15px;
+    cursor: pointer;
 }
 
 #pic-name-cont {
@@ -189,6 +220,8 @@ nav {
 }
 
 
+
+
 #notifications-cont {
     font-weight: 600;
     padding: 15px 0;
@@ -206,7 +239,13 @@ nav {
     gap: 4px;
     color: #0086EA;
 }
-
+#user-options-cont p {
+    cursor: pointer;
+}
+#user-options-cont p:hover {
+    color: #046fc1;
+    text-decoration: underline;
+}
 
 .checkbox-wrapper-2 .ikxBAC {
     appearance: none;
