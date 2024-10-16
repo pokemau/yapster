@@ -1,88 +1,93 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
 
-		<title>Chat</title>
-	</head>
+    <title>Chat</title>
+  </head>
 
-	<body>
-		<nav>
-			<div id="logo-name-cont">
-				<h1>Y</h1>
-				<h2>Yapster</h2>
-			</div>
+  <body>
+    <nav>
+      <div id="logo-name-cont">
+        <h1>Y</h1>
+        <h2>Yapster</h2>
+      </div>
 
-			<div id="nav-options">
-				<p>settings</p>
-				<p>3 dots</p>
-				<div id="nav-profile-pic"></div>
-			</div>
-		</nav>
+      <div id="nav-options">
+        <p>settings</p>
+        <p>3 dots</p>
 
-		<div id="main-cont">
-			<div id="left-sidebar">
-				<div id="search-bar">Search</div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}">LOGOUT</a>
+        {% endif %}
 
-				<div id="users-cont">
-					<div class="user">
-						<div class="left-profile-pic"></div>
-						<div class="name-time-msg">
-							<div class="name-time">
-								<p class="name">Bernard Nicolas Villamor</p>
-								<p class="time-sent">1:06pm</p>
-							</div>
-							<p class="message">Anytime ;)</p>
-						</div>
-					</div>
-					<div class="user">
-						<div class="left-profile-pic"></div>
-						<div class="name-time-msg">
-							<div class="name-time">
-								<p class="name">Lia V. Barbaso</p>
-								<p class="time-sent">8:33pm</p>
-							</div>
-							<p class="message">You: Sige, thank you ma'am</p>
-						</div>
-					</div>
-				</div>
-			</div>
+        <div id="nav-profile-pic"></div>
+      </div>
+    </nav>
 
-			<div id="mid-bar"></div>
-			<div id="right-sidebar">
-				<div id="right-name-x">
-					<div id="pic-name-cont">
-						<div id="right-profile-pic"></div>
-						<p>Bernard</p>
-					</div>
-					<p>X</p>
-				</div>
-				<div id="right-info-cont">
-					<div id="right-username">
-						<h5>Username</h5>
-						<p>@bernardXX</p>
-					</div>
-					<div id="right-bio">
-						<h5>Bio</h5>
-						<p>I love god</p>
-					</div>
-				</div>
-				<div id="notifications-cont">
-					<h5>Notifications</h5>
+    <div id="main-cont">
+      <div id="left-sidebar">
+        <div id="search-bar">Search</div>
 
-					<div class="checkbox-wrapper-2">
-						<input type="checkbox" class="sc-gJwTLC ikxBAC" />
-					</div>
-				</div>
-				<div id="user-options-cont">
-					<p>Block User</p>
-					<p>Clear History</p>
-					<p>Delete Conversation</p>
-				</div>
-			</div>
-		</div>
-	</body>
+        <div id="users-cont">
+          <div class="user">
+            <div class="left-profile-pic"></div>
+            <div class="name-time-msg">
+              <div class="name-time">
+                <p class="name">Bernard Nicolas Villamor</p>
+                <p class="time-sent">1:06pm</p>
+              </div>
+              <p class="message">Anytime ;)</p>
+            </div>
+          </div>
+          <div class="user">
+            <div class="left-profile-pic"></div>
+            <div class="name-time-msg">
+              <div class="name-time">
+                <p class="name">Lia V. Barbaso</p>
+                <p class="time-sent">8:33pm</p>
+              </div>
+              <p class="message">You: Sige, thank you ma'am</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="mid-bar"></div>
+      <div id="right-sidebar">
+        <div id="right-name-x">
+          <div id="pic-name-cont">
+            <div id="right-profile-pic"></div>
+            <p>Bernard</p>
+          </div>
+          <p>X</p>
+        </div>
+        <div id="right-info-cont">
+          <div id="right-username">
+            <h5>Username</h5>
+            <p>@bernardXX</p>
+          </div>
+          <div id="right-bio">
+            <h5>Bio</h5>
+            <p>I love god</p>
+          </div>
+        </div>
+        <div id="notifications-cont">
+          <h5>Notifications</h5>
+
+          <div class="checkbox-wrapper-2">
+            <input type="checkbox" class="sc-gJwTLC ikxBAC" />
+          </div>
+        </div>
+        <div id="user-options-cont">
+          <p>Block User</p>
+          <p>Clear History</p>
+          <p>Delete Conversation</p>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
