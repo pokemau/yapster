@@ -45,6 +45,8 @@ def register_view(request):
             auth.login(request, user_login)
             yapster_user = YapsterUser.objects.create(user=user)
             yapster_user.save()
+            request.session['logged_user'] = yapster_user.id
+            print(yapster_user.id)
             return redirect('chat')
         else:
             messages.info(request, 'Error after registration.')
@@ -69,8 +71,6 @@ def login_view(request):
 
         if user_login is not None:
             auth.login(request, user_login)
-            # naa guro ni mas better
-            # mag add pa add pa sad kos register
             request.session['logged_user'] = user_obj.id
             print(user_obj.id)
             return redirect('chat')
