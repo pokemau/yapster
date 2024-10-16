@@ -7,7 +7,8 @@ from .models import YapsterUser, User
 from .forms import UpdateUserForm
 from django.contrib.auth.decorators import login_required
 
-
+def landing_page_view(request):
+    return render(request, 'landing_page.html')
 
 def index_view(request):
     """ (mau)
@@ -15,7 +16,7 @@ def index_view(request):
     - if logged in ay redirect to home
     - if not logged in kay redirect to login_view
     """
-    return redirect('login')
+    return redirect('landing_page')
 
 def register_view(request):
     """
