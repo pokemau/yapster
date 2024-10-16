@@ -74,7 +74,6 @@ def login_view(request):
         else:
             messages.info(request, 'Incorrect username or password')
             return redirect('login')
-        irect('login')
     else:
         return render(request, 'login.html')
 
