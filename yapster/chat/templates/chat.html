@@ -29,15 +29,20 @@
 
           <div id="dots-options" class="hidden">
             <div class="dots-option" id="dots-logout">
-              {% if user.is_authenticated %}
-              <p>
-                <a href="{% url 'logout' %}">Logout</a>
-              </p>
-              {% endif %}
+              <!-- {% if user.is_authenticated %} -->
+              <a href="{% url 'logout' %}">Logout</a>
+              <!-- {% endif %} -->
+            </div>
+
+            <div class="dots-option" id="dots-friends">
+              <!-- {% if user.is_authenticated %} -->
+              <a href="{% url 'friend:friends_list' user_id=user.id %}"
+                >Friends</a
+              >
+              <!-- {% endif %} -->
             </div>
           </div>
         </div>
-
         <a href="{% url 'profile_page' %}">
           <!-- ako sa gi change para mu adto profile page -->
           <div id="nav-profile-pic"></div>
@@ -48,30 +53,37 @@
     <div id="main-cont">
       <div id="left-sidebar">
         <div id="search-bar">
-          <input placeholder="Search" />
+          <form method="get" action="{% url 'search_user' %}">
+            <input
+              type="text"
+              name="search"
+              placeholder="Search"
+              value="{{ query }}"
+            />
+          </form>
         </div>
 
         <div id="users-cont">
-          <div class="user">
+          {% for user in users %}
+          <div
+            class="user"
+            onclick="loadUserDetails({{user.id }})"
+            data-id="{{ user.id }}"
+          >
             <div class="left-profile-pic"></div>
             <div class="name-time-msg">
               <div class="name-time">
-                <p class="name">Bernard Nicolas Villamor</p>
-                <p class="time-sent">1:06pm</p>
+                <p class="name">
+                  {{ user.user.first_name }} {{ user.user.last_name }}
+                </p>
+                <p class="time-sent">Last seen: 1:06pm</p>
               </div>
-              <p class="message">Anytime ;)</p>
+              <p class="message">No message available</p>
             </div>
           </div>
-          <div class="user">
-            <div class="left-profile-pic"></div>
-            <div class="name-time-msg">
-              <div class="name-time">
-                <p class="name">Lia V. Barbaso</p>
-                <p class="time-sent">8:33pm</p>
-              </div>
-              <p class="message">You: Sige, thank you ma'am</p>
-            </div>
-          </div>
+          {% empty %}
+          <p>No users found.</p>
+          {% endfor %}
         </div>
       </div>
 
@@ -87,7 +99,7 @@
         <div id="right-name-x">
           <div id="pic-name-cont">
             <div id="right-profile-pic"></div>
-            <p>Bernard</p>
+            <p></p>
           </div>
           <div id="close-icon">
             <img src="{% static 'chat/images/close.png' %}" alt="X Icon" />
@@ -95,12 +107,12 @@
         </div>
         <div id="right-info-cont">
           <div id="right-username">
-            <h5>Username</h5>
-            <p>@bernardXX</p>
+            <h5></h5>
+            <p></p>
           </div>
           <div id="right-bio">
-            <h5>Bio</h5>
-            <p>I love god</p>
+            <h5></h5>
+            <p></p>
           </div>
         </div>
         <div id="notifications-cont">
