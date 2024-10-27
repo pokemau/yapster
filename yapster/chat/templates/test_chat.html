@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="{% static 'chat/index.js' %}" defer></script>
+    <script src="{% static 'chat/chat.js' %}" defer></script>
     <title>Test Chat</title>
 </head>
 <body>
     <h1>Real Time Test Chat</h1>
-    <div class="message" id="chatContainer">
+    <h1>{{request.session.loggedUser}}</h1>
+    <div class="messenger" id="main_messenger">
         <!-- Received messages are displayed here -->
-        <div class="message" id="chatContainer">
+        <div class="messages" id="chatContainer">
             <!-- received messages and displayed here -->
             {% for i in content %}
                 {% if i.sender != user %}
