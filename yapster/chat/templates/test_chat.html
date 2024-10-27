@@ -1,15 +1,46 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'chat/index.js' %}" defer></script>
     <title>Test Chat</title>
 </head>
 <body>
-    <form action="" method="POST">
-        {% csrf_token %}
-        <input type="text" name="message_to_send" id="message_to_send" placeholder="Type message here">
-        <button type="submit" class="btn">Send</button>
-    </form>
+    <h1>Real Time Test Chat</h1>
+    <div class="message" id="chatContainer">
+        <!-- Received messages are displayed here -->
+        <div class="message" id="chatContainer">
+            <!-- received messages and displayed here -->
+            {% for i in content %}
+                {% if i.sender != user %}
+                    <div class="receive">
+                        <p style="color: #000;"> {{i.content}} <strong>-{{i.sender}}</strong></p>
+                    </div>
+                {% else %}
+                    <div class="send">
+                        <p style="color: #000;">{{i.content}}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+          <!-- end receive messages -->
+          </div>
+
+          <div class="form">
+              <form action="" id="message-form" method="POST">
+                  {% csrf_token %}
+                  <textarea id="msg" cols="30" name="message" rows="10" placeholder="Enter your message" required></textarea>
+                  <button class="submit" type="submit">Send</button>
+              </form>    
+          </div>
+        <!-- End of received messages -->
+    </div>
+    <script>
+    let chat_name = `{{ chat_room.chat_name }}`
+    console.log("Room:", chat_name)
+    let user_logged_in = `{{ user.username }}`
+    console.log("Logged-in user:", user_logged_in)
+    </script>
 </body>
 </html>
