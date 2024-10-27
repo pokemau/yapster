@@ -8,11 +8,13 @@
 	font-optical-sizing: auto;
 	font-style: normal;
 }
+
 img {
 	display: block;
 	width: 100%;
 	height: auto;
 }
+
 a {
 	text-decoration: none;
 	color: rgb(12, 12, 12);
@@ -43,6 +45,7 @@ nav {
 	position: fixed;
 	background-color: rgb(245, 245, 245);
 }
+
 .option {
 	width: 25px;
 	height: 25px;
@@ -52,6 +55,7 @@ nav {
 	justify-content: center;
 	transition: 0.1s ease-in-out;
 }
+
 .option img {
 	width: 80%;
 	height: auto;
@@ -62,7 +66,7 @@ nav {
 	align-items: center;
 }
 
-#logo-name-cont > h1 {
+#logo-name-cont>h1 {
 	font-size: 2.5rem;
 	font-weight: bold;
 	margin-right: 1rem;
@@ -87,10 +91,13 @@ nav {
 	width: 100vw;
 	height: 100vh;
 }
+
 #dots {
 	position: relative;
 }
+
 #dots-options {
+	z-index: -1;
 	position: absolute;
 	width: 100px;
 	height: 100px;
@@ -100,18 +107,32 @@ nav {
 	border-radius: 5px;
 }
 
-#dots-options p:first-child {
+/* #dots-options p:first-child {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
+
 #dots-options p:first-child:hover {
 	background-color: rgb(216, 216, 216);
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
-}
+} */
+
 .dots-option {
 	width: 100%;
 	text-align: center;
+	background-color: orange;
+	height: 40px;
+}
+
+.dots-option a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.dots-option:hover {
+	background-color: red;
 }
 
 /*******************
@@ -126,6 +147,7 @@ nav {
 	width: 90%;
 	margin: 10px auto;
 }
+
 #search-bar input {
 	color: #8fa0af;
 	border: 1px solid #cdd5de;
@@ -197,6 +219,7 @@ nav {
 	flex-grow: 1;
 	position: relative;
 }
+
 #mid-message {
 	position: absolute;
 	left: 0;
@@ -208,6 +231,7 @@ nav {
 	height: 50px;
 	width: 100%;
 }
+
 #mid-message input {
 	width: 70%;
 	min-width: 100px;
@@ -218,6 +242,7 @@ nav {
 	border-top-left-radius: 10px;
 	border-bottom-left-radius: 10px;
 }
+
 #mid-message button {
 	border: 1px solid rgb(185, 185, 185);
 	border-top-right-radius: 10px;
@@ -228,6 +253,7 @@ nav {
 	cursor: pointer;
 	outline: none;
 }
+
 #mid-message button:hover {
 	background-color: rgb(213, 213, 213);
 }
@@ -242,6 +268,7 @@ nav {
 	padding: 0 25px;
 	border-top-left-radius: 15px;
 	border-bottom-left-radius: 15px;
+	display: none;
 }
 
 #right-name-x {
@@ -251,6 +278,7 @@ nav {
 	border-bottom: 1px solid #cdd5de;
 	padding: 15px 5px;
 }
+
 #close-icon {
 	width: 15px;
 	height: 15px;
@@ -296,12 +324,16 @@ nav {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+}
+
+#user-options-cont p,
+.user-option__a {
+	cursor: pointer;
 	color: #0086ea;
 }
-#user-options-cont p {
-	cursor: pointer;
-}
-#user-options-cont p:hover {
+
+#user-options-cont p:hover,
+.user-option__a:hover {
 	color: #046fc1;
 	text-decoration: underline;
 }
