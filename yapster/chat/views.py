@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
-from chat.models import Message, YapsterUser
+from chat.models import Message, YapsterUser, Chat
 from user.models import User
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -47,13 +47,29 @@ def get_user_details(request, user_id):
     return JsonResponse({"success": False, "error": "Invalid request"})
 
 
+# Handled in consumer for real time
+# GWAAAAAPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPA
+# SLAMM IBOG SHANLEY!
 def test_chat_view(request):
-    # check if logged in need verify na login si user
-    # need nay chat na na belong (pwede default chat)
-    if request.method=="POST":
-        content = request.POST["message_to_send"]
-        if 'logged_user' in request.session:
-            sender = User.objects.get(id=request.session['logged_user'])
-            new_message = Message.objects.create(sender=sender, content=content)
-            print("works")
-    return render(request, 'test_chat.html')
+    if request.method == "POST":
+        chat_name = request.POST.get('chat')
+
+        # Check if the chat already exists
+        chat, created = Chat.objects.get_or_create(chat_name=chat_name)
+
+        # Redirect to the message view with the username and chat_name
+        username = request.user.username
+        return redirect('chat_name', username, chat.chat_name)
+
+    return render(request, 'test_chat_selector.html')
+
+def message_view(request, username, chat_name):
+    chat_room = Chat.objects.get(chat_name=chat_name)
+    content_messages = Message.objects.filter(chat=chat_room)
+    content = {
+        "chat_room": chat_room,
+        "content": content_messages,
+        "sender" : username
+    }
+    print(content)
+    return render(request, 'test_chat.html', content)

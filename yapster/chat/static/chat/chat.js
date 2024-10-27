@@ -1,49 +1,3 @@
-const dots = document.querySelector("#dots");
-const closeUserDetail = document.querySelector("#close-icon");
-
-// window.addEventListener("click", function (e) {
-// 	e.preventDefault();
-// 	console.log(e.target);
-// });
-
-closeUserDetail.addEventListener("click", () => {
-	document.querySelector("#right-sidebar").style.display = "none";
-});
-
-// dots.addEventListener("click", () => {
-// 	const options = document.querySelector("#dots-options");
-
-// 	options.classList.toggle("hidden");
-// });
-
-async function loadUserDetails(userId) {
-	try {
-		const response = await fetch(`/chat/user-details/${userId}/`, {
-			method: "GET",
-			headers: {
-				"X-Requested-With": "XMLHttpRequest",
-			},
-		});
-
-		const data = await response.json();
-
-		if (data.success) {
-			document.querySelector("#right-sidebar p").textContent = data.first_name;
-			document.querySelector(
-				"#right-username p"
-			).textContent = `@${data.username}`;
-			document.querySelector("#right-bio p").textContent =
-				data.bio || "No bio available";
-			document.querySelector("#right-sidebar").style.display = "block";
-			document
-				.querySelector(".user-option__a")
-				.setAttribute("href", `/friend/friend_request/${data.id}`);
-		}
-	} catch (error) {
-		console.error(error);
-	}
-}
-/*
 function scrollToBottom() {
     var chatContainer = document.getElementById("chatContainer");
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -80,6 +34,7 @@ document.getElementById('message-form').addEventListener('submit', function(even
         
 // response from consumer on server
 socket.addEventListener("message", (event) => {
+	// event.preventDefault();
     const messageData = JSON.parse(event.data)['response_data'];
     
     var sender = messageData['sender'];
@@ -88,19 +43,19 @@ socket.addEventListener("message", (event) => {
     console.log("sender: ", sender);
     console.log("message: ", message);
     // empty message input field after message has been sent
-    if (sender == '{{user}}'){
+    if (sender == user_logged_in){
         document.getElementById('msg').value = '';
     }
 
     //Basin naa diri ang double send
     // Here's where we append the message to the chatbox.
-    var messageDiv = document.querySelector('.message');
-    if (sender != '{{user}}') { // assuming you have a variable `currentUser` to hold the current user's name
+    var messageDiv = document.querySelector('.messages');
+    if (sender != user_logged_in) { 
         messageDiv.innerHTML += '<div class="receive"><p style="color: #000;">' + message + '<strong>-' + sender + '</strong></p></div>';
     } else {
-        messageDiv.innerHTML += '<div class="send"><p style="color: #FF0000;">' + message + '</p></div>';
+        messageDiv.innerHTML += '<div class="send"><p>' + message + '</p></div>';
     }
-    // scrollToBottom();
+    scrollToBottom();
 });
 
 socket.onopen = (event) => {
@@ -110,4 +65,3 @@ socket.onopen = (event) => {
 socket.onclose = (event) => {
     console.log("WebSocket connection closed!");
 };
-*/
