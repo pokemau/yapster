@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
     <script src="{% static 'chat/index.js' %}" defer></script>
+    <script src="{% static 'chat/chat.js' %}" defer></script>
 
     <title>Chat</title>
   </head>
@@ -76,12 +77,31 @@
       </div>
 <!-- IMPLEMNMENT REALTIME HERE -->
     <div id="mid-bar">
-      <div id="messages"></div>
-      <div id="mid-message">
-        <input type="text" placeholder="Your message..." />
-        <button>Send</button>
+      <div id="messages">
+            <!-- received messages and displayed here -->
+            {% for i in content %}
+                {% if i.sender != user %}
+                    <div class="receive">
+                        <p style="color: #000;"> {{i.content}} <strong>-{{i.sender}}</strong></p>
+                    </div>
+                {% else %}
+                    <div class="send">
+                        <p style="color: #000;">{{i.content}}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+          <!-- end receive messages -->
       </div>
+      <form action="" id="message-input" method="POST">
+        {% csrf_token %}
+        <div id="mid-message">
+            <input id="typed-message" type="text" placeholder="Your message..." />
+            <button type="submit">Send</button>
+        </div>
+      </form>
     </div>
+
+        <!-- <form action="" id="message-input" method="POST"> -->
 <!-- IMPLEMNMENT REALTIME HERE -->
 
       <div id="right-sidebar">
@@ -118,5 +138,13 @@
         </div>
       </div>
     </div>
+
+    <script>
+        let chat_name = `{{ chat_room.chat_name }}`
+        console.log("Room:", chat_name)
+        let user_logged_in = `{{ user.username }}`
+        console.log("Logged-in user:", user_logged_in)
+    </script>
+
   </body>
 </html>

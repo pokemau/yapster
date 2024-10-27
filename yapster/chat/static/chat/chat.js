@@ -17,14 +17,14 @@ socket.onclose = (event) => {
     console.log("WebSocket connection closed!");
 };
 // Form submit listener
-document.getElementById('message-form').addEventListener('submit', function(event){
+document.getElementById('message-input').addEventListener('submit', function(event){
 	event.preventDefault();
     // console.log("🪼⋆｡𖦹°", event.target.querySelector('textarea').value)
     // console.log("🪼⋆｡𖦹°", )
     // const message = document.getElementById('msg').value;
     socket.send(
         JSON.stringify({
-            'message': event.target.querySelector('textarea').value,
+            'message': event.target.querySelector('#typed-message').value,
             'chat_name': `${chat_name}`,
             'sender': `${user_logged_in}`,
         })
@@ -44,18 +44,18 @@ socket.addEventListener("message", (event) => {
     console.log("message: ", message);
     // empty message input field after message has been sent
     if (sender == user_logged_in){
-        document.getElementById('msg').value = '';
+        document.getElementById('typed-message').value = '';
     }
 
     //Basin naa diri ang double send
     // Here's where we append the message to the chatbox.
-    var messageDiv = document.querySelector('.messages');
+    var messageDiv = document.querySelector('#messages');
     if (sender != user_logged_in) { 
         messageDiv.innerHTML += '<div class="receive"><p style="color: #000;">' + message + '<strong>-' + sender + '</strong></p></div>';
     } else {
         messageDiv.innerHTML += '<div class="send"><p>' + message + '</p></div>';
     }
-    scrollToBottom();
+    // scrollToBottom();
 });
 
 socket.onopen = (event) => {
