@@ -25,20 +25,21 @@ def search_user(request):
         user__first_name__icontains=query
     ) | YapsterUser.objects.filter(
         user__last_name__icontains=query
-    )
+    ) | YapsterUser.objects.filter(user__username__icontains=query)
 
     return render(request, 'chat.html', {'users': users, 'query': query})
 
 @login_required
-def user_details_view(request, user_id):
+def get_user_details(request, user_id):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         try:
             user_profile = YapsterUser.objects.select_related('user').get(id=user_id)
             data = {
-                "success": True,
-                "first_name": user_profile.user.first_name,
-                "username": user_profile.user.username,
-                "bio": user_profile.bio,
+                'success': True,
+                'id': user_profile.user.id,
+                'first_name': user_profile.user.first_name,
+                'username': user_profile.user.username,
+                'bio': user_profile.bio,
             }
             return JsonResponse(data)
         except YapsterUser.DoesNotExist:

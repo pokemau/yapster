@@ -324,14 +324,16 @@ nav {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+}
+
+#user-options-cont p,
+.user-option__a {
+	cursor: pointer;
 	color: #0086ea;
 }
 
-#user-options-cont p {
-	cursor: pointer;
-}
-
-#user-options-cont p:hover {
+#user-options-cont p:hover,
+.user-option__a:hover {
 	color: #046fc1;
 	text-decoration: underline;
 }

@@ -1,20 +1,20 @@
 const dots = document.querySelector("#dots");
 const closeUserDetail = document.querySelector("#close-icon");
 
-window.addEventListener("click", function (e) {
-	e.preventDefault();
-	console.log(e.target);
-});
+// window.addEventListener("click", function (e) {
+// 	e.preventDefault();
+// 	console.log(e.target);
+// });
 
 closeUserDetail.addEventListener("click", () => {
 	document.querySelector("#right-sidebar").style.display = "none";
 });
 
-dots.addEventListener("click", () => {
-	const options = document.querySelector("#dots-options");
+// dots.addEventListener("click", () => {
+// 	const options = document.querySelector("#dots-options");
 
-	options.classList.toggle("hidden");
-});
+// 	options.classList.toggle("hidden");
+// });
 
 async function loadUserDetails(userId) {
 	try {
@@ -35,6 +35,9 @@ async function loadUserDetails(userId) {
 			document.querySelector("#right-bio p").textContent =
 				data.bio || "No bio available";
 			document.querySelector("#right-sidebar").style.display = "block";
+			document
+				.querySelector(".user-option__a")
+				.setAttribute("href", `/friend/friend_request/${data.id}`);
 		}
 	} catch (error) {
 		console.error(error);

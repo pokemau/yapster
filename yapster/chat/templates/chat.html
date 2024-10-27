@@ -21,27 +21,30 @@
         <div class="option">
           <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon" />
         </div>
+        <a href="{% url 'friend:friends_list' user_id=user.id %}">Friends</a>
+        <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
+        <a href="{% url 'logout' %}">Logout</a>
         <div id="dots" class="option">
           <img
             src="{% static 'chat/images/dots.png' %}"
             alt="Triple Dots Icon"
           />
 
-          <div id="dots-options" class="hidden">
+          <!-- <div id="dots-options" class="hidden">
             <div class="dots-option" id="dots-logout">
-              <!-- {% if user.is_authenticated %} -->
+              {% if user.is_authenticated %}
               <a href="{% url 'logout' %}">Logout</a>
-              <!-- {% endif %} -->
+              {% endif %}
             </div>
 
             <div class="dots-option" id="dots-friends">
-              <!-- {% if user.is_authenticated %} -->
+              {% if user.is_authenticated %}
               <a href="{% url 'friend:friends_list' user_id=user.id %}"
                 >Friends</a
               >
-              <!-- {% endif %} -->
+              {% endif %}
             </div>
-          </div>
+          </div> -->
         </div>
         <a href="{% url 'profile_page' %}">
           <!-- ako sa gi change para mu adto profile page -->
@@ -126,6 +129,7 @@
           <p>Block User</p>
           <p>Clear History</p>
           <p>Delete Conversation</p>
+          <a href="#" id="user-b" class="user-option__a">Add Friend</a>
         </div>
       </div>
     </div>

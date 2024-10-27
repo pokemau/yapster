@@ -6,7 +6,7 @@ class FriendList(models.Model):
     friends = models.ManyToManyField(YapsterUser, blank=True, related_name='friends')
 
     def __str__(self):
-        return self.user.username
+        return self.user.user.username
     
     def add_friend(self, account):
         if not account in self.friends.all():
@@ -21,7 +21,6 @@ class FriendList(models.Model):
     def unfriend(self, target_account):
         remover_friends_list = self
         remover_friends_list.remove_friend(target_account)
-
         friends_list = FriendList.objects.get(user=target_account)
         friends_list.remove_friend(self.user)
 
@@ -35,7 +34,7 @@ class FriendRequest(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.sender.username
+        return self.sender.user.username
     
     def accept(self):
         receiver_friend_list = FriendList.objects.get(user=self.receiver)

@@ -1,0 +1,10 @@
+{% load static %}
+<h1>FRIENDS LIST</h1>
+
+{% for friend in friend_list %}
+<div>
+  <p>{{friend}}</p>
+  <a href="{% url 'friend:remove_friend' friend.user.id %}">Remove Friend</a>
+</div>
+
+{% endfor %}

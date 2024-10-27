@@ -1,0 +1,16 @@
+<h1>Friend Requests</h1>
+
+{% if friend_requests %}
+<ul>
+  {% for request in friend_requests %}
+  <li>
+    {{ request.sender.user.username }}
+
+    <a href="{% url 'friend:accept_friend_request' request.id %}">Accept</a>
+    <a href="{% url 'friend:decline_friend_request' request.id %}">Decline</a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No friend requests.</p>
+{% endif %}
