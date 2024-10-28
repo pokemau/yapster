@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 * {
 	padding: 0;
 	margin: 0;
@@ -367,4 +367,52 @@ nav {
 
 .checkbox-wrapper-2 .ikxBAC:checked:hover {
 	background-color: #017ad7;
+}
+
+/*******************
+* Message Bubble
+*******************/
+html { font-family: 'PT Sans', Georgia, serif; }
+
+.discussion {
+	/* max-width: 600px; */
+	/* margin: 0% auto; */
+	margin-left: 10%;
+	margin-right: 10%;
+	
+	display: flex;
+	flex-flow: column wrap;
+	/* flex-grow: 1; */
+}
+
+.discussion > .bubble {
+	border-radius: 1em;
+	padding: 0.25em 0.75em;
+	margin: 0.0625em;
+	max-width: 50%;
+	font-size: 1.1em;
+}
+
+.discussion > .bubble.sender {
+	align-self: flex-start;
+	background-color: cornflowerblue;
+	color: #fff;
+}
+.discussion > .bubble.recipient {
+	align-self: flex-end;
+	background-color: #efefef;
+}
+
+.discussion > .bubble.sender.first { border-bottom-left-radius: 0.1em; }
+.discussion > .bubble.sender.last { border-top-left-radius: 0.1em; }
+.discussion > .bubble.sender.middle {
+	border-bottom-left-radius: 0.1em;
+ 	border-top-left-radius: 0.1em;
+}
+
+.discussion > .bubble.recipient.first { border-bottom-right-radius: 0.1em; }
+.discussion > .bubble.recipient.last { border-top-right-radius: 0.1em; }
+.discussion > .bubble.recipient.middle {
+	border-bottom-right-radius: 0.1em;
+	border-top-right-radius: 0.1em;
 }
