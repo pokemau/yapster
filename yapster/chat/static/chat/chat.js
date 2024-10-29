@@ -49,11 +49,11 @@ socket.addEventListener("message", (event) => {
 
     //Basin naa diri ang double send
     // Here's where we append the message to the chatbox.
-    var messageDiv = document.querySelector('#messages');
+    var messageDiv = document.querySelector('.messages');
     if (sender != user_logged_in) { 
-        messageDiv.innerHTML += '<div class="receive"><p style="color: #000;">' + message + '<strong>-' + sender + '</strong></p></div>';
+        messageDiv.innerHTML += '<div class="bubble sender"><p>' + message + '</p></div>';
     } else {
-        messageDiv.innerHTML += '<div class="send"><p>' + message + '</p></div>';
+        messageDiv.innerHTML += '<div class="bubble recipient"><p>' + message + '</p></div>';
     }
     // scrollToBottom();
 });

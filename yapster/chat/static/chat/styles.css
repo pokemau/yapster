@@ -374,7 +374,7 @@ nav {
 *******************/
 html { font-family: 'PT Sans', Georgia, serif; }
 
-.discussion {
+.messages {
 	/* max-width: 600px; */
 	/* margin: 0% auto; */
 	margin-left: 10%;
@@ -385,7 +385,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	/* flex-grow: 1; */
 }
 
-.discussion > .bubble {
+.messages > .bubble {
 	border-radius: 1em;
 	padding: 0.25em 0.75em;
 	margin: 0.0625em;
@@ -393,26 +393,26 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	font-size: 1.1em;
 }
 
-.discussion > .bubble.sender {
+.messages > .bubble.sender {
 	align-self: flex-start;
 	background-color: cornflowerblue;
 	color: #fff;
 }
-.discussion > .bubble.recipient {
+.messages > .bubble.recipient {
 	align-self: flex-end;
 	background-color: #efefef;
 }
 
-.discussion > .bubble.sender.first { border-bottom-left-radius: 0.1em; }
-.discussion > .bubble.sender.last { border-top-left-radius: 0.1em; }
-.discussion > .bubble.sender.middle {
+.messages > .bubble.sender.first { border-bottom-left-radius: 0.1em; }
+.messages > .bubble.sender.last { border-top-left-radius: 0.1em; }
+.messages > .bubble.sender.middle {
 	border-bottom-left-radius: 0.1em;
  	border-top-left-radius: 0.1em;
 }
 
-.discussion > .bubble.recipient.first { border-bottom-right-radius: 0.1em; }
-.discussion > .bubble.recipient.last { border-top-right-radius: 0.1em; }
-.discussion > .bubble.recipient.middle {
+.messages > .bubble.recipient.first { border-bottom-right-radius: 0.1em; }
+.messages > .bubble.recipient.last { border-top-right-radius: 0.1em; }
+.messages > .bubble.recipient.middle {
 	border-bottom-right-radius: 0.1em;
 	border-top-right-radius: 0.1em;
 }
