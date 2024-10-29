@@ -196,6 +196,8 @@ nav {
 #mid-bar {
 	flex-grow: 1;
 	position: relative;
+	/* display: flex; */
+	/* justify-content: center;  */
 }
 #mid-message {
 	position: absolute;
@@ -375,13 +377,16 @@ nav {
 html { font-family: 'PT Sans', Georgia, serif; }
 
 .messages {
-	/* max-width: 600px; */
+	/* max-width: 400px; */
 	/* margin: 0% auto; */
-	margin-left: 10%;
-	margin-right: 10%;
+	margin-left: 5%;
+	margin-right: 5%;
 	
 	display: flex;
 	flex-flow: column wrap;
+
+	justify-content: center;
+
 	/* flex-grow: 1; */
 }
 
@@ -389,8 +394,10 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	border-radius: 1em;
 	padding: 0.25em 0.75em;
 	margin: 0.0625em;
-	max-width: 50%;
 	font-size: 1.1em;
+	word-wrap: break-word;
+	max-width: 28rem;
+	width: 50%;
 }
 
 .messages > .bubble.sender {
@@ -416,3 +423,4 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	border-bottom-right-radius: 0.1em;
 	border-top-right-radius: 0.1em;
 }
+
