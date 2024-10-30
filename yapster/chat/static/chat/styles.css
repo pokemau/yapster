@@ -383,9 +383,12 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	margin-right: 5%;
 	
 	display: flex;
-	flex-flow: column wrap;
+	flex-flow: column;
 
-	justify-content: center;
+	align-items: center;
+
+	height: 85%;
+	overflow: auto;
 
 	/* flex-grow: 1; */
 }
@@ -397,7 +400,6 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	font-size: 1.1em;
 	word-wrap: break-word;
 	max-width: 28rem;
-	width: 50%;
 }
 
 .messages > .bubble.sender {
