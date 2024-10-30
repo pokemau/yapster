@@ -1,7 +1,11 @@
 function scrollToBottom() {
-    var chatContainer = document.getElementById("chatContainer");
+    console.log("areeee")
+    var chatContainer = document.querySelector(".messages");
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+window.onload = (event) => {
+    scrollToBottom()
+};
 // DO YOU WANT TO BUILD A SNOW MAN? :(
 // Determine the WebSocket protocol based on the application's URL
 const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -55,7 +59,7 @@ socket.addEventListener("message", (event) => {
     } else {
         messageDiv.innerHTML += '<div class="bubble recipient"><p>' + message + '</p></div>';
     }
-    // scrollToBottom();
+    scrollToBottom();
 });
 
 socket.onopen = (event) => {
