@@ -72,4 +72,4 @@ def message_view(request, username, chat_name):
         "sender" : username
     }
     print(content)
-    return render(request, 'test_chat.html', content)
+    return render(request, 'chat.html', content)

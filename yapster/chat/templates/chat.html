@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
     <script src="{% static 'chat/index.js' %}" defer></script>
+    <script src="{% static 'chat/chat.js' %}" defer></script>
 
     <title>Chat</title>
   </head>
@@ -91,11 +92,28 @@
       </div>
 <!-- IMPLEMNMENT REALTIME HERE -->
     <div id="mid-bar">
-      <div id="messages"></div>
-      <div id="mid-message">
-        <input type="text" placeholder="Your message..." />
-        <button>Send</button>
-      </div>
+      <section class="messages">
+	      <!-- received messages and displayed here -->
+          {% for i in content %}
+              {% if i.sender != user %}
+                  <div class="bubble sender">
+                      <p> {{i.content}} </p>
+                  </div>
+              {% else %}
+                  <div class="bubble recipient">
+                      <p>{{i.content}}</p>
+                  </div>
+              {% endif %}
+          {% endfor %}
+          <!-- end receive messages -->
+      </section>
+      <form action="" id="message-input" method="POST">
+        {% csrf_token %}
+        <div id="mid-message">
+            <input id="typed-message" type="text" placeholder="Your message..." />
+            <button type="submit">Send</button>
+        </div>
+      </form>
     </div>
 <!-- IMPLEMNMENT REALTIME HERE -->
 
@@ -134,5 +152,13 @@
         </div>
       </div>
     </div>
+
+    <script>
+        let chat_name = `{{ chat_room.chat_name }}`
+        console.log("Room:", chat_name)
+        let user_logged_in = `{{ user.username }}`
+        console.log("Logged-in user:", user_logged_in)
+    </script>
+
   </body>
 </html>
