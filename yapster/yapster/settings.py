@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'chat', # Changed, for migrations. Don't know why ingun Ana.
     'user', # Changed, for migrations. Don't know why ingun Ana.
+    'friend',
     'channels',
 ]
 
