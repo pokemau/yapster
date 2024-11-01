@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from chat.models import Message, YapsterUser, Chat
 from user.models import User
+from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
@@ -21,11 +22,16 @@ def search_user(request):
     if not query:
         return render(request, 'chat.html')
     
+    # users = YapsterUser.objects.filter(
+    #     user__first_name__icontains=query
+    # ) | YapsterUser.objects.filter(
+    #     user__last_name__icontains=query
+    # ) | YapsterUser.objects.filter(user__username__icontains=query)
     users = YapsterUser.objects.filter(
-        user__first_name__icontains=query
-    ) | YapsterUser.objects.filter(
-        user__last_name__icontains=query
-    ) | YapsterUser.objects.filter(user__username__icontains=query)
+        (Q(user__first_name__icontains=query) |
+         Q(user__last_name__icontains=query) |
+         Q(user__username__icontains=query))
+    ).exclude(id=request.user.yapsteruser.id)
 
     return render(request, 'chat.html', {'users': users, 'query': query})
 
