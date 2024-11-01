@@ -31,14 +31,17 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'chat.apps.ChatConfig',
-    'user.apps.UserConfig',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'chat', # Changed, for migrations. Don't know why ingun Ana.
+    'user', # Changed, for migrations. Don't know why ingun Ana.
+    'friend',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +59,7 @@ ROOT_URLCONF = 'yapster.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'user/templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,7 +73,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'yapster.wsgi.application'
-
+ASGI_APPLICATION = "yapster.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
