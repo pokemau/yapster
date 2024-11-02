@@ -42,7 +42,6 @@ nav {
 	align-items: center;
 	padding: 0 20px;
 	border-bottom: 1px solid #cdd5de;
-	position: fixed;
 	background-color: rgb(245, 245, 245);
 }
 
@@ -87,52 +86,38 @@ nav {
 
 #main-cont {
 	display: flex;
-	padding-top: 3.5rem;
 	width: 100vw;
-	height: 100vh;
+	height: calc(100vh - 55px);
 }
 
 #dots {
 	position: relative;
+	z-index: 10;
 }
 
 #dots-options {
-	z-index: -1;
 	position: absolute;
-	width: 100px;
-	height: 100px;
-	background-color: rgb(238, 238, 238);
-	bottom: -110px;
-	right: -10px;
+	top: 140%;
+	left: -100px;
+	background-color: white;
+	padding: 5px;
+	border: 1px solid #ddd;
 	border-radius: 5px;
+	z-index: 20;
+	width: 150px;
 }
-
-/* #dots-options p:first-child {
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
-}
-
-#dots-options p:first-child:hover {
-	background-color: rgb(216, 216, 216);
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-} */
 
 .dots-option {
-	width: 100%;
-	text-align: center;
-	background-color: orange;
-	height: 40px;
+	padding: 4px;
+	border-bottom: 1px solid rgb(206, 206, 206);
 }
 
-.dots-option a {
-	display: block;
-	width: 100%;
-	height: 100%;
+.dots-option:last-child {
+	border-bottom: none;
 }
 
 .dots-option:hover {
-	background-color: red;
+	background-color: rgb(240, 240, 240);
 }
 
 /*******************

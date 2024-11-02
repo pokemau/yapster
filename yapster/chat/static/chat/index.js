@@ -1,20 +1,14 @@
 const dots = document.querySelector("#dots");
 const closeUserDetail = document.querySelector("#close-icon");
 
-// window.addEventListener("click", function (e) {
-// 	e.preventDefault();
-// 	console.log(e.target);
-// });
-
 closeUserDetail.addEventListener("click", () => {
 	document.querySelector("#right-sidebar").style.display = "none";
 });
 
-// dots.addEventListener("click", () => {
-// 	const options = document.querySelector("#dots-options");
-
-// 	options.classList.toggle("hidden");
-// });
+dots.addEventListener("click", () => {
+	const options = document.querySelector("#dots-options");
+	options.classList.toggle("hidden");
+});
 
 async function loadUserDetails(userId) {
 	try {
@@ -27,6 +21,8 @@ async function loadUserDetails(userId) {
 
 		const data = await response.json();
 
+		console.log(data);
+
 		if (data.success) {
 			document.querySelector("#right-sidebar p").textContent = data.first_name;
 			document.querySelector(
@@ -35,9 +31,32 @@ async function loadUserDetails(userId) {
 			document.querySelector("#right-bio p").textContent =
 				data.bio || "No bio available";
 			document.querySelector("#right-sidebar").style.display = "block";
-			document
-				.querySelector(".user-option__a")
-				.setAttribute("href", `/friend/friend_request/${data.id}`);
+
+			const addFriend = document.querySelector("#add-friend");
+			const blockUser = document.querySelector("#block-user");
+
+			if (data.is_blocked) {
+				blockUser.textContent = "Unblock User";
+				blockUser.setAttribute("href", `/friend/unblock_user/${data.id}`);
+				addFriend.style.display = "none";
+			} else {
+				blockUser.textContent = "Block User";
+				blockUser.setAttribute("href", `/friend/block_user/${data.id}`);
+			}
+
+			if (data.friend_request_active) {
+				addFriend.textContent = "Cancel Friend Request";
+				addFriend.setAttribute(
+					"href",
+					`/friend/cancel_friend_request/${data.id}`
+				);
+			} else if (!data.is_friend) {
+				addFriend.textContent = "Add Friend";
+				addFriend.setAttribute("href", `/friend/friend_request/${data.id}`);
+			} else {
+				addFriend.textContent = "Remove Friend";
+				addFriend.setAttribute("href", `/friend/remove_friend/${data.id}`);
+			}
 		}
 	} catch (error) {
 		console.error(error);

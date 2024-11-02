@@ -1,10 +1,72 @@
 {% load static %}
-<h1>FRIENDS LIST</h1>
 
-{% for friend in friend_list %}
-<div>
-  <p>{{friend}}</p>
-  <a href="{% url 'friend:remove_friend' friend.user.id %}">Remove Friend</a>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'friend/styles.css' %}" />
+    <title>Friends</title>
+  </head>
+  <body>
+    <nav>
+      <div id="logo-name-cont">
+        <h1>Y</h1>
+        <h2>Yapster</h2>
+      </div>
 
-{% endfor %}
+      <div id="nav-options">
+        <div class="option">
+          <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon" />
+        </div>
+        <a href="{% url 'friend:friends_list' user_id=user.id %}">Friends</a>
+        <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
+        <a href="{% url 'logout' %}">Logout</a>
+        <div id="dots" class="option">
+          <img
+            src="{% static 'chat/images/dots.png' %}"
+            alt="Triple Dots Icon"
+          />
+
+          <!-- <div id="dots-options" class="hidden">
+            <div class="dots-option" id="dots-logout">
+              {% if user.is_authenticated %}
+              <a href="{% url 'logout' %}">Logout</a>
+              {% endif %}
+            </div>
+
+            <div class="dots-option" id="dots-friends">
+              {% if user.is_authenticated %}
+              <a href="{% url 'friend:friends_list' user_id=user.id %}"
+                >Friends</a
+              >
+              {% endif %}
+            </div>
+          </div> -->
+        </div>
+        <a href="{% url 'profile_page' %}">
+          <!-- ako sa gi change para mu adto profile page -->
+          <div id="nav-profile-pic"></div>
+        </a>
+      </div>
+    </nav>
+    <div class="cont">
+      <h1 class="cont__title">FRIENDS</h1>
+      {% if friend_list %}
+      <div class="friend-list">
+        {% for friend in friend_list %}
+        <div class="friend">
+          <h2 class="friend__name">
+            {{friend.user.first_name }} {{ friend.user.last_name }}
+          </h2>
+          <a href="{% url 'friend:remove_friend' friend.user.id %}">Unfriend</a>
+        </div>
+
+        {% endfor %}
+      </div>
+      {% else %}
+      <h3>NO FRIENDS</h3>
+      {% endif %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+/*******************
+* NAVBAR
+*******************/
+nav {
+  width: 100%;
+  height: 55px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #cdd5de;
+  position: fixed;
+  top: 0;
+  background-color: rgb(245, 245, 245);
+}
+
+.option {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.1s ease-in-out;
+}
+
+.option img {
+  width: 80%;
+  height: auto;
+}
+
+#logo-name-cont {
+  display: flex;
+  align-items: center;
+}
+
+#logo-name-cont>h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+#nav-options {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#nav-profile-pic {
+  background-color: rgb(193, 193, 193);
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+}
+
+#main-cont {
+  display: flex;
+  padding-top: 3.5rem;
+  width: 100vw;
+  height: 100vh;
+}
+
+#dots {
+  position: relative;
+}
+
+#dots-options {
+  z-index: -1;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: rgb(238, 238, 238);
+  bottom: -110px;
+  right: -10px;
+  border-radius: 5px;
+}
+
+/* #dots-options p:first-child {
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+#dots-options p:first-child:hover {
+	background-color: rgb(216, 216, 216);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+} */
+
+.dots-option {
+  width: 100%;
+  text-align: center;
+  background-color: orange;
+  height: 40px;
+}
+
+.dots-option a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dots-option:hover {
+  background-color: red;
+}
+
+.cont {
+  width: 80%;
+  max-width: 1200px;
+  margin-inline: auto;
+  border-radius: 7px;
+  margin-top: 55px;
+}
+
+.cont__title {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.friend-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+.friend {
+  background-color: rgb(239, 239, 239);
+  padding: 10px;
+  border-radius: 8px;
+  height: 90px;
+}
+
+.friend__name {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
