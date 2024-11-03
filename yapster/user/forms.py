@@ -1,30 +1,38 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from .models import YapsterUser
 
-class UpdateUserForm(forms.ModelForm):
+User = get_user_model()
+
+class ProfileUpdateForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30, required=False)
     last_name = forms.CharField(max_length=30, required=False)
-    email = forms.EmailField(required=True)
-    birthdate = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    gender = forms.ChoiceField(choices=[('Male', 'Male'), ('Female', 'Female')], widget=forms.RadioSelect)
+    email = forms.EmailField(required=False)
+    phone_number = forms.CharField(max_length=15, required=False)
+    city = forms.CharField(max_length=100, required=False)
+    state = forms.CharField(max_length=100, required=False)
+    postcode = forms.CharField(max_length=20, required=False)
+    country = forms.CharField(max_length=100, required=False)
+    birthdate = forms.DateField(required=False)
+    gender = forms.ChoiceField(choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other')], required=False)
     bio = forms.CharField(widget=forms.Textarea, required=False)
+    profile_image = forms.ImageField(required=False)
+    cover_photo = forms.ImageField(required=False)
 
     class Meta:
         model = YapsterUser
-        fields = ['first_name', 'last_name', 'email', 'birthdate', 'gender', 'bio']
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'city', 'state', 'postcode', 'country',
+                  'birthdate', 'gender', 'profile_image', 'cover_photo', 'bio']
 
     def save(self, commit=True):
-        user = super().save(commit=False)
+        yapster_user = super().save(commit=False)
+
+        user = yapster_user.user
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+       # yapster_user.email = self.cleaned_data['email']
+        yapster_user.bio = self.cleaned_data['bio']
         if commit:
             user.save()
-            yapster_user, created = YapsterUser.objects.get_or_create(user=user)
-            yapster_user.birthdate = self.cleaned_data['birthdate']
-            yapster_user.gender = self.cleaned_data['gender']
-            yapster_user.bio = self.cleaned_data['bio']
             yapster_user.save()
-
-            user.first_name = self.cleaned_data['first_name']
-            user.last_name = self.cleaned_data['last_name']
-            user.email = self.cleaned_data['email']
-            user.save()
-        return user
+        return yapster_user

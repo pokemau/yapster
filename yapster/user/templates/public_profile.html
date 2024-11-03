@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Profile</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'profile_style.css' %}">
+</head>
+<body>
+    <nav>
+
+    </nav>
+    <div class="cover-photo" style="background-image: url('{% if yapster_user.cover_photo %}{{ yapster_user.cover_photo.url }}{% else %}{% static 'default_cover_photo.jpg' %}{% endif %}'); height: 200px;">
+    </div>
+
+    <div class="container mt-5">
+        <h2>Public Profile</h2>
+        <div class="profile-page-container mt-4">
+            <div class="profile-sidebar">
+                <div class="profile-image">
+                    {% if yapster_user.profile_image %}
+                        <img id="profileImage" src="{{ yapster_user.profile_image.url }}" alt="Profile Picture" width="150" height="150">
+                    {% else %}
+                        <img id="profileImage" src="{% static 'default_profile_image.jpg' %}" alt="Default Profile Picture" width="150" height="150">
+                    {% endif %}
+                </div>
+                <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+                <p>{{ user.email }}</p>
+            </div>
+
+            <div class="profile-main mt-4">
+                <h5>Profile Details</h5>
+                <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                <p><strong>Phone Number:</strong> {{ yapster_user.phone_number }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>City:</strong> {{ yapster_user.city }}</p>
+                <p><strong>State/County:</strong> {{ yapster_user.state }}</p>
+                <p><strong>Postcode:</strong> {{ yapster_user.postcode }}</p>
+                <p><strong>Country:</strong> {{ yapster_user.country }}</p>
+                <p><strong>Bio:</strong> {{ yapster_user.bio }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

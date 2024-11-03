@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'profile_style.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Update Profile</h2>
+        <form method="POST" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="firstName">First Name</label>
+                    <input type="text" class="form-control" id="firstName" name="first_name" value="{{ user.first_name }}" placeholder="Enter First Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" name="last_name" value="{{ user.last_name }}" placeholder="Enter Last Name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="text" class="form-control" id="phoneNumber" name="phone_number" value="{{ user.yapsteruser.phone_number }}" placeholder="Enter Phone Number">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" placeholder="Enter Email Address">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="city">City</label>
+                    <input type="text" class="form-control" id="city" name="city" value="{{ user.yapsteruser.city }}" placeholder="Enter City">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="state">State/County</label>
+                    <input type="text" class="form-control" id="state" name="state" value="{{ user.yapsteruser.state }}" placeholder="Enter State">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="postcode">Postcode</label>
+                    <input type="text" class="form-control" id="postcode" name="postcode" value="{{ user.yapsteruser.postcode }}" placeholder="Enter Postal Code">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="country">Country</label>
+                    <input type="text" class="form-control" id="country" name="country" value="{{ user.yapsteruser.country }}" placeholder="Enter Country">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="bio">Bio</label>
+                    <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Enter Bio">{{ user.yapsteruser.bio }}</textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="profileImage">Profile Image</label>
+                    <input type="file" class="form-control-file" id="profileImage" name="profile_image">
+                    {% if user.yapsteruser.profile_image %}
+                        <img src="{{ user.yapsteruser.profile_image.url }}" alt="Profile Picture" width="100" height="100">
+                    {% else %}
+                        <img src="{% static 'default_profile_image.jpg' %}" alt="Default Profile Picture" width="100" height="100">
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="coverPhoto">Cover Photo</label>
+                    <input type="file" class="form-control-file" id="coverPhoto" name="cover_photo">
+                    {% if user.yapsteruser.cover_photo %}
+                        <img src="{{ user.yapsteruser.cover_photo.url }}" alt="Cover Photo" width="100" height="100">
+                    {% else %}
+                        <img src="{% static 'default_cover_photo.jpg' %}" alt="Default Cover Photo" width="100" height="100">
+                    {% endif %}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>
