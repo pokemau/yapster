@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from chat.models import Message, YapsterUser, Chat
 from user.models import User
+from friend.models import FriendRequest, FriendList, BlockList
+from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
@@ -22,25 +24,52 @@ def search_user(request):
         return render(request, 'chat.html')
     
     users = YapsterUser.objects.filter(
-        user__first_name__icontains=query
-    ) | YapsterUser.objects.filter(
-        user__last_name__icontains=query
-    ) | YapsterUser.objects.filter(user__username__icontains=query)
+        (Q(user__first_name__icontains=query) |
+         Q(user__last_name__icontains=query) |
+         Q(user__username__icontains=query))
+    ).exclude(id=request.user.yapsteruser.id)
 
     return render(request, 'chat.html', {'users': users, 'query': query})
+
+
+def friends_list_view(request, user_id):
+    current_user = get_object_or_404(YapsterUser, user__id=user_id)
+    friend_list, created = FriendList.objects.get_or_create(user=current_user)
+    return render(request, 'friends_list.html', {'friend_list': friend_list.friends.all()})
 
 @login_required
 def get_user_details(request, user_id):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         try:
             user_profile = YapsterUser.objects.select_related('user').get(id=user_id)
+            friend_request_exists = FriendRequest.objects.filter(
+                sender=request.user.yapsteruser,
+                receiver=user_profile,
+                is_active=True
+            ).exists()
+            
+            is_friend = FriendList.objects.filter(
+                user=request.user.yapsteruser,
+                friends=user_profile
+            ).exists()
+
+            block_list, created = BlockList.objects.get_or_create(user=request.user.yapsteruser)
+            is_blocked = BlockList.objects.filter(
+                user=request.user.yapsteruser,
+                blocked_users=user_profile
+            ).exists()
+
             data = {
                 'success': True,
                 'id': user_profile.user.id,
                 'first_name': user_profile.user.first_name,
                 'username': user_profile.user.username,
                 'bio': user_profile.bio,
+                'friend_request_active': friend_request_exists,
+                'is_friend': is_friend,
+                'is_blocked': is_blocked
             }
+            
             return JsonResponse(data)
         except YapsterUser.DoesNotExist:
             return JsonResponse({"success": False, "error": "User not found"})

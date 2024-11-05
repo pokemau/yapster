@@ -5,7 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
     <script src="{% static 'chat/index.js' %}" defer></script>
+    <script src="{% static 'yapster/index.js' %}" defer></script>
     <script src="{% static 'chat/chat.js' %}" defer></script>
 
     <title>Chat</title>
@@ -14,7 +16,7 @@
   <body>
     <nav>
       <div id="logo-name-cont">
-        <h1>Y</h1>
+        <a href="/" class="logo"> <h1>Y</h1></a>
         <h2>Yapster</h2>
       </div>
 
@@ -22,16 +24,9 @@
         <div class="option">
           <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon" />
         </div>
-        <a href="{% url 'friend:friends_list' user_id=user.id %}">Friends</a>
-        <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
-        <a href="{% url 'logout' %}">Logout</a>
         <div id="dots" class="option">
-          <img
-            src="{% static 'chat/images/dots.png' %}"
-            alt="Triple Dots Icon"
-          />
-
-          <!-- <div id="dots-options" class="hidden">
+          <img src="{% static 'chat/images/dots.png' %}" alt="Triple Dots Icon" />
+          <div id="dots-options" class="hidden">
             <div class="dots-option" id="dots-logout">
               {% if user.is_authenticated %}
               <a href="{% url 'logout' %}">Logout</a>
@@ -40,12 +35,20 @@
 
             <div class="dots-option" id="dots-friends">
               {% if user.is_authenticated %}
-              <a href="{% url 'friend:friends_list' user_id=user.id %}"
-                >Friends</a
-              >
+              <a href="{% url 'friend:friends_list' user_id=user.id %}">Friends</a>
               {% endif %}
             </div>
-          </div> -->
+            <div class="dots-option" id="dots-friend-requests">
+              {% if user.is_authenticated %}
+              <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
+              {% endif %}
+            </div>
+            <div class="dots-option" id="dots-friend-requests">
+              {% if user.is_authenticated %}
+              <a href="{% url 'friend:block_list' user_id=user.id %}">Block List</a>
+              {% endif %}
+            </div>
+          </div>
         </div>
         <a href="{% url 'profile_page' %}">
           <!-- ako sa gi change para mu adto profile page -->
@@ -58,28 +61,17 @@
       <div id="left-sidebar">
         <div id="search-bar">
           <form method="get" action="{% url 'search_user' %}">
-            <input
-              type="text"
-              name="search"
-              placeholder="Search"
-              value="{{ query }}"
-            />
+            <input type="text" name="search" placeholder="Search" value="{{ query }}" />
           </form>
         </div>
 
         <div id="users-cont">
           {% for user in users %}
-          <div
-            class="user"
-            onclick="loadUserDetails({{user.id }})"
-            data-id="{{ user.id }}"
-          >
+          <div class="user" onclick="loadUserDetails({{user.id }})" data-id="{{ user.id }}">
             <div class="left-profile-pic"></div>
             <div class="name-time-msg">
               <div class="name-time">
-                <p class="name">
-                  {{ user.user.first_name }} {{ user.user.last_name }}
-                </p>
+                <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
                 <p class="time-sent">Last seen: 1:06pm</p>
               </div>
               <p class="message">No message available</p>
@@ -90,32 +82,30 @@
           {% endfor %}
         </div>
       </div>
-<!-- IMPLEMNMENT REALTIME HERE -->
-    <div id="mid-bar">
-      <section class="messages">
-	      <!-- received messages and displayed here -->
-          {% for i in content %}
-              {% if i.sender != user %}
-                  <div class="bubble sender">
-                      <p> {{i.content}} </p>
-                  </div>
-              {% else %}
-                  <div class="bubble recipient">
-                      <p>{{i.content}}</p>
-                  </div>
-              {% endif %}
-          {% endfor %}
+      <!-- IMPLEMNMENT REALTIME HERE -->
+      <div id="mid-bar">
+        <section class="messages">
+          <!-- received messages and displayed here -->
+          {% for i in content %} {% if i.sender != user %}
+          <div class="bubble sender">
+            <p>{{i.content}}</p>
+          </div>
+          {% else %}
+          <div class="bubble recipient">
+            <p>{{i.content}}</p>
+          </div>
+          {% endif %} {% endfor %}
           <!-- end receive messages -->
-      </section>
-      <form action="" id="message-input" method="POST">
-        {% csrf_token %}
-        <div id="mid-message">
+        </section>
+        <form action="" id="message-input" method="POST">
+          {% csrf_token %}
+          <div id="mid-message">
             <input id="typed-message" type="text" placeholder="Your message..." />
             <button type="submit">Send</button>
-        </div>
-      </form>
-    </div>
-<!-- IMPLEMNMENT REALTIME HERE -->
+          </div>
+        </form>
+      </div>
+      <!-- IMPLEMNMENT REALTIME HERE -->
 
       <div id="right-sidebar">
         <div id="right-name-x">
@@ -145,20 +135,19 @@
           </div>
         </div>
         <div id="user-options-cont">
-          <p>Block User</p>
+          <a href="#" id="block-user" class="user-option__a">Block User</a>
           <p>Clear History</p>
           <p>Delete Conversation</p>
-          <a href="#" id="user-b" class="user-option__a">Add Friend</a>
+          <a href="#" id="add-friend" class="user-option__a">Add Friend</a>
         </div>
       </div>
     </div>
 
     <script>
-        let chat_name = `{{ chat_room.chat_name }}`
-        console.log("Room:", chat_name)
-        let user_logged_in = `{{ user.username }}`
-        console.log("Logged-in user:", user_logged_in)
+      let chat_name = `{{ chat_room.chat_name }}`;
+      console.log("Room:", chat_name);
+      let user_logged_in = `{{ user.username }}`;
+      console.log("Logged-in user:", user_logged_in);
     </script>
-
   </body>
 </html>

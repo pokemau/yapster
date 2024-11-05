@@ -7,7 +7,7 @@ class FriendList(models.Model):
 
     def __str__(self):
         return self.user.user.username
-    
+
     def add_friend(self, account):
         if not account in self.friends.all():
             self.friends.add(account)
@@ -35,7 +35,7 @@ class FriendRequest(models.Model):
 
     def __str__(self):
         return self.sender.user.username
-    
+
     def accept(self):
         receiver_friend_list = FriendList.objects.get(user=self.receiver)
         if receiver_friend_list:
@@ -53,3 +53,21 @@ class FriendRequest(models.Model):
     def cancel(self):
         self.is_active = False
         self.save()
+
+
+class BlockList(models.Model):
+    user = models.OneToOneField(YapsterUser, on_delete=models.CASCADE, related_name='blocklist_user')
+    blocked_users = models.ManyToManyField(YapsterUser, blank=True, related_name='blocked_users')
+
+    def __str__(self):
+        return self.user.user.username
+
+    def add_to_block_list(self, account):
+        if not account in self.blocked_users.all():
+            self.blocked_users.add(account)
+            self.save()
+
+    def remove_from_block_list(self, account):
+        if account in self.blocked_users.all():
+            self.blocked_users.remove(account)
+            self.save()
