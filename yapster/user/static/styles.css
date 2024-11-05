@@ -236,6 +236,25 @@
     background-color: #9b59b6;
 }
 
+.btn_save {
+    position: relative;
+    width: 25%;
+    padding: 7px;
+    background: #51a0ff;
+    color: #ffffff;
+    font-size: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 30px;
+    z-index: 1;
+}
+
+.btn_save:hover {
+    background-color: #9b59b6;
+}
+
 /* Last question */
 .last-question {
     margin-top: 20px;
@@ -399,3 +418,144 @@ p a:hover {
     width: 100%;
     max-width: 1200px;
 }
+
+/* PROFILE PAGE */
+
+/* .profile-container {
+    max-width: 900px;
+    margin: 100px auto 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-height: 550px;
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-container p {
+    font-size: 16px;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 15px;
+    justify-content: right;
+    margin-bottom: 20px;
+    top: 0;
+    z-index: 1000;
+    background-color: #fff;
+    position: sticky;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.nav-tabs .nav-link {
+    color: #141313;
+    font-weight: 500;
+    border-radius: 25px;
+    padding: 6px 18px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 20px;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #717f92;
+    background-color: #e6efff;
+}
+
+.nav-tabs .nav-link.active {
+    color: #151515;
+    background-color: #d1e5ff;
+}
+
+.tab-content {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-image {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+} */
+
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile content section */
+.profile-main {
+    margin-top: 20px;
+}
+
+.profile-content {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.profile-image {
+    margin-right: 20px;
+}
+
+.profile-image img {
+    border-radius: 50%;
+    border: 2px solid #d4edff;
+}
+
+.profile-info h2 {
+    font-size: 24px;
+    color: #343a40;
+}
+
+.profile-info p {
+    color: #6c757d;
+}
+
+/* Profile details section */
+.profile-details {
+    padding: 20px;
+}
+
+.profile-details h3 {
+    font-size: 20px;
+    color: #343a40;
+    margin-bottom: 15px;
+}
+
+.profile-details p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #495057;
+}
+
+/* Cover Photo Section */
+.cover-photo {
+    height: 200px;
+    background-color: #3b5998;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+}
+

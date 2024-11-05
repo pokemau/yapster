@@ -1,22 +1,42 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from django.http import HttpResponse
 from datetime import datetime
 from .models import YapsterUser, User
-from .forms import UpdateUserForm
 from django.contrib.auth.decorators import login_required
+from .forms import ProfileUpdateForm
+from django.core.files.base import File
 
+@login_required
+def update_profile(request):
+    user = request.user
+    yapster_user = user.yapsteruser
+
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=yapster_user)
+        if form.is_valid():
+            form.save()
+            user.first_name = form.cleaned_data.get('first_name')
+            user.last_name = form.cleaned_data.get('last_name')
+            user.email = form.cleaned_data.get('email')
+            user.save()
+            return redirect('profile_page')
+    else:
+        form = ProfileUpdateForm(instance=yapster_user)
+        form.fields['first_name'].initial = user.first_name
+        form.fields['last_name'].initial = user.last_name
+        form.fields['email'].initial = user.email
+
+    return render(request, 'update_profile.html', {'form': form, 'user': user})
 
 def landing_page_view(request):
     return render(request, 'landing_page.html')
-
 
 def index_view(request):
     if request.user.is_authenticated:
         return redirect('chat')
     return redirect('landing_page')
-
 
 def register_view(request):
     if request.method == 'POST':
@@ -34,8 +54,7 @@ def register_view(request):
             messages.info(request, 'Username exists')
             return redirect('register')
 
-        user = User.objects.create_user(username=username,
-                                        password=password)
+        user = User.objects.create_user(username=username, password=password)
         user.first_name = fname
         user.last_name = lname
         user.save()
@@ -43,17 +62,16 @@ def register_view(request):
 
         if user_login is not None:
             auth.login(request, user_login)
-            yapster_user = YapsterUser.objects.create(user=user)
-            yapster_user.save()
-            request.session['logged_user'] = yapster_user.id
-            print(yapster_user.id)
+            user = YapsterUser.objects.create(user=user)
+            user.save()
+            request.session['logged_user'] = user.id
+            print(user.id)
             return redirect('chat')
         else:
             messages.info(request, 'Error after registration.')
             return redirect('login')
     else:
         return render(request, 'register.html')
-
 
 def login_view(request):
     if request.method == "POST":
@@ -80,24 +98,22 @@ def login_view(request):
     else:
         return render(request, 'login.html')
 
-
 def chat_view(request):
     return render(request, 'chat_view.html')
-
 
 @login_required
 def update_user(request):
     if request.method == 'POST':
-        form = UpdateUserForm(request.POST, instance=request.user)
+        form = ProfileUpdateForm(request.POST, instance=request.user.yapsteruser)
         if form.is_valid():
             form.save()
             return redirect('profile_page')
     else:
-        form = UpdateUserForm(instance=request.user)
-        form.fields['birthdate'].initial = request.user.yapsteruser.birthdate
+        form = ProfileUpdateForm(instance=request.user.yapsteruser)
+        form.fields['email'].initial = request.user.email
+        # form.fields['birthdate'].initial = request.user.yapsteruser.birthdate
         form.fields['gender'].initial = request.user.yapsteruser.gender
     return render(request, 'profile_page.html', {'user': request.user, 'form': form})
-
 
 @login_required
 def delete_user(request):
@@ -107,7 +123,23 @@ def delete_user(request):
     return redirect('logout')
 
 
-@login_required
 def profile_page(request):
-    form = UpdateUserForm(instance=request.user)
-    return render(request, 'profile_page.html', {'user': request.user, 'form': form})
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.yapsteruser)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_page')
+    else:
+        form = ProfileUpdateForm(instance=request.user.yapsteruser)
+
+    return render(request, 'profile_page.html', {'form': form})
+
+@login_required
+def view_public_profile(request):
+    user = get_object_or_404(YapsterUser, user=request.user)
+    return render(request, 'public_profile.html', {'yapster_user': user})
+
+def public_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    yapster_user = user.yapsteruser
+    return render(request, 'public_profile.html', {'user': user, 'yapster_user': yapster_user})

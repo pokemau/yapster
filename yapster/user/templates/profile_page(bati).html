@@ -1,0 +1,114 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<div class="profile-container">
+    <h1>Settings</h1>
+    <ul class="nav nav-tabs" id="settingsTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="view-profile-tab" data-toggle="tab" href="#view-profile" role="tab" aria-controls="view-profile" aria-selected="true">View Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="account-tab" data-toggle="tab" href="#account" role="tab" aria-controls="account" aria-selected="false">Account Settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="notifications-tab" data-toggle="tab" href="#notifications" role="tab" aria-controls="notifications" aria-selected="false">Notification Settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="password-tab" data-toggle="tab" href="#password" role="tab" aria-controls="password" aria-selected="false">Password Settings</a>
+            </li>
+    </ul>
+
+    <div class="settings-container container mt-5">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="view-profile" role="tabpanel" aria-labelledby="view-profile-tab">
+                <h3>View Profile</h3>
+                <p style="font-weight: 600">Avatar</p>
+                <div class="profile-image">
+                    <img
+                      src="{% static 'images/USER.png' %}"
+                      alt="Profile Pic"
+                    />
+                </div>
+                <p><strong>Display Name:</strong> {{ user.first_name }}</p>
+                <p><strong>Bio:</strong> {{ user.yapsteruser.bio }}</p>
+                <p><strong>Email Address:</strong> {{ user.email }}</p>
+                <p><strong>Phone Number:</strong> {{ user.yapsteruser.phone }}</p>
+            </div>
+
+            <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account-tab">
+                <h3>Account Settings</h3>
+                <div class="profile-image" onclick="document.getElementById('profilePicInput').click()">
+                    <img
+                      src="{% static 'images/USER.png' %}"
+                      alt="User Icon"
+                    />
+                </div>
+                <form id="profileForm" method="POST" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" id="profilePicInput" name="profile_picture" style="display: none;" onchange="document.getElementById('profileForm').submit()">
+
+                    <div class="form-group">
+                        <label for="displayName">Display Name</label>
+                        <input type="text" id="displayName" name="display_name" class="form-control" value="{{ user.first_name }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="displayName">Bio</label>
+                        <input type="text" id="bio" name="bio" class="form-control" value="{{ user.yapsteruser.bio }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" value="{{ user.yapsteruser.phone }}">
+                    </div>
+
+                    <button type="submit" class="btn_save btn-primary">Save Changes</button>
+                </form>
+            </div>
+
+            <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                <h3>Notification Settings</h3>
+                <p>Manage your notification preferences here.</p>
+                <!-- notification settings here -->
+            </div>
+
+            <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+                <h3>Change Password</h3>
+                <form id="passwordForm" method="POST" action="{% url 'update_password' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="current_password" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="new_password" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
