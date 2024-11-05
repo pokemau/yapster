@@ -12,6 +12,7 @@ def friends_list_view(request, user_id):
 @login_required
 def friend_requests_view(request):
     requests = FriendRequest.objects.filter(receiver=request.user.yapsteruser, is_active=True)
+    # print(requests)
     return render(request, 'friend_requests.html', {'friend_requests': requests})
 
 @login_required
@@ -59,8 +60,10 @@ def remove_friend(request, target_id):
     friend_list.unfriend(target_user)
     return redirect('friend:friends_list', user_id=request.user.id)
 
-def block_list_view(request):
-    return redirect('chat')
+def block_list_view(request, user_id):
+    current_user = get_object_or_404(YapsterUser, user__id=user_id)
+    blocked_list, created = BlockList.objects.get_or_create(user=current_user)
+    return render(request, 'block_list.html', {'blocked_list': blocked_list.blocked_users.all()})
 
 @login_required
 def block_user(request, target_id):

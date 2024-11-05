@@ -1,13 +1,7 @@
-const dots = document.querySelector("#dots");
 const closeUserDetail = document.querySelector("#close-icon");
 
 closeUserDetail.addEventListener("click", () => {
 	document.querySelector("#right-sidebar").style.display = "none";
-});
-
-dots.addEventListener("click", () => {
-	const options = document.querySelector("#dots-options");
-	options.classList.toggle("hidden");
 });
 
 async function loadUserDetails(userId) {
