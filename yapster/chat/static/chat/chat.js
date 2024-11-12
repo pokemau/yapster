@@ -55,7 +55,8 @@ socket.addEventListener("message", (event) => {
     // Here's where we append the message to the chatbox.
     var messageDiv = document.querySelector('.messages');
     if (sender != user_logged_in) { 
-        messageDiv.innerHTML += '<div class="bubble sender"><p>' + message + '</p></div>';
+        messageDiv.innerHTML += 
+        '<div class="message first"><div class="chatter name"></div><div class="bubble sender"><p>OTEN</p></div></div>';
     } else {
         messageDiv.innerHTML += '<div class="bubble recipient"><p>' + message + '</p></div>';
     }

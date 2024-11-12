@@ -299,7 +299,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	/* flex-grow: 1; */
 }
 
-.messages > .bubble {
+.messages  .bubble {
 	border-radius: 1em;
 	padding: 0.25em 0.75em;
 	margin: 0.0625em;
@@ -308,27 +308,66 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	max-width: 28rem;
 }
 
-.messages > .bubble.sender {
+.messages .message_body{
+	align-self: flex-start;
+	display: flex;
+} 
+
+.messages .with_pfp{
+	display: flex;
+	flex-direction: row;
+	/* margin-top: auto; */
+}
+
+.messages .chatter_name{
+	font-weight: initial;
+	margin-left: 20px;
+	font-size: 16px;
+} 
+
+.messages  .bubble.sender {
 	align-self: flex-start;
 	background-color: cornflowerblue;
 	color: #fff;
+	margin-left: 10px;
 }
-.messages > .bubble.recipient {
+.messages  .bubble.recipient {
 	align-self: flex-end;
 	background-color: #efefef;
 }
 
-.messages > .bubble.sender.first { border-bottom-left-radius: 0.1em; }
-.messages > .bubble.sender.last { border-top-left-radius: 0.1em; }
-.messages > .bubble.sender.middle {
+.messages  .bubble.sender.first { border-bottom-left-radius: 0.1em; }
+.messages  .bubble.sender.last { border-top-left-radius: 0.1em; }
+.messages  .bubble.sender.middle {
 	border-bottom-left-radius: 0.1em;
  	border-top-left-radius: 0.1em;
 }
 
-.messages > .bubble.recipient.first { border-bottom-right-radius: 0.1em; }
-.messages > .bubble.recipient.last { border-top-right-radius: 0.1em; }
-.messages > .bubble.recipient.middle {
+.messages  .bubble.recipient.first { border-bottom-right-radius: 0.1em; }
+.messages  .bubble.recipient.last { border-top-right-radius: 0.1em; }
+.messages  .bubble.recipient.middle {
 	border-bottom-right-radius: 0.1em;
 	border-top-right-radius: 0.1em;
 }
 
+.pfp {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+  
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: cover;
+
+	align-self: flex-end;
+  }
+
+  .empty_image{
+	width: 40px;
+	height: 40px;
+  }
+  
+  .one {
+	background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');
+  }
