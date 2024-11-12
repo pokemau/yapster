@@ -303,7 +303,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	border-radius: 1em;
 	padding: 0.25em 0.75em;
 	margin: 0.0625em;
-	font-size: 1.1em;
+	font-size: 1.2em;
 	word-wrap: break-word;
 	max-width: 28rem;
 }
@@ -311,6 +311,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 .messages .message_body{
 	align-self: flex-start;
 	display: flex;
+	align-items: flex-end;
 } 
 
 .messages .with_pfp{
@@ -324,6 +325,11 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	margin-left: 20px;
 	font-size: 16px;
 } 
+
+.messages .flex_message{
+	display: flex; 
+	flex-direction: column;
+}
 
 .messages .div{
 	all: inherit;
@@ -356,20 +362,18 @@ html { font-family: 'PT Sans', Georgia, serif; }
 
 .pfp {
 	display: inline-block;
-	width: 40px;
-	height: 40px;
+	width: 35px;
+	height: 35px;
 	border-radius: 50%;
   
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
-
-	align-self: flex-end;
   }
 
   .empty_image{
-	width: 40px;
-	height: 40px;
+	width: 35px;
+	height: 35px;
   }
   
   .one {

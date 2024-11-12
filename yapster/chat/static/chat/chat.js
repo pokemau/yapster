@@ -64,7 +64,7 @@ socket.addEventListener("message", (event) => {
             `
             <div class="message_body" id="chatno${messageCount}">
             <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-            <div>
+            <div class="flex_message">
               <div class="bubble sender">
                 <p>${message}</p>
               </div>
@@ -87,7 +87,7 @@ socket.addEventListener("message", (event) => {
             `
             <div class="message_body" id="chatno${messageCount}">
                 <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-                <div>
+                <div class="flex_message">
                     <div class="chatter_name">
                         ${sender}
                     </div>
