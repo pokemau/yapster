@@ -325,6 +325,10 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	font-size: 16px;
 } 
 
+.messages .div{
+	all: inherit;
+}
+
 .messages  .bubble.sender {
 	align-self: flex-start;
 	background-color: cornflowerblue;

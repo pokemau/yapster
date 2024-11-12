@@ -35,9 +35,12 @@ document.getElementById('message-input').addEventListener('submit', function(eve
     );
 });
 
-        
+var buffer = "@@@@";
+var messageCount = 0;
+
 // response from consumer on server
 socket.addEventListener("message", (event) => {
+    
 	// event.preventDefault();
     const messageData = JSON.parse(event.data)['response_data'];
     
@@ -51,15 +54,56 @@ socket.addEventListener("message", (event) => {
         document.getElementById('typed-message').value = '';
     }
 
-    //Basin naa diri ang double send
     // Here's where we append the message to the chatbox.
     var messageDiv = document.querySelector('.messages');
+    console.log("BufferVal: " + buffer);
+
     if (sender != user_logged_in) { 
-        messageDiv.innerHTML += 
-        '<div class="message first"><div class="chatter name"></div><div class="bubble sender"><p>OTEN</p></div></div>';
+        if(buffer == sender){
+            messageDiv.innerHTML +=  
+            `
+            <div class="message_body" id="chatno${messageCount}">
+            <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
+            <div>
+              <div class="bubble sender">
+                <p>${message}</p>
+              </div>
+            </div>
+          </div>
+          `
+
+            chat = "chatno"+(messageCount-1);
+            console.log("Changing chat:" + chat);
+
+            var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
+
+            if(hasNoPfp.length > 0){
+                document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
+                document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
+            }
+                
+        }else{
+            messageDiv.innerHTML +=  
+            `
+            <div class="message_body" id="chatno${messageCount}">
+                <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
+                <div>
+                    <div class="chatter_name">
+                        ${sender}
+                    </div>
+                    <div class="bubble sender">
+                        <p>${message}</p>
+                    </div>
+                </div>
+            </div>
+            `
+        }
     } else {
         messageDiv.innerHTML += '<div class="bubble recipient"><p>' + message + '</p></div>';
     }
+
+    buffer = sender;
+    messageCount++;
     scrollToBottom();
 });
 
