@@ -4,45 +4,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Public Profile</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'profile_style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'test.css' %}">
+    <!-- <script src="https://kit.fontawesome.com/a81368914c.js"></script> -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700&display=swap" rel="stylesheet">
+    <title>Product Card</title>
 </head>
 <body>
-    <nav>
-
-    </nav>
-    <div class="cover-photo" style="background-image: url('{% if yapster_user.cover_photo %}{{ yapster_user.cover_photo.url }}{% else %}{% static 'default_cover_photo.jpg' %}{% endif %}'); height: 200px;">
-    </div>
-
-    <div class="container mt-5">
-        <h2>Public Profile</h2>
-        <div class="profile-page-container mt-4">
-            <div class="profile-sidebar">
-                <div class="profile-image">
+    <div class="container">
+        <div class="card">
+            <div class="Background">
                     {% if yapster_user.profile_image %}
-                        <img id="profileImage" src="{{ yapster_user.profile_image.url }}" alt="Profile Picture" width="150" height="150">
+                        <img id="profileImage" src="{{ yapster_user.profile_image.url }}" alt="Profile Picture" >
                     {% else %}
-                        <img id="profileImage" src="{% static 'default_profile_image.jpg' %}" alt="Default Profile Picture" width="150" height="150">
+                        <img id="profileImage" src="{% static 'default_profile_image.jpg' %}" alt="Default Profile Picture" >
                     {% endif %}
-                </div>
-                <h4>{{ user.first_name }} {{ user.last_name }}</h4>
-                <p>{{ user.email }}</p>
             </div>
-
-            <div class="profile-main mt-4">
-                <h5>Profile Details</h5>
-                <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                <p><strong>Phone Number:</strong> {{ yapster_user.phone_number }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>City:</strong> {{ yapster_user.city }}</p>
-                <p><strong>State/County:</strong> {{ yapster_user.state }}</p>
-                <p><strong>Postcode:</strong> {{ yapster_user.postcode }}</p>
-                <p><strong>Country:</strong> {{ yapster_user.country }}</p>
-                <p><strong>Bio:</strong> {{ yapster_user.bio }}</p>
+                <div class="info">
+                    <div class="person-name">
+                        <div>
+                            <h1 class="big">{{ user.first_name }} {{ user.last_name }}</h1>
+                            <span class="new">ACTIVE</span>
+                        </div>
+                        <h3 class="small">{{ user.username }}</h3>
+                    </div>
+                    <div class="description-container">
+                        <h3 class="title">Bio</h3>
+                        <p class="text"> {{ yapster_user.bio }}</p>
+                    </div>
+                    <div class="information-container">
+                        <h3 class="title">Basic Information</h3>
+                        <p class="text">Contact Number: {{ yapster_user.phone_number }}</p>
+                        <p class="text">Email Address: {{ user.email }}</p>
+                        <p class="text">Address: {{ yapster_user.state }} {{ yapster_user.city }}
+                            {{ yapster_user.postcode }} {{ yapster_user.country }}</p>
+                    <div class="friends-container">
+                        <a href="{% url 'profile_page' %}" class="edit-btn">Edit Profile</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <script src="{% static 'app.js' %}"></script>
+
 </body>
 </html>
