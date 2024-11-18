@@ -48,7 +48,7 @@ def update_profile(request):
             return redirect('profile_page')
     else:
         form = ProfileForm(instance=request.user.yapsteruser)
-    return render(request, 'profile_page.html', {'form': form})
+    return render(request, 'profile_settings.html', {'form': form})
 
 def landing_page_view(request):
     return render(request, 'landing_page.html')
@@ -133,7 +133,7 @@ def update_user(request):
         #form.fields['email'].initial = request.user.email
         # form.fields['birthdate'].initial = request.user.yapsteruser.birthdate
         #form.fields['gender'].initial = request.user.yapsteruser.gender
-    return render(request, 'profile_page.html', {'user': request.user, 'form': form})
+    return render(request, 'profile_settings.html', {'user': request.user, 'form': form})
 
 @login_required
 def delete_user(request):
@@ -148,18 +148,20 @@ def profile_page(request):
         form = ProfileForm(request.POST, request.FILES, instance=request.user.yapsteruser)
         if form.is_valid():
             form.save()
-            return redirect('profile_page')
+            return redirect('profile_settings')
     else:
         form = ProfileForm(instance=request.user.yapsteruser)
 
-    return render(request, 'profile_page.html', {'form': form})
+    return render(request, 'profile_settings.html', {'form': form})
 
 @login_required
 def view_public_profile(request):
     user = get_object_or_404(YapsterUser, user=request.user)
     return render(request, 'public_profile.html', {'yapster_user': user})
 
+@login_required
 def public_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
     yapster_user = user.yapsteruser
     return render(request, 'public_profile.html', {'user': user, 'yapster_user': yapster_user})
+
