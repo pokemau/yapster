@@ -10,7 +10,10 @@ from django.contrib.auth.decorators import login_required
 def chat_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, 'chat.html')
+    
+    users = YapsterUser.objects.exclude(id=request.user.yapsteruser.id)
+    
+    return render(request, 'chat.html', {'users': users})
 
 def logout_user(request):
     logout(request)
@@ -23,6 +26,7 @@ def search_user(request):
     if not query:
         return render(request, 'chat.html')
     
+    print("Test: " + str(users))
     users = YapsterUser.objects.filter(
         (Q(user__first_name__icontains=query) |
          Q(user__last_name__icontains=query) |
@@ -30,7 +34,6 @@ def search_user(request):
     ).exclude(id=request.user.yapsteruser.id)
 
     return render(request, 'chat.html', {'users': users, 'query': query})
-
 
 def friends_list_view(request, user_id):
     current_user = get_object_or_404(YapsterUser, user__id=user_id)
