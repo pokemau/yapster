@@ -5,9 +5,10 @@ from django.http import HttpResponse
 from datetime import datetime
 from .models import YapsterUser, User
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileUpdateForm
+from .forms import ProfileForm
 from django.core.files.base import File
 
+"""
 @login_required
 def update_profile(request):
     user = request.user
@@ -29,6 +30,25 @@ def update_profile(request):
         form.fields['email'].initial = user.email
 
     return render(request, 'update_profile.html', {'form': form, 'user': user})
+"""
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.yapsteruser)
+        if form.is_valid():
+            yapster_user = form.save(commit=False)
+            user = yapster_user.user
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            if 'profile_image' in request.FILES:
+                yapster_user.profile_image = request.FILES['profile_image']
+            user.save()
+            yapster_user.save()
+            return redirect('profile_page')
+    else:
+        form = ProfileForm(instance=request.user.yapsteruser)
+    return render(request, 'profile_settings.html', {'form': form})
 
 def landing_page_view(request):
     return render(request, 'landing_page.html')
@@ -104,16 +124,16 @@ def chat_view(request):
 @login_required
 def update_user(request):
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=request.user.yapsteruser)
+        form = ProfileForm(request.POST, instance=request.user.yapsteruser)
         if form.is_valid():
             form.save()
             return redirect('profile_page')
     else:
-        form = ProfileUpdateForm(instance=request.user.yapsteruser)
-        form.fields['email'].initial = request.user.email
+        form = ProfileForm(instance=request.user.yapsteruser)
+        #form.fields['email'].initial = request.user.email
         # form.fields['birthdate'].initial = request.user.yapsteruser.birthdate
-        form.fields['gender'].initial = request.user.yapsteruser.gender
-    return render(request, 'profile_page.html', {'user': request.user, 'form': form})
+        #form.fields['gender'].initial = request.user.yapsteruser.gender
+    return render(request, 'profile_settings.html', {'user': request.user, 'form': form})
 
 @login_required
 def delete_user(request):
@@ -125,21 +145,23 @@ def delete_user(request):
 
 def profile_page(request):
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.yapsteruser)
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.yapsteruser)
         if form.is_valid():
             form.save()
-            return redirect('profile_page')
+            return redirect('profile_settings')
     else:
-        form = ProfileUpdateForm(instance=request.user.yapsteruser)
+        form = ProfileForm(instance=request.user.yapsteruser)
 
-    return render(request, 'profile_page.html', {'form': form})
+    return render(request, 'profile_settings.html', {'form': form})
 
 @login_required
 def view_public_profile(request):
     user = get_object_or_404(YapsterUser, user=request.user)
     return render(request, 'public_profile.html', {'yapster_user': user})
 
+@login_required
 def public_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
     yapster_user = user.yapsteruser
     return render(request, 'public_profile.html', {'user': user, 'yapster_user': yapster_user})
+
