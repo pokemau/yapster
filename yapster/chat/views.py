@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
-from chat.models import Message, YapsterUser, Chat
+from chat.models import Message, YapsterUser, Chat, ChatUser
 from user.models import User
 from friend.models import FriendRequest, FriendList, BlockList
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
@@ -98,34 +98,50 @@ def test_chat_view(request):
 def temp_chat_view(request, user_id):
     target_user = get_object_or_404(YapsterUser, id=user_id)
     return render(request, 'chat.html', {'target_user': target_user, 'is_temp': True})
-    
+
 def get_or_create_chat(request):
     if request.method == "POST":
-        target_user_id = request.POST.get('target_user_id')  # Sent from the form
-        message_content = request.POST.get('message')  # The first message
+        target_user_id = request.POST.get('target_user_id')
+        
+        user_ids = [target_user_id]
+        sender_id = request.user.yapsteruser.id
+        user_ids.append(sender_id)
 
-        # Get the sender and target user
-        sender = request.user.username
-        target_user = get_object_or_404(YapsterUser, id=target_user_id)
+        for user_id in user_ids:
+            print("USER ID: ", user_id)
+        chat = find_chat(user_ids)
 
-        # Check if a chat already exists
-        # chat, created = Chat.objects.get_or_create(participants__in=[sender, target_user])
+        if not chat:
+            chat = Chat.objects.create()
 
-        # Check if a chat already exists between the users
-        # chat = Chat.objects.filter(participants=sender).filter(participants=target_user).first()
+            for user_id in user_ids:
+                user = YapsterUser.objects.get(id=user_id)
+                ChatUser.objects.create(chat=chat, member=user)
 
-        # if not chat:
-            # Create a new chat
-        chat = Chat.objects.create() # Generates an Id
-        chat.chat_name = chat.id  # Use any naming format you prefer
-        chat.save()
+            chat.chat_name = f"Chat-{chat.id}"
+            chat.save()
 
-        # Save the message
-        if message_content:
-            Message.objects.create(chat=chat, sender=request.user, content=message_content)
+        return redirect('chat_name', chat_name=chat.chat_name)
 
-        # Redirect to the proper chat room
-        return redirect('chat_name', chat_name=chat.id)
+def find_chat(user_ids):
+    user_ids = list(map(int, user_ids))
+
+    candidate_chats = Chat.objects.all()
+
+    for user_id in user_ids:
+        candidate_chats = candidate_chats.filter(chatuser__member_id=user_id)
+
+    for chat in candidate_chats:
+        participant_ids = set(chat.chatuser.values_list('member_id', flat=True))
+        
+        print("Participant IDS: ", participant_ids)
+        print("USerid set: ", set(user_ids))
+
+        if participant_ids == set(user_ids):
+            return chat
+
+    return None
+
 
 def message_view(request, chat_name):
     chat_room = Chat.objects.get(chat_name=chat_name)
