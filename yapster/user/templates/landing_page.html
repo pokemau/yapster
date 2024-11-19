@@ -11,13 +11,13 @@
         <header class="header1">
             <div class="logo-container">
                 <div id="logo-name-cont">
-                    <h1>Yapster</h1>
+                    <a href="{% url 'landing_page' %}" class="nav-link"><h1>Yapster</h1></a>
                 </div>
             </div>
             <nav class="nav">
-                <a href="{% url 'landing_page' %}" class="nav-link">Home</a>
+               <!-- <a href="{% url 'landing_page' %}" class="nav-link">Home</a>
                 <a href="#" class="nav-link">About</a>
-                <a href="#" class="nav-link">Contact</a>
+                <a href="#" class="nav-link">Contact</a> -->
             </nav>
             <a href="{% url 'login' %}" class="login-btn">Login</a>
         </header>
