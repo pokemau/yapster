@@ -5,7 +5,7 @@ from user.models import YapsterUser, User
 
 # Chat Contains User and Message
 class Chat(models.Model):
-    chat_name = models.CharField(max_length=255, unique=True)
+    chat_name = models.CharField(max_length=255)
     def __str(self):
         return self.chat_name
 

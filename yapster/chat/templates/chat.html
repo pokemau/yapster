@@ -68,16 +68,18 @@
 
         <div id="users-cont">
           {% for user in users %}
-          <div class="user" onclick="loadUserDetails({{user.id }})" data-id="{{ user.id }}">
-            <div class="left-profile-pic"></div>
-            <div class="name-time-msg">
-              <div class="name-time">
-                <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
-                <p class="time-sent">Last seen: 1:06pm</p>
+          <a href="{% url 'temp_chat' user_id=user.id %}">
+            <div class="user" onclick="loadUserDetails({{user.id}})" data-id="{{ user.id }}">
+              <div class="left-profile-pic"></div>
+              <div class="name-time-msg">
+                <div class="name-time">
+                  <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
+                  <p class="time-sent">Last seen: 1:06pm</p>
+                </div>
+                <p class="message">No message available</p>
               </div>
-              <p class="message">No message available</p>
             </div>
-          </div>
+          </a>
           {% empty %}
           <p>No users found.</p>
           {% endfor %}
@@ -120,13 +122,24 @@
           <p>STOOOOOOOP</p>
           
         </section>
-        <form action="" id="message-input" method="POST">
-          {% csrf_token %}
-          <div id="mid-message">
-            <input id="typed-message" type="text" placeholder="Your message..." />
-            <button type="submit">Send</button>
-          </div>
+        {% if is_temp %}
+        <form action="{% url 'get_or_create_chat' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="target_user_id" value="{{ target_user.id }}">
+            <div id="mid-message">
+                <input id="typed-message" type="text" name="message" placeholder="Your message..." />
+                <button type="submit">Send</button>
+            </div>
         </form>
+        {% else %}
+        <form action="" id="message-input" method="POST">
+            {% csrf_token %}
+            <div id="mid-message">
+                <input id="typed-message" type="text" name="message" placeholder="Your message..." />
+                <button type="submit">Send</button>
+            </div>
+        </form>
+        {% endif %}
       </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
 

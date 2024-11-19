@@ -114,3 +114,4 @@ socket.onopen = (event) => {
 socket.onclose = (event) => {
     console.log("WebSocket connection closed!");
 };
+
