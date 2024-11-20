@@ -19,15 +19,20 @@ async function loadUserDetails(userId) {
 
 		if (data.success) {
 			document.querySelector("#right-sidebar p").textContent = data.first_name;
-			document.querySelector(
-				"#right-username p"
-			).textContent = `@${data.username}`;
-			document.querySelector("#right-bio p").textContent =
-				data.bio || "No bio available";
+			document.querySelector("#right-username p").textContent = `@${data.username}`;
+			document.querySelector("#right-bio p").textContent = data.bio || "No bio available";
 			document.querySelector("#right-sidebar").style.display = "block";
 
 			const addFriend = document.querySelector("#add-friend");
 			const blockUser = document.querySelector("#block-user");
+
+			if (data.you_are_blocked) {
+				const userOptionsCont = document.querySelector("#user-options-cont");
+				userOptionsCont.innerHTML = `
+				<p>This user is unavailable</p>
+				`;
+				return;
+			}
 
 			if (data.is_blocked) {
 				blockUser.textContent = "Unblock User";
@@ -40,10 +45,7 @@ async function loadUserDetails(userId) {
 
 			if (data.friend_request_active) {
 				addFriend.textContent = "Cancel Friend Request";
-				addFriend.setAttribute(
-					"href",
-					`/friend/cancel_friend_request/${data.id}`
-				);
+				addFriend.setAttribute("href", `/friend/cancel_friend_request/${data.id}`);
 			} else if (!data.is_friend) {
 				addFriend.textContent = "Add Friend";
 				addFriend.setAttribute("href", `/friend/friend_request/${data.id}`);
