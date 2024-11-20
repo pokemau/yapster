@@ -126,3 +126,8 @@ socket.onclose = (event) => {
     console.log("WebSocket connection closed!");
 };
 */
+
+function toggleDropdown(element) {
+  const dropdown = element.parentElement;
+  dropdown.classList.toggle('show');
+}
