@@ -57,6 +57,23 @@ async function loadUserDetails(userId) {
 	}
 }
 
-async function loadSelectedChat() {
-	
+function loadChat(targetUserId) {
+	fetch(getOrCreateChatUrl, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"X-CSRFToken": csrfToken,
+			'X-Requested-With': 'XMLHttpRequest'
+		},
+		body: JSON.stringify({ target_user_id: targetUserId })
+	})
+	.then(response => response.json())
+	.then(data => {
+		if (data.success) {
+			window.location.href = `/chat/${data.chat_name}/`;
+		} else {
+			console.error("Error:", data.error);
+		}
+	})
+	.catch(error => console.error("Error:", error));
 }

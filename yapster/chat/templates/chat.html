@@ -13,7 +13,10 @@
 
     <title>Chat</title>
   </head>
-
+  <script>
+    const csrfToken = "{{ csrf_token }}";
+    const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
+  </script>
   <body>
     <nav>
       <div id="logo-name-cont">
@@ -61,30 +64,46 @@
     <div id="main-cont">
       <div id="left-sidebar">
         <div id="search-bar">
-          <form method="get" action="{% url 'search_user' %}">
+          <form method="get" action="{% url 'chat' %}">
             <input type="text" name="search" placeholder="Search" value="{{ query }}" />
           </form>
         </div>
-
         <div id="users-cont">
-          {% for user in users %}
-          <a href="{% url 'temp_chat' user_id=user.id %}">
-            <div class="user" onclick="loadUserDetails({{user.id}})" data-id="{{ user.id }}">
-              <div class="left-profile-pic"></div>
-              <div class="name-time-msg">
-                <div class="name-time">
-                  <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
-                  <p class="time-sent">Last seen: 1:06pm</p>
+          {% if query %}
+              <!-- Search Results -->
+              {% for user in users %}
+              <div class="user" onclick="loadUserDetails({{user.id}})" data-id="{{ user.id }}">
+                <div class="left-profile-pic"></div>
+                <div class="name-time-msg">
+                  <div class="name-time">
+                    <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
+                    <p class="time-sent">Last seen: 1:06pm</p>
+                  </div>
+                  <p class="message">No message available</p>
                 </div>
-                <p class="message">No message available</p>
               </div>
-            </div>
-          </a>
-          {% empty %}
-          <p>No users found.</p>
-          {% endfor %}
-        </div>
+              {% empty %}
+              <p>No users found.</p>
+              {% endfor %}
+          {% else %}
+              <!-- Existing Chats -->
+              {% for user in users %}
+              <div class="user" onclick="loadChat({{user.id}})" data-id="{{ user.id }}">
+                <div class="left-profile-pic"></div>
+                <div class="name-time-msg">
+                  <div class="name-time">
+                    <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
+                    <p class="time-sent">Last seen: 1:06pm</p>
+                  </div>
+                  <p class="message">No message available</p>
+                </div>
+              </div>
+              {% empty %}
+              <p>No chats available.</p>
+              {% endfor %}
+          {% endif %}
       </div>
+    </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
       <div id="mid-bar">
         <section class="messages">
