@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'friend/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
+    <script src="{% static 'yapster/index.js' %}" defer></script>
+    <title>Yapster</title>
+  </head>
+
+  <body>
+    {% include 'html/navbar.html' %}
+    <h2 class="title">Search Users</h2>
+
+    <div class="form-cont">
+      <form method="get" action="{% url 'friend:search' %}">
+        <input
+          class="search-input"
+          type="text"
+          name="search"
+          placeholder="Search"
+          value="{{ query }}"
+        />
+      </form>
+    </div>
+
+    <div class="users-cont">
+      {% for searched_user in users %}
+      <div class="user">
+        <div class="user-details">
+          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
+          <p class="user__name">{{ searched_user.first_name }} {{ searched_user.last_name }}</p>
+        </div>
+        <div class="user__actions">
+          {% if searched_user.is_blocked %}
+          <a href="/friend/unblock_user/{{ searched_user.id }}">Unblock</a>
+          {% else %} {% if searched_user.is_friend %}
+          <a href="/friend/remove_friend/{{ searched_user.id }}">Remove Friend</a>
+          {% elif searched_user.user_friend_request.exists %}
+          <a href="/friend/accept_friend_request/{{ searched_user.user_friend_request.id }}"
+            >Accept Friend Request</a
+          >
+          {% elif searched_user.friend_request_exists %}
+          <a href="/friend/cancel_friend_request/{{ searched_user.id }}">Cancel Friend Request</a>
+          {% else %}
+          <a href="/friend/friend_request/{{ searched_user.id }}">Add Friend</a>
+          {% endif %}
+          <a href="/friend/block_user/{{ searched_user.id }}">Block</a>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <p>No users found.</p>
+      {% endfor %}
+    </div>
+  </body>
+</html>
