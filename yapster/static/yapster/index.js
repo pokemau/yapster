@@ -1,6 +1,6 @@
 const dots = document.querySelector("#dots");
+const options = document.querySelector("#dots-options");
 
 dots.addEventListener("click", () => {
-	const options = document.querySelector("#dots-options");
 	options.classList.toggle("hidden");
 });

@@ -11,29 +11,26 @@
   </head>
   <body>
     {% include 'html/navbar.html' %}
-    <div class="cont">
-      <h1 class="cont__title">Friend Requests</h1>
 
-      {% if friend_requests %}
-      <div class="friend-list">
-        {% for request in friend_requests %}
-        <div class="friend">
-          <h2 class="friend__name">
-            {{ request.sender.user.first_name}} {{ request.sender.user.last_name}}
-          </h2>
-          <a class="user-option" href="{% url 'friend:accept_friend_request' request.id %}"
-            >Accept</a
-          >
-          <a class="user-option" href="{% url 'friend:decline_friend_request' request.id %}"
-            >Decline</a
-          >
+    <h2 class="title">Friend Requests</h2>
+
+    <div class="users-cont">
+      {% for request in friend_requests %}
+      <div class="user">
+        <div class="user-details">
+          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
+          <p class="user__name">
+            {{ request.sender.user.first_name }} {{ request.sender.user.last_name }}
+          </p>
         </div>
-
-        {% endfor %}
+        <div class="user__actions">
+          <a href="{% url 'friend:accept_friend_request' request.id %}">Accept</a>
+          <a href="{% url 'friend:decline_friend_request' request.id %}">Decline</a>
+        </div>
       </div>
-      {% else %}
-      <h3>No friend requests.</h3>
-      {% endif %}
+      {% empty %}
+      <p>No users found.</p>
+      {% endfor %}
     </div>
   </body>
 </html>

@@ -12,21 +12,22 @@
   <body>
     {% include 'html/navbar.html' %}
 
-    <div class="cont">
-      <h1 class="cont__title">Blocked List</h1>
-      {% if blocked_list%}
-      <div class="friend-list">
-        {% for blocked in blocked_list %}
-        <div class="friend">
-          <h2 class="friend__name">{{blocked.user.first_name }} {{ blocked.user.last_name }}</h2>
-          <a class="user-option" href="{% url 'friend:unblock_user' blocked.user.id %}">Unblock</a>
-        </div>
+    <h2 class="title">Blocked Users</h2>
 
-        {% endfor %}
+    <div class="users-cont">
+      {% for blocked in blocked_list %}
+      <div class="user">
+        <div class="user-details">
+          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
+          <p class="user__name">{{ blocked.user.first_name }} {{ blocked.user.last_name }}</p>
+        </div>
+        <div class="user__actions">
+          <a href="{% url 'friend:unblock_user' blocked.user.id %}">Unblock</a>
+        </div>
       </div>
-      {% else %}
-      <h3>NO BLOCKED USERS</h3>
-      {% endif %}
+      {% empty %}
+      <p>No users found.</p>
+      {% endfor %}
     </div>
   </body>
 </html>
