@@ -107,8 +107,8 @@
       </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
 
-      <div id="right-sidebar">
-        <div id="right-name-x">
+      <!--<div id="right-sidebar">
+         <div id="right-name-x">
           <div id="pic-name-cont">
             <div id="right-profile-pic"></div>
             <p></p>
@@ -139,8 +139,63 @@
           <p>Clear History</p>
           <p>Delete Conversation</p>
           <a href="#" id="add-friend" class="user-option__a">Add Friend</a>
-        </div>
-      </div>
+        </div> -->
+
+        <div id="chat-sidebar">
+          <div class="chat-sidebar-profile">
+            <div class="chat-sidebar-profile-pic">
+                <div class="image">
+                    <img id="profileImage" src="
+                            {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+                         width="100" height="100" alt="Profile Picture"
+                         onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
+                </div>
+            <div class="chat-sidebar-info">
+              <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+              <p class="chat-sidebar-status">@{{ user.username }}</p>
+                <a href="#" class="chat-sidebar-search">
+                    <img src="{% static 'chat/images/search.png' %}" alt="Search Icon" />
+                    <span>Search</span>
+                </a>
+            </div>
+          </div>
+          <div class="chat-sidebar-options">
+              <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                  Chat info
+                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+                </button>
+                <div class="dropdown-content">
+                  <a href="#">Option 1</a>
+                  <a href="#">Option 2</a>
+                  <a href="#">Option 3</a>
+                </div>
+              </div>
+              <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                  Customize chat
+                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+                </button>
+                <div class="dropdown-content">
+                  <a href="#">Option 1</a>
+                  <a href="#">Option 2</a>
+                  <a href="#">Option 3</a>
+                </div>
+              </div>
+              <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                  Chat members
+                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+                </button>
+                <div class="dropdown-content">
+                  <a href="#">Option 1</a>
+                  <a href="#">Option 2</a>
+                  <a href="#">Option 3</a>
+                </div>
+              </div>
+            </div>
+
+      </div> <!-- closing div for right-sidebar -->
     </div>
 
     <script>

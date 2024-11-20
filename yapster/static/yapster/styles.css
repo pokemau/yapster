@@ -45,6 +45,7 @@ nav {
 	padding: 0 20px;
 	border-bottom: 1px solid #cdd5de;
 	background-color: rgb(245, 245, 245);
+	z-index: 20;
 }
 
 .option {
