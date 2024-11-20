@@ -12,7 +12,7 @@ def chat_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
-    query = request.GET.get('search', '')
+    query = request.GET.get('search', '').strip()
     if query:
         users = YapsterUser.objects.filter(
             (Q(user__first_name__icontains=query) |
@@ -20,7 +20,9 @@ def chat_view(request):
             Q(user__username__icontains=query))
         ).exclude(id=request.user.yapsteruser.id)
     else:
+        #Chat list here
         users = YapsterUser.objects.exclude(id=request.user.yapsteruser.id)
+        # ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
     
     return render(request, 'chat.html', {'users': users, 'query': query})
 
@@ -117,14 +119,30 @@ def find_chat(user_ids):
     return None
 
 def message_view(request, chat_name):
+    query = request.GET.get('search', '').strip()
+    if query:
+        users = YapsterUser.objects.filter(
+            (Q(user__first_name__icontains=query) |
+            Q(user__last_name__icontains=query) |
+            Q(user__username__icontains=query))
+        ).exclude(id=request.user.yapsteruser.id)
+    else:
+        #Chat list here
+        users = YapsterUser.objects.exclude(id=request.user.yapsteruser.id)
+
     chat_room = Chat.objects.get(chat_name=chat_name)
     content_messages = Message.objects.filter(chat=chat_room)
     content = {
         "chat_room": chat_room,
         "content": content_messages,
-        "sender" : request.user.username
+        "sender" : request.user.username,
+        'users': users, 
+        'query': query
     }
     print("CHAT: \n", chat_room)
+    
+
+
     return render(request, 'chat.html', content)
 
 

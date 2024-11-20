@@ -88,7 +88,8 @@
           {% else %}
               <!-- Existing Chats -->
               {% for user in users %}
-              <div class="user" onclick="loadChat({{user.id}})" data-id="{{ user.id }}">
+              <!-- <div class="user" onclick="loadChat({{user.id}})" data-id="{{ user.id }}"></div> -->
+              <div class="user" onclick="loadChat({{ user.id }}, 5 ,11, 12)" data-id="{{ user.id }}">
                 <div class="left-profile-pic"></div>
                 <div class="name-time-msg">
                   <div class="name-time">
@@ -141,16 +142,6 @@
           <p>STOOOOOOOP</p>
           
         </section>
-        {% if is_temp %}
-        <form action="{% url 'get_or_create_chat' %}" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="target_user_id" value="{{ target_user.id }}">
-            <div id="mid-message">
-                <input id="typed-message" type="text" name="message" placeholder="Your message..." />
-                <button type="submit">Send</button>
-            </div>
-        </form>
-        {% else %}
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
@@ -158,7 +149,6 @@
                 <button type="submit">Send</button>
             </div>
         </form>
-        {% endif %}
       </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
 

@@ -57,6 +57,8 @@ async function loadUserDetails(userId) {
 	}
 }
 
+//maybe para sa search lang ni
+//pero need ko function mu load sa chat mismo via id sa chat
 function loadChat(targetUserId) {
 	fetch(getOrCreateChatUrl, {
 		method: "POST",
@@ -76,4 +78,11 @@ function loadChat(targetUserId) {
 		}
 	})
 	.catch(error => console.error("Error:", error));
+}
+
+function test(target){
+	for (var i = 0; i < arguments.length; i++) {
+		console.log(arguments[i]);
+	}
+	console.log(target)
 }
