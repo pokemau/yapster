@@ -347,7 +347,6 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	position: fixed;
 	right: 0;
 	top: 0;
-	z-index: 10;
 	margin-top: 55px;
 	border-left: 1px solid #cdd5de;
 }

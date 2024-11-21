@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <link rel="stylesheet" href="{%  static 'public-profile.css' %}">
+    <script src="{% static 'yapster/index.js' %}" defer></script>
     <title>Profile Card</title>
 </head>
 <body>
@@ -18,6 +21,8 @@
         <div class="close"></div>
     </div> -->
 
+    {% include 'html/navbar.html' %}
+
    <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('profileModal')">&times;</span>
@@ -26,31 +31,8 @@
              onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';">
         </div>
     </div>
+        
 
-        <nav>
-            <div id="logo-name-cont">
-                <h1>Y</h1>
-                <h2>Yapster</h2>
-            </div>
-
-            <div id="nav-options">
-                <div class="option">
-                    <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon"/>
-                </div>
-                <a href="{% url 'friend:friends_list' user_id=user.id %}">Friends</a>
-                <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
-                <a href="{% url 'logout' %}">Logout</a>
-                <div id="dots" class="option">
-                    <img
-                            src="{% static 'chat/images/dots.png' %}"
-                            alt="Triple Dots Icon"
-                    />
-                </div>
-                <a href="{% url 'public_profile' %}">
-                    <div id="nav-profile-pic"></div>
-                </a>
-            </div>
-        </nav>
 
     <div class="container">
         <div class="card">

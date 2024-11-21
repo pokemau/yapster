@@ -25,7 +25,7 @@
 
         <div id="users-cont">
           {% for user in users %}
-          <div class="user" onclick="loadUserDetails({{user.id }})" data-id="{{ user.id }}">
+          <div class="user" onclick="loadUserDetails(`{{user.id }}`)" data-id="{{ user.id }}">
             <div class="left-profile-pic"></div>
             <div class="name-time-msg">
               <div class="name-time">
