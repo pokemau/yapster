@@ -1,332 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-
-
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body{
-    background-color: #efefef;
-}
-
-.container {
-    padding: 20px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    min-height: 100vh;
-    margin-left: 20%;
-
-}
-
-@media (max-width: 768px) {
-    .container {
-        margin-left: 2%;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        margin-left: 1%;
-    }
-}
-
-.card{
-    position: relative;
-    width: 400px;
-    background-color: #fff;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 15px 0 35px rgba(0, 0, 0, 0.1),
-    0 -15px 35px rgba(0, 0, 0, 0.1),
-    0 15px 35px rgba(0, 0, 0, 0.1);
-}
-
-.card:before{
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 270px;
-    top: 0;
-    left: 0;
-    background: linear-gradient(90deg, #D2736F, #E89686, #E6B09E ) no-repeat center center fixed;
-    clip-path: inset(0);
-}
-
-.header{
-    position: relative;
-    height: 265px;
-}
-
-.settings{
-    position: absolute;
-    top: 1rem;
-    right: 2rem;
-    font-size: 1.5rem;
-    color: #fff;
-    opacity: .8;
-    transition: .3s;
-    z-index: 3;
-    text-decoration: none;
-}
-
-.settings:hover{
-    opacity: 1;
-}
-
-.main{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.main .image{
-    position: relative;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: no-repeat center / cover;
-    border: 2px solid #ffffff;
-    margin-bottom: 2px;
-    overflow: hidden;
-    cursor: pointer;
-}
-
-.image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-.image .hover{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: linear-gradient(90deg, #D2736F, #E89686, #E6B09E ) no-repeat center center fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    transition: .5s;
-    opacity: 0;
-}
-
-.image:hover .hover{
-    opacity: 1;
-}
-
-.hover.active{
-    opacity: 1;
-}
-
-.name{
-    font-size: 1.2rem;
-    color: #fff;
-    font-weight: 500;
-    line-height: 1;
-    margin: 5px 0;
-}
-
-.sub-name{
-    font-family: 'Cutive Mono', monospace;
-    font-size: 1.2rem;
-    opacity: .8;
-    color: #fff;
-}
-
-.content{
-    display: flex;
-    padding: 1.7rem 2.5rem 2.6rem 2.5rem;
-}
-
-.right{
-    padding-top: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-    margin-left: 2.1rem;
-}
-
-.number{
-    font-size: 2.1rem;
-    font-weight: 200;
-    color: #333;
-    line-height: 1.2;
-    margin-top: -20px;
-}
-
-.number-title{
-    font-size: .55rem;
-    color: #666;
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.number1{
-    font-size: 2.1rem;
-    font-weight: 200;
-    color: #333;
-    line-height: 1.2;
-    margin-top: 20px;
-}
-
-.number-title1{
-    font-size: .55rem;
-    color: #666;
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.title{
-    position: relative;
-    color: #555;
-    font-weight: 500;
-    font-size: 1.1rem;
-    padding: 0 0 3px 0;
-    margin-bottom: .9rem;
-    display: inline-block;
-}
-
-.title:after{
-    content: '';
-    position: absolute;
-    height: 3px;
-    width: 50%;
-    background-color: #555;
-    bottom: 0;
-    left: 0;
-}
-
-.text{
-    color: #666;
-    font-weight: 300;
-    line-height: 1.7;
-}
-
-.buttons-wrap{
-    display: flex;
-    margin-top: 20px;
-}
-
-.follow-wrap, .message-wrap{
-    flex: 4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: .5s;
-}
-
-.follow-wrap:hover, .share-wrap:hover{
-    flex: 5;
-}
-
-.follow{
-    padding: 9.6px 0;
-    width: 100%;
-    background: linear-gradient(90deg, #D2736F, #E89686, #E6B09E ) no-repeat center center fixed;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    font-size: .7rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border-radius: 18.1px;
-    margin-right: 3px;
-}
-
-.message{
-    padding: 7.6px 0;
-    width: 100%;
-    border: 2px solid #dc8383;
-    color: #dc8383;
-    text-decoration: none;
-    text-align: center;
-    font-size: .7rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-left: 3px;
-    border-radius: 18.1px;
-}
-
-/* .modal{
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: -1;
-    opacity: 0;
-    transition: .5s;
-}
-
-.modal img{
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(.3);
-    max-width: 100%;
-    max-height: 100%;
-    transition: .5s;
-}
-
-.modal.show{
-    opacity: 1;
-    z-index: 99;
-}
-
-.modal.show img{
-    top: 50%;
-    transform: translate(-50%, -50%) scale(1);
-}
-
-.close{
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    transition: .3s;
-}
-
-.close:hover{
-    opacity: .5;
-}
-
-.close:before, .close:after{
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    border-radius: 1.5px;
-    top: 50%;
-    left: 50%;
-    background-color: #fff;
-}
-
-.close:before{
-    transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.close:after{
-    transform: translate(-50%, -50%) rotate(135deg);
-} */
-
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap'); /* Modal CSS */
 .modal {
     display: none;
     position: fixed;
@@ -352,7 +24,7 @@ body{
     align-items: center;
     animation: openSesame 1s forwards;
     z-index: 10;
-
+    position: relative;
 }
 
 @keyframes openSesame {
@@ -368,17 +40,15 @@ body{
 
 .modal-content img {
     max-width: 70%;
-    height: 100%;
-    display: block;
-    margin: 0 auto;
-    align-items: center;
+    height: auto;
+    width: auto;
     animation: openSesame 1s forwards;
 }
 
 .close {
     color: #aaa;
     position: absolute;
-    right: 50px;
+    right: 40px;
     top: 20px;
     font-size: 28px;
     font-weight: bold;
@@ -392,17 +62,278 @@ body{
     cursor: pointer;
 }
 
-.modal-content img {
-    max-width: 70%;
-    height: auto;
+/* Public Profile CSS */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-@media (max-width: 410px){
-    .content{
+body {
+    background-color: #efefef;
+}
+
+.container {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    margin-left: 20%;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-left: 2%;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin-left: 1%;
+    }
+}
+
+.card {
+    position: relative;
+    width: 400px;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 15px 0 35px rgba(0, 0, 0, 0.1),
+                0 -15px 35px rgba(0, 0, 0, 0.1),
+                0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.card:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 270px;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, #D2736F, #E89686, #E6B09E) no-repeat center center fixed;
+    clip-path: inset(0);
+}
+
+.header {
+    position: relative;
+    height: 265px;
+}
+
+.settings {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    font-size: 1.5rem;
+    color: #fff;
+    opacity: .8;
+    transition: .3s;
+    z-index: 3;
+    text-decoration: none;
+}
+
+.settings:hover {
+    opacity: 1;
+}
+
+.main {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.main .image {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: no-repeat center / cover;
+    border: 2px solid #ffffff;
+    margin-bottom: 2px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.image .hover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, #D2736F, #E89686, #E6B09E) no-repeat center center fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    transition: .5s;
+    opacity: 0;
+}
+
+.image:hover .hover {
+    opacity: 1;
+}
+
+.hover.active {
+    opacity: 1;
+}
+
+.name {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+    line-height: 1;
+    margin: 5px 0;
+}
+
+.sub-name {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 1.2rem;
+    opacity: .8;
+    color: #fff;
+}
+
+.content {
+    display: flex;
+    padding: 1.7rem 2.5rem 2.6rem 2.5rem;
+}
+
+.right {
+    padding-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    margin-left: 2.1rem;
+}
+
+.number {
+    font-size: 2.1rem;
+    font-weight: 200;
+    color: #333;
+    line-height: 1.2;
+    margin-top: -20px;
+}
+
+.number-title {
+    font-size: .55rem;
+    color: #666;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.number1 {
+    font-size: 2.1rem;
+    font-weight: 200;
+    color: #333;
+    line-height: 1.2;
+    margin-top: 20px;
+}
+
+.number-title1 {
+    font-size: .55rem;
+    color: #666;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.title {
+    position: relative;
+    color: #555;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0 0 3px 0;
+    margin-bottom: .9rem;
+    display: inline-block;
+}
+
+.title:after {
+    content: '';
+    position: absolute;
+    height: 3px;
+    width: 50%;
+    background-color: #555;
+    bottom: 0;
+    left: 0;
+}
+
+.text {
+    color: #666;
+    font-weight: 300;
+    line-height: 1.7;
+}
+
+.buttons-wrap {
+    display: flex;
+    margin-top: 20px;
+}
+
+.follow-wrap, .message-wrap {
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .5s;
+}
+
+.follow-wrap:hover, .share-wrap:hover {
+    flex: 5;
+}
+
+.follow {
+    padding: 9.6px 0;
+    width: 100%;
+    background: linear-gradient(90deg, #D2736F, #E89686, #E6B09E) no-repeat center center fixed;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-size: .7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 18.1px;
+    margin-right: 3px;
+}
+
+.message {
+    padding: 7.6px 0;
+    width: 100%;
+    border: 2px solid #dc8383;
+    color: #dc8383;
+    text-decoration: none;
+    text-align: center;
+    font-size: .7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-left: 3px;
+    border-radius: 18.1px;
+}
+
+@media (max-width: 410px) {
+    .content {
         flex-direction: column;
     }
 
-    .right{
+    .right {
         flex-direction: row;
         text-align: center;
         justify-content: space-around;
@@ -411,80 +342,80 @@ body{
     }
 }
 
-@media (max-width: 1370px){
-    .header{
+@media (max-width: 1370px) {
+    .header {
         height: 230px;
     }
 
-    .card:before{
+    .card:before {
         clip-path: inset(0);
         height: 230px;
     }
 
-    .hamburger-menu{
+    .hamburger-menu {
         width: 16px;
         height: 12px;
         top: 1.1rem;
         left: 1.5rem;
     }
 
-    .settings{
+    .settings {
         font-size: 1.1rem;
         top: .75rem;
         right: 1.5rem;
     }
 
-    .main .image{
+    .main .image {
         width: 90px;
         height: 90px;
         border-width: 3px;
     }
 
-    .name, .sub-name{
+    .name, .sub-name {
         font-size: 1rem;
     }
 
     .content {
-    width: 400px;
-    height: 300px;
-    padding: 1.2rem 1.8rem 1.8rem 1.8rem;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+        width: 400px;
+        height: 300px;
+        padding: 1.2rem 1.8rem 1.8rem 1.8rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
     .content.expanded {
         height: auto;
     }
 
-    .number, .number1{
+    .number, .number1 {
         font-size: 1.8rem;
     }
 
-    .number-title, .number-title1{
+    .number-title, .number-title1 {
         font-size: .4rem;
     }
 
-    .right{
+    .right {
         padding-top: 1rem;
     }
 
-    .title{
+    .title {
         font-size: .9rem;
         margin-bottom: .5rem;
     }
 
-    .text{
+    .text {
         font-size: .8rem;
     }
 
-    .follow{
+    .follow {
         padding: 7.6px 0;
         border-radius: 14.6px;
         font-size: .6rem;
     }
 
-    .message{
+    .message {
         padding: 5.6px 0;
         border-radius: 14.6px;
         font-size: .6rem;
@@ -545,7 +476,7 @@ nav {
     border-radius: 50px;
 }
 
-.info{
+.info {
     width: 45%;
     height: 100%;
     min-height: 500px;
@@ -554,8 +485,8 @@ nav {
     z-index: 1;
     padding: 35px 40px;
     box-shadow: 15px 0 35px rgba(0, 0, 0, 0.1),
-    0 -15px 35px rgba(0, 0, 0, 0.1),
-    0 15px 35px rgba(0, 0, 0, 0.1);
+                0 -15px 35px rgba(0, 0, 0, 0.1),
+                0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
 .person-name {
@@ -563,6 +494,7 @@ nav {
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
+    border-bottom: 1px solid black;
 }
 
 .person-name .big {
