@@ -1,0 +1,62 @@
+
+.title {
+  text-align: center;
+}
+
+.board-cont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+}
+
+.tile {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  border: 2px solid black;
+  margin: 2px;
+}
+
+.keyboard-row {
+  display: flex;
+}
+
+.keyboard {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.keyboard-row div {
+  background-color: rgb(232, 232, 232);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 40px;
+  height: 60px;
+  margin: 2px;
+  font-weight: bold;
+  font-size: 18px;
+}
+.keyboard-row div:hover {
+  background-color: rgb(216, 216, 216);
+}
+
+.row__2 {
+  margin-left: 20px;
+}
+
+#enter {
+  width: 50px;
+}
+#delete {
+  width: 70px;
+}
