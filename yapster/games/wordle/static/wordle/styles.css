@@ -18,8 +18,12 @@
   width: 50px;
   height: 50px;
   display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid black;
   margin: 2px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .keyboard-row {
@@ -59,4 +63,10 @@
 }
 #delete {
   width: 70px;
+}
+
+.noselect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

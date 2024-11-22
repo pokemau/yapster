@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'wordle/styles.css' %}" />
   <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
-  <script src="{% static 'wordle/index.js' %}" defer></script>
+  <script type="module" src="{% static 'wordle/index.js' %}" defer></script>
   <script src="{% static 'yapster/index.js' %}" defer></script>
   <title>Games | Worlde</title>
 </head>
@@ -60,7 +60,7 @@
       </div>
     </div>
 
-    <div class="keyboard">
+    <div class="keyboard noselect">
       <div class="keyboard-row row__1">
         <div class="key" data-key="q">Q</div>
         <div class="key" data-key="w">W</div>
@@ -85,7 +85,7 @@
         <div class="key" data-key="l">L</div>
       </div>
       <div class="keyboard-row row__3">
-        <div id="enter">ENT</div>
+        <div id="enter" data-key="enter">ENT</div>
         <div class="key" data-key="z">Z</div>
         <div class="key" data-key="x">X</div>
         <div class="key" data-key="c">C</div>
@@ -93,7 +93,7 @@
         <div class="key" data-key="b">B</div>
         <div class="key" data-key="n">N</div>
         <div class="key" data-key="m">M</div>
-        <div id="delete">DEL</div>
+        <div id="delete" data-key="backspace">DEL</div>
       </div>
     </div>
   </div>
