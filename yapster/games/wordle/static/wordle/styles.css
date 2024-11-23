@@ -38,7 +38,6 @@
 }
 
 .keyboard-row div {
-  background-color: rgb(232, 232, 232);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,9 +48,7 @@
   margin: 2px;
   font-weight: bold;
   font-size: 18px;
-}
-.keyboard-row div:hover {
-  background-color: rgb(216, 216, 216);
+  background-color: rgb(232, 232, 232);
 }
 
 .row__2 {
@@ -69,4 +66,16 @@
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.correct {
+  background-color: #6ca965 !important;
+}
+
+.wrong {
+  background-color: #999c9e !important;
+}
+
+.slightly-correct {
+  background-color: #c8b653 !important;
 }

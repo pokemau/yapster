@@ -1,96 +1,136 @@
 import { WORDS } from "./wordlist.js";
 
-const keys = document.querySelectorAll('.key');
+let SECRET_WORD = "cream";
+
+const keys = document.querySelectorAll(".key");
 
 let guessCount = 0;
 let letterCount = 0;
-let guess = '';
+let guess = "";
 
-function getKeyPress(e) {
-  const key = e.key.toUpperCase();
-
-  if (key == ' ') { return; }
-  if (key == 'BACKSPACE') {
-    eraseLetter();
-    return;
-  }
-  if (key == 'ENTER') {
-    submitGuess();
-    return;
-  } 
-
-
-  if (isLetter(key)) 
-    setTileText(key);
-  console.log(letterCount)
-}
-
-document.addEventListener('keydown', getKeyPress);
-
-function handleOnScreenKeyboardPress(e) {
-  const target = e.target;
-  const key= target.getAttribute('data-key');
-  if (!key) { return; }
-  if (key == 'backspace') {
-    eraseLetter();
-    return;
-  }
-  if (key == 'enter') {
-    submitGuess();
-    return;
-  }
-
-  if (isLetter(key))
-    setTileText(key);
-}
-
-const keyboard = document.querySelector('.keyboard');
-keyboard.addEventListener('click', handleOnScreenKeyboardPress);
-
-function submitGuess() {
-  if (letterCount != 5) {
-    alert('not enough letters')
-    return;
-  }
-  checkGuess();
-  letterCount = 0;
-  if (guessCount < 5)
-    guessCount++;
-
-  guess = '';
-  // check if enough letters
-  // check if last chance to guess
-}
-
-function checkGuess() {
-  console.log(guess);
-}
+function inWordList(guess) {}
 
 function eraseLetter() {
-  if (letterCount == 0) { return; }
-  getCurrTile().textContent = '';
-  guess = guess.slice(0,-1);
-  letterCount--;
+	if (letterCount == 0) {
+		return;
+	}
+	getCurrTile().textContent = "";
+	guess = guess.slice(0, -1);
+	letterCount--;
 }
 
 function getCurrTile() {
-  const currRow = document.getElementsByClassName('row')[guessCount];
-  return currRow.getElementsByClassName('tile')[letterCount-1];
+	const currRow = document.getElementsByClassName("row")[guessCount];
+	return currRow.getElementsByClassName("tile")[letterCount - 1];
 }
 
 function setTileText(letter) {
-  if (letterCount == 5) { return; }
-  const currRow = document.getElementsByClassName('row')[guessCount];
-  const currTile = currRow.getElementsByClassName('tile')[letterCount];
-  currTile.textContent = letter;
-  guess+=letter;
-  letterCount++;
+	if (letterCount == 5) {
+		return;
+	}
+	const currRow = document.getElementsByClassName("row")[guessCount];
+	const currTile = currRow.getElementsByClassName("tile")[letterCount];
+	currTile.textContent = letter;
+	guess += letter;
+	letterCount++;
 }
 
 function isLetter(letter) {
-  const letterASCIIValue = letter.charCodeAt(0);
-  const capsLetter = letterASCIIValue >= 65 && letterASCIIValue <= 90;
-  const smallLetter = letterASCIIValue >= 97 && letterASCIIValue <= 122;
-  const length = letter.length === 1;
-  return length && (capsLetter || smallLetter);
+	const letterASCIIValue = letter.charCodeAt(0);
+	const capsLetter = letterASCIIValue >= 65 && letterASCIIValue <= 90;
+	const smallLetter = letterASCIIValue >= 97 && letterASCIIValue <= 122;
+	const length = letter.length === 1;
+	return length && (capsLetter || smallLetter);
 }
+
+function checkCorrectLetter(guessLetter, wordLetter, SECRET_WORD) {
+	if (guessLetter === wordLetter) return "correct";
+	else if (SECRET_WORD.includes(guessLetter)) return "slightly-correct";
+	else return "wrong";
+}
+
+function handleKeyboardInput(e) {
+	const key = e.key.toUpperCase();
+
+	if (key == " ") {
+		return;
+	}
+	if (key == "BACKSPACE") {
+		eraseLetter();
+		return;
+	}
+	if (key == "ENTER") {
+		submitGuess();
+		return;
+	}
+
+	if (isLetter(key)) setTileText(key);
+}
+
+function handleOnScreenKeyboardInput(e) {
+	const target = e.target.getAttribute("data-key");
+	if (!target) {
+		return;
+	}
+	const key = target.toUpperCase();
+
+	if (key == "BACKSPACE") {
+		eraseLetter();
+		return;
+	}
+	if (key == "ENTER") {
+		submitGuess();
+		return;
+	}
+
+	if (isLetter(key)) setTileText(key);
+}
+
+function submitGuess() {
+	console.log(letterCount);
+	if (letterCount != 5) {
+		alert("not enough letters");
+		return;
+	}
+	checkGuess();
+}
+
+function checkGuess() {
+	guess = guess.toLowerCase();
+	SECRET_WORD = SECRET_WORD.toLowerCase();
+
+	if (guess == SECRET_WORD) {
+		guessCount++;
+		alert(`YOU GUESSED THE WORD IN ${guessCount} TRIES!`);
+		return;
+	}
+	if (!WORDS.includes(guess)) {
+		console.log(guess);
+		alert(`INVALID WORD`);
+		return;
+	}
+
+  for (let i = 0; i < SECRET_WORD.length; i++) {
+    const currRow = document.getElementsByClassName("row")[guessCount];
+    const currLetter = currRow.getElementsByClassName("tile")[i];
+    const guessL = guess[i];
+    const wordL = SECRET_WORD[i];
+    const correctness = checkCorrectLetter(guessL, wordL, SECRET_WORD);
+
+    currLetter.classList.add(correctness);
+    
+    console.log(guessL);
+
+    const keyboardKey = document.getElementById(guessL);
+    console.log(keyboardKey);
+    keyboardKey.classList.add(correctness);
+  }
+
+	letterCount = 0;
+	if (guessCount < 5) guessCount++;
+	guess = "";
+}
+
+const keyboard = document.querySelector(".keyboard");
+document.addEventListener("keydown", handleKeyboardInput);
+keyboard.addEventListener("click", handleOnScreenKeyboardInput);
