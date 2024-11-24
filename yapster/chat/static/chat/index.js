@@ -55,6 +55,8 @@ async function loadUserDetails(userId) {
 	} catch (error) {
 		console.error(error);
 	}
+
+	loadChat(userId)
 }
 
 //maybe para sa search lang ni
@@ -78,6 +80,10 @@ function loadChat(targetUserId) {
 		}
 	})
 	.catch(error => console.error("Error:", error));
+}
+
+function loadChatWithID(chatID){
+	
 }
 
 function test(target){

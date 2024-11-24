@@ -7,12 +7,17 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 import json
 from django.contrib.auth.decorators import login_required
+from collections import defaultdict
 
 def chat_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
     query = request.GET.get('search', '').strip()
+    users = None
+    chatList = None
+    chat_users_mapping = []
+
     if query:
         users = YapsterUser.objects.filter(
             (Q(user__first_name__icontains=query) |
@@ -20,11 +25,25 @@ def chat_view(request):
             Q(user__username__icontains=query))
         ).exclude(id=request.user.yapsteruser.id)
     else:
-        #Chat list here
-        users = YapsterUser.objects.exclude(id=request.user.yapsteruser.id)
-        # ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
+        # Get all chats involving the logged-in user
+        chat_ids = ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
+        chats = Chat.objects.filter(id__in=chat_ids)
+
+        # Build the chat_users_mapping
+        for chat in chats:
+            users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
+            user_ids = [cu.member.id for cu in users_in_chat]
+            user_names = [
+                f"{cu.member.user.first_name} {cu.member.user.last_name}" for cu in users_in_chat
+            ]
+            chat_users_mapping.append({
+                'chat_id': chat.id,
+                'chat_name': chat.chat_name,
+                'user_ids': user_ids,
+                'user_names': user_names,
+            })
     
-    return render(request, 'chat.html', {'users': users, 'query': query})
+    return render(request, 'chat.html', {'users': users, 'query': query, 'chat_users_mapping' : chat_users_mapping})
 
 def logout_user(request):
     logout(request)
@@ -74,6 +93,7 @@ def get_user_details(request, user_id):
     return JsonResponse({"success": False, "error": "Invalid request"})
 
 def get_or_create_chat(request):
+    # Based on users involved
     if request.method == "POST":
         target_user_id = request.POST.get('target_user_id') or json.loads(request.body).get('target_user_id')
 
@@ -117,6 +137,9 @@ def find_chat(user_ids):
             return chat
 
     return None
+
+def get_user_chats_with_id(request):
+    pass
 
 def message_view(request, chat_name):
     query = request.GET.get('search', '').strip()

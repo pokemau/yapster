@@ -87,17 +87,25 @@
               {% endfor %}
           {% else %}
               <!-- Existing Chats -->
-              {% for user in users %}
-              <!-- <div class="user" onclick="loadChat({{user.id}})" data-id="{{ user.id }}"></div> -->
-              <div class="user" onclick="loadChat({{ user.id }}, 5 ,11, 12)" data-id="{{ user.id }}">
-                <div class="left-profile-pic"></div>
-                <div class="name-time-msg">
-                  <div class="name-time">
-                    <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
-                    <p class="time-sent">Last seen: 1:06pm</p>
+              {% for chat in chat_users_mapping %}
+              <div class="user" 
+                  onclick="loadChat({{ chat.user_ids|join:', ' }})" 
+                   data-chat-id="{{ chat.chat_id }}">
+                  <div class="left-profile-pic"></div>
+                  <div class="name-time-msg">
+                      <div class="name-time">
+                        <p class="name">
+                          {{ chat.chat_name }}
+                        </p>
+                        <p class="members">
+                            {% for name in chat.user_names %}
+                                {{ name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p class="time-sent">Last seen: 1:06pm</p>
+                      </div>
+                      <p class="message">No message available</p>
                   </div>
-                  <p class="message">No message available</p>
-                </div>
               </div>
               {% empty %}
               <p>No chats available.</p>
@@ -139,7 +147,7 @@
             </div>
           </div> -->
 
-          <p>STOOOOOOOP</p>
+          <!-- <p>STOOOOOOOP</p> -->
           
         </section>
         <form action="" id="message-input" method="POST">
