@@ -61,7 +61,9 @@ async function loadUserDetails(userId) {
 
 //maybe para sa search lang ni
 //pero need ko function mu load sa chat mismo via id sa chat
-function loadChat(targetUserId) {
+function loadChat(...targetUserId) {
+	const allUserIDs = [...targetUserId]
+
 	fetch(getOrCreateChatUrl, {
 		method: "POST",
 		headers: {
@@ -69,7 +71,7 @@ function loadChat(targetUserId) {
 			"X-CSRFToken": csrfToken,
 			'X-Requested-With': 'XMLHttpRequest'
 		},
-		body: JSON.stringify({ target_user_id: targetUserId })
+		body: JSON.stringify({ target_user_ids: allUserIDs})
 	})
 	.then(response => response.json())
 	.then(data => {

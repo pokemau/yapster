@@ -15,7 +15,6 @@ def chat_view(request):
     
     query = request.GET.get('search', '').strip()
     users = None
-    chatList = None
     chat_users_mapping = []
 
     if query:
@@ -95,12 +94,12 @@ def get_user_details(request, user_id):
 def get_or_create_chat(request):
     # Based on users involved
     if request.method == "POST":
-        target_user_id = request.POST.get('target_user_id') or json.loads(request.body).get('target_user_id')
-
-        user_ids = [target_user_id]
+        user_ids = request.POST.get('target_user_ids') or json.loads(request.body).get('target_user_ids')
+        print("GAGAGAGAGAG")
+        
         sender_id = request.user.yapsteruser.id
         user_ids.append(sender_id)
-
+        print(user_ids)
         chat = find_chat(user_ids)
 
         if not chat:
