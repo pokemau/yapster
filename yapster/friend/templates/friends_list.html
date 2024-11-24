@@ -11,76 +11,24 @@
     <title>Friends</title>
   </head>
   <body>
-    <nav>
-      <div id="logo-name-cont">
-        <a href="/" class="logo"> <h1>Y</h1></a>
-        <h2>Yapster</h2>
-      </div>
+    {% include 'html/navbar.html' %}
 
-      <div id="nav-options">
-        <div class="option">
-          <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon" />
-        </div>
-        <div id="dots" class="option">
-          <img
-            src="{% static 'chat/images/dots.png' %}"
-            alt="Triple Dots Icon"
-          />
-          <div id="dots-options" class="hidden">
-            <div class="dots-option" id="dots-logout">
-              {% if user.is_authenticated %}
-              <a href="{% url 'logout' %}">Logout</a>
-              {% endif %}
-            </div>
+    <h2 class="title">Friends</h2>
 
-            <div class="dots-option" id="dots-friends">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:friends_list' user_id=user.id %}"
-                >Friends</a
-              >
-              {% endif %}
-            </div>
-            <div class="dots-option" id="dots-friend-requests">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
-              {% endif %}
-            </div>
-            <div class="dots-option" id="dots-friend-requests">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:block_list' user_id=user.id %}"
-                >Block List</a
-              >
-              {% endif %}
-            </div>
-          </div>
+    <div class="users-cont">
+      {% for friend in friend_list %}
+      <div class="user">
+        <div class="user-details">
+          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
+          <p class="user__name">{{ friend.user.first_name }} {{ friend.user.last_name }}</p>
         </div>
-        <a href="{% url 'profile_page' %}">
-          <!-- ako sa gi change para mu adto profile page -->
-          <div id="nav-profile-pic"></div>
-        </a>
-      </div>
-    </nav>
-    <div class="cont">
-      <h1 class="cont__title">FRIENDS</h1>
-      {% if friend_list %}
-      <div class="friend-list">
-        {% for friend in friend_list %}
-        <div class="friend">
-          <h2 class="friend__name">
-            {{friend.user.first_name }} {{ friend.user.last_name }}
-          </h2>
-          <a
-            class="user-option"
-            href="{% url 'friend:remove_friend' friend.user.id %}"
-            >Unfriend</a
-          >
+        <div class="user__actions">
+          <a href="{% url 'friend:remove_friend' friend.user.id %}">Unfriend</a>
         </div>
-
-        {% endfor %}
       </div>
-      {% else %}
-      <h3>NO FRIENDS</h3>
-      {% endif %}
+      {% empty %}
+      <p>No users found.</p>
+      {% endfor %}
     </div>
   </body>
 </html>

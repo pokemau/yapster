@@ -1,0 +1,49 @@
+{% load static %}
+<nav>
+  <div id="logo-name-cont">
+    <a href="/" class="logo"> <h1>Y</h1></a>
+    <h2>Yapster</h2>
+  </div>
+
+  <div id="nav-options">
+    <div class="option">
+      <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon" />
+    </div>
+    <div id="dots" class="option">
+      <img src="{% static 'chat/images/dots.png' %}" alt="Triple Dots Icon" />
+      <div id="dots-options" class="hidden">
+        <div class="dots-option" id="dots-logout">
+          {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}">Logout</a>
+          {% endif %}
+        </div>
+
+        <div class="dots-option" id="dots-search">
+          {% if user.is_authenticated %}
+          <a href="{% url 'friend:search' %}">Search</a>
+          {% endif %}
+        </div>
+
+        <div class="dots-option" id="dots-friends">
+          {% if user.is_authenticated %}
+          <a href="{% url 'friend:friends_list' %}">Friends</a>
+          {% endif %}
+        </div>
+        <div class="dots-option" id="dots-friend-requests">
+          {% if user.is_authenticated %}
+          <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
+          {% endif %}
+        </div>
+        <div class="dots-option" id="dots-friend-requests">
+          {% if user.is_authenticated %}
+          <a href="{% url 'friend:block_list' %}">Block List</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <a href="{% url 'public_profile' %}">
+      <!-- ako sa gi change para mu adto profile page -->
+      <div id="nav-profile-pic"></div>
+    </a>
+  </div>
+</nav>

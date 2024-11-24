@@ -10,72 +10,27 @@
     <title>Friend Requests</title>
   </head>
   <body>
-    <nav>
-      <div id="logo-name-cont">
-        <a class="logo" href="/"><h1>Y</h1></a>
-        <h2>Yapster</h2>
-      </div>
+    {% include 'html/navbar.html' %}
 
-      <div id="nav-options">
-        <div class="option">
-          <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon" />
+    <h2 class="title">Friend Requests</h2>
+
+    <div class="users-cont">
+      {% for request in friend_requests %}
+      <div class="user">
+        <div class="user-details">
+          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
+          <p class="user__name">
+            {{ request.sender.user.first_name }} {{ request.sender.user.last_name }}
+          </p>
         </div>
-        <div id="dots" class="option">
-          <img src="{% static 'chat/images/dots.png' %}" alt="Triple Dots Icon" />
-          <div id="dots-options" class="hidden">
-            <div class="dots-option" id="dots-logout">
-              {% if user.is_authenticated %}
-              <a href="{% url 'logout' %}">Logout</a>
-              {% endif %}
-            </div>
-
-            <div class="dots-option" id="dots-friends">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:friends_list' user_id=user.id %}">Friends</a>
-              {% endif %}
-            </div>
-            <div class="dots-option" id="dots-friend-requests">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
-              {% endif %}
-            </div>
-            <div class="dots-option" id="dots-friend-requests">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:block_list' user_id=user.id %}">Block List</a>
-              {% endif %}
-            </div>
-          </div>
+        <div class="user__actions">
+          <a href="{% url 'friend:accept_friend_request' request.id %}">Accept</a>
+          <a href="{% url 'friend:decline_friend_request' request.id %}">Decline</a>
         </div>
-        <a href="{% url 'profile_page' %}">
-          <!-- ako sa gi change para mu adto profile page -->
-          <div id="nav-profile-pic"></div>
-        </a>
       </div>
-    </nav>
-
-    <div class="cont">
-      <h1 class="cont__title">Friend Requests</h1>
-
-      {% if friend_requests %}
-      <div class="friend-list">
-        {% for request in friend_requests %}
-        <div class="friend">
-          <h2 class="friend__name">
-            {{ request.sender.user.first_name}} {{ request.sender.user.last_name}}
-          </h2>
-          <a class="user-option" href="{% url 'friend:accept_friend_request' request.id %}"
-            >Accept</a
-          >
-          <a class="user-option" href="{% url 'friend:decline_friend_request' request.id %}"
-            >Decline</a
-          >
-        </div>
-
-        {% endfor %}
-      </div>
-      {% else %}
-      <h3>No friend requests.</h3>
-      {% endif %}
+      {% empty %}
+      <p>No users found.</p>
+      {% endfor %}
     </div>
   </body>
 </html>

@@ -75,6 +75,12 @@ def get_user_details(request, user_id):
                 blocked_users=user_profile
             ).exists()
 
+            try:
+                other_user_block_list = BlockList.objects.get(user=user_profile)
+                you_are_blocked = other_user_block_list.blocked_users.filter(id=request.user.yapsteruser.id).exists()
+            except BlockList.DoesNotExist:
+                you_are_blocked = False
+
             data = {
                 'success': True,
                 'id': user_profile.user.id,
@@ -83,7 +89,8 @@ def get_user_details(request, user_id):
                 'bio': user_profile.bio,
                 'friend_request_active': friend_request_exists,
                 'is_friend': is_friend,
-                'is_blocked': is_blocked
+                'is_blocked': is_blocked,
+                'you_are_blocked': you_are_blocked
             }
             
             return JsonResponse(data)

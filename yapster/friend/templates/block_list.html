@@ -10,77 +10,24 @@
     <title>Block List</title>
   </head>
   <body>
-    <nav>
-      <div id="logo-name-cont">
-        <a href="/" class="logo"> <h1>Y</h1></a>
-        <h2>Yapster</h2>
-      </div>
+    {% include 'html/navbar.html' %}
 
-      <div id="nav-options">
-        <div class="option">
-          <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon" />
+    <h2 class="title">Blocked Users</h2>
+
+    <div class="users-cont">
+      {% for blocked in blocked_list %}
+      <div class="user">
+        <div class="user-details">
+          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
+          <p class="user__name">{{ blocked.user.first_name }} {{ blocked.user.last_name }}</p>
         </div>
-        <div id="dots" class="option">
-          <img
-            src="{% static 'chat/images/dots.png' %}"
-            alt="Triple Dots Icon"
-          />
-          <div id="dots-options" class="hidden">
-            <div class="dots-option" id="dots-logout">
-              {% if user.is_authenticated %}
-              <a href="{% url 'logout' %}">Logout</a>
-              {% endif %}
-            </div>
-
-            <div class="dots-option" id="dots-friends">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:friends_list' user_id=user.id %}"
-                >Friends</a
-              >
-              {% endif %}
-            </div>
-            <div class="dots-option" id="dots-friend-requests">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
-              {% endif %}
-            </div>
-            <div class="dots-option" id="dots-friend-requests">
-              {% if user.is_authenticated %}
-              <a href="{% url 'friend:block_list' user_id=user.id %}"
-                >Block List</a
-              >
-              {% endif %}
-            </div>
-          </div>
+        <div class="user__actions">
+          <a href="{% url 'friend:unblock_user' blocked.user.id %}">Unblock</a>
         </div>
-        <a href="{% url 'profile_page' %}">
-          <!-- ako sa gi change para mu adto profile page -->
-          <div id="nav-profile-pic"></div>
-        </a>
       </div>
-    </nav>
-
-    <div class="cont">
-      <h1 class="cont__title">Blocked List</h1>
-      {% if blocked_list%}
-      <div class="friend-list">
-        {% for blocked in blocked_list %}
-        <div class="friend">
-          <h2 class="friend__name">
-            {{blocked.user.first_name }} {{ blocked.user.last_name }}
-          </h2>
-          <a
-            class="user-option"
-            href="{% url 'friend:unblock_user' blocked.user.id %}"
-            >Unblock</a
-          >
-        </div>
-
-        {% endfor %}
-      </div>
-      {% else %}
-      <h3>NO BLOCKED USERS</h3>
-      {% endif %}
+      {% empty %}
+      <p>No users found.</p>
+      {% endfor %}
     </div>
   </body>
 </html>

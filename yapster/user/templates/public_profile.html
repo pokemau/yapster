@@ -1,48 +1,106 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Public Profile</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'profile_style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <link rel="stylesheet" href="{%  static 'public-profile.css' %}">
+    <script src="{% static 'yapster/index.js' %}" defer></script>
+    <title>Profile Card</title>
 </head>
 <body>
-    <nav>
+   <!--  <div class="modal">
+        <img id="profileImage" src="
+             {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+             width="100" height="100" alt="Profile Picture"
+             onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';">
+        <div class="close"></div>
+    </div> -->
 
-    </nav>
-    <div class="cover-photo" style="background-image: url('{% if yapster_user.cover_photo %}{{ yapster_user.cover_photo.url }}{% else %}{% static 'default_cover_photo.jpg' %}{% endif %}'); height: 200px;">
-    </div>
+    {% include 'html/navbar.html' %}
 
-    <div class="container mt-5">
-        <h2>Public Profile</h2>
-        <div class="profile-page-container mt-4">
-            <div class="profile-sidebar">
-                <div class="profile-image">
-                    {% if yapster_user.profile_image %}
-                        <img id="profileImage" src="{{ yapster_user.profile_image.url }}" alt="Profile Picture" width="150" height="150">
-                    {% else %}
-                        <img id="profileImage" src="{% static 'default_profile_image.jpg' %}" alt="Default Profile Picture" width="150" height="150">
-                    {% endif %}
-                </div>
-                <h4>{{ user.first_name }} {{ user.last_name }}</h4>
-                <p>{{ user.email }}</p>
-            </div>
-
-            <div class="profile-main mt-4">
-                <h5>Profile Details</h5>
-                <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                <p><strong>Phone Number:</strong> {{ yapster_user.phone_number }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>City:</strong> {{ yapster_user.city }}</p>
-                <p><strong>State/County:</strong> {{ yapster_user.state }}</p>
-                <p><strong>Postcode:</strong> {{ yapster_user.postcode }}</p>
-                <p><strong>Country:</strong> {{ yapster_user.country }}</p>
-                <p><strong>Bio:</strong> {{ yapster_user.bio }}</p>
-            </div>
+   <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('profileModal')">&times;</span>
+            <img id="modalProfileImage" src="{% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+             width="100" height="100" alt="Profile Picture"
+             onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';">
         </div>
     </div>
+        
+
+
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <a href="{% url 'profile_page' %}" class="settings">
+                    <i class="fas fa-cog"></i>
+                </a>
+                <div class="main">
+                    <div class="image">
+                        <img id="profileImage" src="
+                                {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+                             width="100" height="100" alt="Profile Picture"
+                             onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';">
+                        <div class="hover">
+                            <i class="fas fa-camera fa-2x"></i>
+                        </div>
+                    </div>
+                    <h3 class="name">{{ user.first_name }} {{ user.last_name }}</h3>
+                    <h3 class="sub-name">@{{ user.username }}</h3>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="left">
+                    <div class="about-container">
+                        <h3 class="title">Bio</h3>
+                        <p class="text" id="bioText">{{ user.yapsteruser.bio }}</p>
+                        <a href="#" id="seeMoreLink" style="display: none;text-decoration: none;"> see more</a>
+                        <a href="#" id="seeLessLink" style="display: none;text-decoration: none;"> see less...</a>
+                    </div>
+                    <div class="buttons-wrap">
+                        <div class="follow-wrap">
+                            <a href="#" class="follow">Follow</a>
+                        </div>
+                        <div class="message-wrap">
+                            <a href="#" class="message">Message</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right">
+                    <div>
+                        <h3 class="number">5</h3>
+                        <h3 class="number-title">Following</h3>
+                    </div>
+                    <div>
+                        <h3 class="number1">1</h3>
+                        <h3 class="number-title1">Followers</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info">
+            <div class="person-name">
+                    <div>
+                        <h1 class="big">{{ user.first_name }} {{ user.last_name }}</h1>
+                    </div>
+                </div>
+
+                    <h3 class="title">Basic Information</h3>
+                    <p class="text">Contact Number: {{ yapster_user.phone_number }}</p>
+                    <p class="text">Email Address: {{ user.email }}</p>
+                    <p class="text">Address: {{ yapster_user.state }} {{ yapster_user.city }}
+                        {{ yapster_user.postcode }} {{ yapster_user.country }}</p>
+
+            </div>
+        </div>
+    <script src="{% static 'public-profile.js' %}"></script>
 </body>
 </html>
