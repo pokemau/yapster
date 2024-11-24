@@ -61,8 +61,6 @@ async function loadUserDetails(userId) {
 	loadChat(userId)
 }
 
-//maybe para sa search lang ni
-//pero need ko function mu load sa chat mismo via id sa chat
 function loadChat(...targetUserId) {
 	const allUserIDs = [...targetUserId]
 
@@ -86,16 +84,6 @@ function loadChat(...targetUserId) {
 	.catch(error => console.error("Error:", error));
 }
 
-function loadChatWithID(chatID){
-	
-}
-
-function test(target){
-	for (var i = 0; i < arguments.length; i++) {
-		console.log(arguments[i]);
-	}
-	console.log(target)
-}
 function toggleDropdown(element) {
   const dropdown = element.parentElement;
   dropdown.classList.toggle('show');
