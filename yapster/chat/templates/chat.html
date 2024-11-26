@@ -74,40 +74,33 @@
       <!-- IMPLEMNMENT REALTIME HERE -->
       <div id="mid-bar">
         <section class="messages">
-          <!-- received messages and displayed here -->
-          {% for i in content %} {% if i.sender != user %}
-          <div class="bubble sender">
-            <p>{{i.content}}</p>
-          </div>
-          {% else %}
-          <div class="bubble recipient">
-            <p>{{i.content}}</p>
-          </div>
-          {% endif %} {% endfor %}
-          <!-- end receive messages -->
-          <!-- test maessage -->
-          <!-- <div class="message_body">
-            <div class="empty_image"></div>
-            <div>
-              <div class="chatter_name">
-                Dunk it Jonathan
+          <!-- Messages rendered from the server -->
+          {% for i in content %}
+          <div class="message_body" id="chatno{{ forloop.counter }}">
+            {% if i.sender != user %}
+              {% if i.has_pfp %}
+                <div class="pfp" 
+                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
+                </div>
+              {% else %}
+                <div class="empty_image"></div>
+              {% endif %}
+              <div class="flex_message">
+                {% if i.is_new_sender %}
+                  <div class="chatter_name">{{ i.sender }}</div>
+                {% endif %}
+                <div class="bubble sender">
+                  <p>{{ i.message }}</p>
+                </div>
               </div>
-              <div class="bubble sender">
-                <p>we gon be alrigth</p>
+            {% else %}
+              <div class="bubble recipient">
+                <p>{{ i.message }}</p>
               </div>
-            </div>
+            {% endif %}
           </div>
-        
-          <div class="message_body">
-            <div class="pfp one"></div>
-            <div class="bubble sender">
-              <p>we gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigth</p>
-            </div>
-          </div> -->
-
-          <!-- <p>STOOOOOOOP</p> -->
-          
-        </section>
+          {% endfor %}
+        </section>        
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
@@ -116,42 +109,6 @@
             </div>
         </form>
       </div>
-      <!-- IMPLEMNMENT REALTIME HERE -->
-
-      <!--<div id="right-sidebar">
-         <div id="right-name-x">
-          <div id="pic-name-cont">
-            <div id="right-profile-pic"></div>
-            <p></p>
-          </div>
-          <div id="close-icon">
-            <img src="{% static 'chat/images/close.png' %}" alt="X Icon" />
-          </div>
-        </div>
-        <div id="right-info-cont">
-          <div id="right-username">
-            <h5></h5>
-            <p></p>
-          </div>
-          <div id="right-bio">
-            <h5></h5>
-            <p></p>
-          </div>
-        </div>
-        <div id="notifications-cont">
-          <h5>Notifications</h5>
-
-          <div class="checkbox-wrapper-2">
-            <input type="checkbox" class="sc-gJwTLC ikxBAC" />
-          </div>
-        </div>
-        <div id="user-options-cont">
-          <a href="#" id="block-user" class="user-option__a">Block User</a>
-          <p>Clear History</p>
-          <p>Delete Conversation</p>
-          <a href="#" id="add-friend" class="user-option__a">Add Friend</a>
-        </div> -->
-
         <div id="chat-sidebar">
           <div class="chat-sidebar-profile">
             <div class="chat-sidebar-profile-pic">
@@ -217,3 +174,61 @@
     </script>
   </body>
 </html>
+
+<!-- test maessage -->
+          <!-- <div class="message_body">
+            <div class="empty_image"></div>
+            <div>
+              <div class="chatter_name">
+                Dunk it Jonathan
+              </div>
+              <div class="bubble sender">
+                <p>we gon be alrigth</p>
+              </div>
+            </div>
+          </div>
+        
+          <div class="message_body">
+            <div class="pfp one"></div>
+            <div class="bubble sender">
+              <p>we gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigth</p>
+            </div>
+          </div> -->
+
+          <!-- <p>STOOOOOOOP</p> -->
+
+      <!-- IMPLEMNMENT REALTIME HERE -->
+
+      <!--<div id="right-sidebar">
+         <div id="right-name-x">
+          <div id="pic-name-cont">
+            <div id="right-profile-pic"></div>
+            <p></p>
+          </div>
+          <div id="close-icon">
+            <img src="{% static 'chat/images/close.png' %}" alt="X Icon" />
+          </div>
+        </div>
+        <div id="right-info-cont">
+          <div id="right-username">
+            <h5></h5>
+            <p></p>
+          </div>
+          <div id="right-bio">
+            <h5></h5>
+            <p></p>
+          </div>
+        </div>
+        <div id="notifications-cont">
+          <h5>Notifications</h5>
+
+          <div class="checkbox-wrapper-2">
+            <input type="checkbox" class="sc-gJwTLC ikxBAC" />
+          </div>
+        </div>
+        <div id="user-options-cont">
+          <a href="#" id="block-user" class="user-option__a">Block User</a>
+          <p>Clear History</p>
+          <p>Delete Conversation</p>
+          <a href="#" id="add-friend" class="user-option__a">Add Friend</a>
+        </div> -->

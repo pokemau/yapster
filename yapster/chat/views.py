@@ -80,7 +80,34 @@ def message_view(request, chat_name):
 
     #Chat View Stuff
     chat_room = Chat.objects.get(chat_name=chat_name)
-    content_messages = Message.objects.filter(chat=chat_room)
+    messages = Message.objects.filter(chat=chat_room)
+
+    content_messages = []
+    last_sender = None
+
+    #Last sender functionality
+    senders = []
+    counter = 0
+
+    for message in messages:
+        senders.append(message.sender)
+
+    withPfp = [0] * len(senders)
+
+    for i in range(len(senders) - 1, -1, -1):
+        if i == len(senders) - 1 or senders[i] != senders[i + 1]:
+            withPfp[i] = 1
+
+    for message in messages:
+        content_messages.append({
+            'sender': message.sender,
+            'message': message.content,
+            'is_new_sender': last_sender != message.sender,  # Check if the sender is different
+            'has_pfp': withPfp[counter] == 1
+        })
+        last_sender = message.sender  # Update the last sender
+        counter+=1
+
     content = {
         "chat_room": chat_room,
         "content": content_messages,
