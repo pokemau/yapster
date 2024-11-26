@@ -46,19 +46,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender = User.objects.get(username=data['sender'])
             
             # Check for duplicates based on chat, sender, and content
-            if not Message.objects.filter(content=data['message'], chat=chat, sender=sender).exists():
-                new_message = Message(
-                    chat=chat,
-                    sender=sender,
-                    content=data['message']
-                )
-                new_message.save()
-                return {"success": True, "message": "Message saved successfully."}
-            else:
-                return {"success": False, "message": "Duplicate message not saved."}
+            # if not Message.objects.filter(content=data['message'], chat=chat, sender=sender).exists():
+            new_message = Message(
+                chat=chat,
+                sender=sender,
+                content=data['message']
+            )
+            new_message.save()
+            return {"success": True, "message": "Message saved successfully."}
         except Chat.DoesNotExist:
+            print('3')
             return {"success": False, "message": "Chat room does not exist."}
         except User.DoesNotExist:
+            print('4')
             return {"success": False, "message": "Sender does not exist."}
         except Exception as e:
+            print('5')
             return {"success": False, "message": str(e)}
