@@ -1,3 +1,5 @@
+import { WORDS } from './wordlist.js'
+
 function scrollToBottom() {
     console.log("areeee")
     var chatContainer = document.querySelector(".messages");
@@ -34,6 +36,44 @@ document.getElementById('message-input').addEventListener('submit', function(eve
         })
     );
 });
+
+
+
+const wordleForm = document.querySelector('#wordle-form');
+wordleForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const inputWord = document.querySelector('#word-input').value
+    if (WORDS.includes(inputWord)) {
+        console.log("VALID WORD");
+        
+        fetch('/games/wordle/create_game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ word: inputWord })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("WordleGame created successfully:", data.game);
+                socket.send(
+                    JSON.stringify({
+                        'message': `[WORDLE]${data.game}`,
+                        'chat_name': `${chat_name}`,
+                        'sender': `${user_logged_in}`,
+                })
+        );
+            } else {
+                console.error("Failed to create WordleGame:", data.error);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    } else {
+        console.log("INVALID WORD")
+    }
+})
 
 var buffer = "@@@@";
 var messageCount = 0;
@@ -109,6 +149,33 @@ socket.addEventListener("message", (event) => {
 
 socket.onopen = (event) => {
     console.log("WebSocket connection opened!");
+    const localStorageChatName = window.localStorage.getItem('chatName')
+    const guessCount = window.localStorage.getItem('guessCount')
+    if (chat_name == localStorageChatName
+        && guessCount != 0) {
+            console.log("HERE")
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(
+                JSON.stringify({
+                    'message': `I guessed your word in ${guessCount} ${guessCount==1? 'try':'tries'}`,
+                    'chat_name': chat_name,
+                    'sender': user_logged_in,
+                })
+            );
+
+            window.localStorage.setItem('guessCount', 0);
+        } else {
+            console.error("WebSocket is not open.");
+        }
+        // socket.send(
+        // JSON.stringify({
+        //     'message': `I guessed your word in ${guessCount}`,
+        //     'chat_name': `${chat_name}`,
+        //     'sender': `${user_logged_in}`,
+        // })
+        // );
+        // window.localStorage.setItem('guessCount', 0)
+    }
 };
 
 socket.onclose = (event) => {
