@@ -8,6 +8,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  position: relative;
 }
 
 .row {
@@ -78,4 +79,39 @@
 
 .slightly-correct {
   background-color: #c8b653 !important;
+}
+
+.win-cont {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 300px;
+  height: 160px;
+  border-radius: 8px;
+  margin-inline: auto;
+  background-color: rgb(212, 212, 212);
+}
+
+.win-cont__title {
+  margin-top: 10px;
+}
+.win-cont__word {
+  margin-top: 10px;
+}
+.win-cont__button {
+  display: block;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  margin-top: 20px;
+  width: 80px;
+  padding: 8px;
+  margin-inline: auto;
+  border-radius: 5px;
+  background-color: rgb(200, 134, 134);
+}
+.win-cont__button:hover {
+  background-color: rgb(203, 105, 105);
 }
