@@ -6,4 +6,5 @@ app_name = 'wordle'
 urlpatterns = [
     path('', views.wordle_view, name='wordle_main'),
     path('<int:game_id>', views.wordle_view, name='wordle_main'),
+    path('create_game', views.create_wordle_game, name='create_wordle_game'),
 ]

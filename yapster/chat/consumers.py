@@ -16,6 +16,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         data = text_data_json
+        await self.create_message(data=data)
         # Trigger send_message method
         await self.channel_layer.group_send(
             self.chat_name,
@@ -27,7 +28,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def send_message(self, event):
         data = event['data']
         print(data)
-        await self.create_message(data=data)
+        # await self.create_message(data=data)
         # response_data = {
         #     'sender': data['sender'],
         #     'message': data['message']
@@ -53,13 +54,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 content=data['message']
             )
             new_message.save()
+            print(1)
             return {"success": True, "message": "Message saved successfully."}
         except Chat.DoesNotExist:
-            print('3')
+            print(2)
             return {"success": False, "message": "Chat room does not exist."}
         except User.DoesNotExist:
-            print('4')
+            print(3)
             return {"success": False, "message": "Sender does not exist."}
         except Exception as e:
-            print('5')
+            print(4)
             return {"success": False, "message": str(e)}
