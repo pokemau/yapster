@@ -63,7 +63,7 @@ async function loadUserDetails(userId) {
 
 function loadChat(...targetUserId) {
 	const allUserIDs = [...targetUserId]
-
+	
 	fetch(getOrCreateChatUrl, {
 		method: "POST",
 		headers: {

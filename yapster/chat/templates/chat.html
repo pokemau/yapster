@@ -16,6 +16,7 @@
   <script>
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
+    const currentUserID = {{ current_userID }};
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -46,23 +47,30 @@
           {% else %}
               <!-- Existing Chats -->
               {% for chat in chat_users_mapping %}
-              <div class="user" 
-                  onclick="loadChat({{ chat.user_ids|join:', ' }})" 
-                   data-chat-id="{{ chat.chat_id }}">
+              <div class="user" onclick="loadChat({{ chat.user_ids|join:', ' }})" data-chat-id="{{ chat.chat_id }}">
                   <div class="left-profile-pic"></div>
                   <div class="name-time-msg">
                       <div class="name-time">
                         <p class="name">
-                          {{ chat.chat_name }}
+                          {% if chat.is_PM %}
+                            {% for nickname in chat.nicknames %}
+                              {% if nickname != chat.current_user_nickname %}
+                                {{ nickname }}
+                              {% endif %}
+                            {% endfor %}
+                          {% else %}
+                            {{ chat.chat_name }}
+                          {% endif %}
                         </p>
-                        <p class="members">
+                        <!-- <p class="members">
                             {% for name in chat.user_names %}
                                 {{ name }}{% if not forloop.last %}, {% endif %}
                             {% endfor %}
-                        </p>
-                        <p class="time-sent">Last seen: 1:06pm</p>
+                        </p> -->
+
                       </div>
-                      <p class="message">No message available</p>
+                      <p class="message">No message available</p>   
+                      <p class="time-sent">Last seen: 1:06pm</p>                      
                   </div>
               </div>
               {% empty %}

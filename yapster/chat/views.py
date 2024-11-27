@@ -10,11 +10,13 @@ from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 
 def chat_view(request):
+    #Message View Stuff
     if not request.user.is_authenticated:
         return redirect('login')
     
     query = request.GET.get('search', '').strip()
     users = None
+    currentUserID = request.user.yapsteruser.id
     chat_users_mapping = []
 
     if query:
@@ -32,17 +34,29 @@ def chat_view(request):
         for chat in chats:
             users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
             user_ids = [cu.member.id for cu in users_in_chat]
+            is_PM = len(user_ids) == 2
             user_names = [
                 f"{cu.member.user.first_name} {cu.member.user.last_name}" for cu in users_in_chat
             ]
+            nicknames_in_chat = ChatUser.objects.filter(chat=chat)
+            nicknames = [
+                f"{cu.nickname}" for cu in nicknames_in_chat
+            ]
+
+            current_user_chat_user = users_in_chat.get(member=request.user.yapsteruser)
+            current_user_nickname = current_user_chat_user.nickname
+
             chat_users_mapping.append({
                 'chat_id': chat.id,
                 'chat_name': chat.chat_name,
                 'user_ids': user_ids,
                 'user_names': user_names,
+                'is_PM': is_PM,
+                'nicknames': nicknames,
+                'current_user_nickname': current_user_nickname
             })
-    
-    return render(request, 'chat.html', {'users': users, 'query': query, 'chat_users_mapping' : chat_users_mapping})
+
+    return render(request, 'chat.html', {'users': users, 'query': query, 'chat_users_mapping' : chat_users_mapping, "current_userID" : currentUserID})
 
 def message_view(request, chat_name):
     #Message View Stuff
@@ -51,6 +65,7 @@ def message_view(request, chat_name):
     
     query = request.GET.get('search', '').strip()
     users = None
+    currentUserID = request.user.yapsteruser.id
     chat_users_mapping = []
 
     if query:
@@ -68,14 +83,26 @@ def message_view(request, chat_name):
         for chat in chats:
             users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
             user_ids = [cu.member.id for cu in users_in_chat]
+            is_PM = len(user_ids) == 2
             user_names = [
                 f"{cu.member.user.first_name} {cu.member.user.last_name}" for cu in users_in_chat
             ]
+            nicknames_in_chat = ChatUser.objects.filter(chat=chat)
+            nicknames = [
+                f"{cu.nickname}" for cu in nicknames_in_chat
+            ]
+
+            current_user_chat_user = users_in_chat.get(member=request.user.yapsteruser)
+            current_user_nickname = current_user_chat_user.nickname
+
             chat_users_mapping.append({
                 'chat_id': chat.id,
                 'chat_name': chat.chat_name,
                 'user_ids': user_ids,
                 'user_names': user_names,
+                'is_PM': is_PM,
+                'nicknames': nicknames,
+                'current_user_nickname': current_user_nickname
             })
 
     #Chat View Stuff
@@ -114,7 +141,8 @@ def message_view(request, chat_name):
         "sender" : request.user.username,
         'users': users, 
         'query': query,
-        'chat_users_mapping' : chat_users_mapping
+        'chat_users_mapping' : chat_users_mapping,
+        "current_userID" : currentUserID
     }
     
     return render(request, 'chat.html', content)
