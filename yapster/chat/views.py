@@ -95,6 +95,12 @@ def message_view(request, chat_name):
             current_user_chat_user = users_in_chat.get(member=request.user.yapsteruser)
             current_user_nickname = current_user_chat_user.nickname
 
+            nicknames_without_curruser = []
+
+            for cu in nicknames_in_chat:
+                if cu != current_user_nickname:
+                    nicknames_without_curruser.append(cu)
+            
             chat_users_mapping.append({
                 'chat_id': chat.id,
                 'chat_name': chat.chat_name,
@@ -102,7 +108,8 @@ def message_view(request, chat_name):
                 'user_names': user_names,
                 'is_PM': is_PM,
                 'nicknames': nicknames,
-                'current_user_nickname': current_user_nickname
+                'current_user_nickname': current_user_nickname,
+                'nicknames_without_curruser': nicknames_without_curruser 
             })
 
     #Chat View Stuff
