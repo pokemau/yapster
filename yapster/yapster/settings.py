@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'chat', # Changed, for migrations. Don't know why ingun Ana.
     'user', # Changed, for migrations. Don't know why ingun Ana.
     'friend',
+    'games.wordle',
     'channels',
 ]
 

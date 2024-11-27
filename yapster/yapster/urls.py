@@ -23,6 +23,7 @@ urlpatterns = [
     path('', include('user.urls')),
     path('chat/', include('chat.urls')),
     path('friend/', include('friend.urls')),
+    path('games/wordle/', include('games.wordle.urls')),
     path('admin/', admin.site.urls),
 ]
 

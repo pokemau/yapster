@@ -1,4 +1,5 @@
 {% load static %}
+{% load chat_filter %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,8 +9,8 @@
     <link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
     <script src="{% static 'chat/index.js' %}" defer></script>
+    <script type="module" src="{% static 'chat/chat.js' %}" defer></script>
     <script src="{% static 'yapster/index.js' %}" defer></script>
-    <script src="{% static 'chat/chat.js' %}" defer></script>
 
     <title>Chat</title>
   </head>
@@ -75,13 +76,22 @@
       <div id="mid-bar">
         <section class="messages">
           <!-- received messages and displayed here -->
-          {% for i in content %} {% if i.sender != user %}
+          {% for i in content %} 
+          {% if i.sender != user %}
           <div class="bubble sender">
+            {% if "[WORDLE]"|contains:i.content %}
+            <a href="/games/wordle/{{ i.content|slice }}">Guess my Wordle!</a>
+            {% else %}
             <p>{{i.content}}</p>
+            {% endif %}
           </div>
           {% else %}
           <div class="bubble recipient">
+            {% if "[WORDLE]"|contains:i.content %}
+            <p>Guess my Wordle!</p>
+            {% else %}
             <p>{{i.content}}</p>
+            {% endif %}
           </div>
           {% endif %} {% endfor %}
           <!-- end receive messages -->
@@ -112,9 +122,29 @@
             {% csrf_token %}
             <div id="mid-message">
                 <input id="typed-message" type="text" name="message" placeholder="Your message..." />
-                <button type="submit">Send</button>
+                <button id="wordle-btn" type="button">Game</button>
+                <button id="send-btn" type="submit">Send</button>
             </div>
         </form>
+
+
+        <div id="myModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <label for="secretWord">Enter word:</label>
+
+            <form action="" id="wordle-form" method="POST">
+              {% csrf_token %}
+              <input id="word-input" maxlength="5" type="text" name="message" placeholder="Your message..." />
+            </form>
+
+            <!-- <form class="word-form" action="#">
+              <input type="text" name="secretWord" class="word-input" maxlength="5">
+            </form> -->
+
+          </div>
+        </div>
+
       </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
 
@@ -214,6 +244,9 @@
       console.log("Room:", chat_name);
       let user_logged_in = `{{ user.username }}`;
       console.log("Logged-in user:", user_logged_in);
+      window.localStorage.setItem('chatName',chat_name)
+      if (!window.localStorage.getItem('guessCount'))
+        window.localStorage.setItem('guessCount', 0)
     </script>
   </body>
 </html>
