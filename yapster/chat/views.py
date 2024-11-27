@@ -219,6 +219,9 @@ def find_chat(user_ids):
 
     return None
 
+def test_chat_view(request):
+    return render(request, 'test_chat_selector.html')
+
 #Temp Chat for chatting unchatted user
 # def temp_chat_view(request, user_id):
 #     target_user = get_object_or_404(YapsterUser, id=user_id)

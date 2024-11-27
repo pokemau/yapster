@@ -12,6 +12,7 @@ class Chat(models.Model):
 class ChatUser(models.Model):
     member = models.ForeignKey(YapsterUser, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat , related_name='chatuser',on_delete=models.CASCADE)
+    #nickname
     #ChatUser
     #chatid = 0
     #member = 1
