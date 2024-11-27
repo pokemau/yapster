@@ -81,3 +81,59 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteAccountButton = document.querySelector('.btn-danger');
+    const deleteAccountModal = document.getElementById('deleteAccountModal');
+
+    if (deleteAccountButton) {
+        deleteAccountButton.addEventListener('click', function(event) {
+            deleteAccountModal.submit();
+        });
+    }
+
+    if (deleteAccountModal) {
+        const closeButton = deleteAccountModal.querySelector('.close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                closeModal('deleteAccountModal');
+            });
+        }
+    }
+});
+
+function toggleSections(section) {
+    const accountSettingsSection = document.getElementById('accountSettingsSection');
+    const passwordSecuritySection = document.getElementById('passwordSecuritySection');
+
+    if (section === 'account') {
+        accountSettingsSection.style.display = 'block';
+        passwordSecuritySection.style.display = 'none';
+    } else if (section === 'password') {
+        accountSettingsSection.style.display = 'none';
+        passwordSecuritySection.style.display = 'block';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const accountSettingsLink = document.getElementById('accountSettingsLink');
+    const passwordSecurityLink = document.getElementById('passwordSecurityLink');
+
+    if (accountSettingsLink) {
+        accountSettingsLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            toggleSections('account');
+        });
+    }
+
+    if (passwordSecurityLink) {
+        passwordSecurityLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            toggleSections('password');
+        });
+    }
+});

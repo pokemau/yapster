@@ -7,36 +7,14 @@
     <title>Profile Page - Settings</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'profile_style.css' %}">
+    <script src="{% static 'yapster/index.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
 </head>
 <body>
 
-
 <div class="badi">
     <div class="baddie">
-        <nav>
-            <div id="logo-name-cont">
-                <h1>Y</h1>
-                <h2>Yapster</h2>
-            </div>
-
-            <div id="nav-options">
-                <div class="option">
-                    <img src="{% static 'chat/images/settings.png' %}" alt="Gear Icon"/>
-                </div>
-                <a href="{% url 'friend:friends_list' user_id=user.id %}">Friends</a>
-                <a href="{% url 'friend:friend_requests' %}">Friend Requests</a>
-                <a href="{% url 'logout' %}">Logout</a>
-                <div id="dots" class="option">
-                    <img
-                            src="{% static 'chat/images/dots.png' %}"
-                            alt="Triple Dots Icon"
-                    />
-                </div>
-                <a href="{% url 'profile_page' %}">
-                    <div id="nav-profile-pic"></div>
-                </a>
-            </div>
-        </nav>
+        {% include 'html/navbar.html' %}
 
         <div class="profile-page-container">
             <div class="profile-content">
@@ -50,88 +28,111 @@
                     <h4>{{ user.first_name|default_if_none:"Enter First Name" }} {{ user.last_name|default_if_none:"Enter Last Name" }}</h4>
 
                     <div class="left-navigation">
-                        <a href="{% url 'public_profile' %}" class="btn btn-primary btn-block mt-3">View Public
-                            Profile</a>
-                        <a href="{% url 'profile_page' %}" class="btn btn-primary btn-block mt-3">Account Settings</a>
-                        <a href="#" class="btn btn-primary btn-block mt-3">Password Security</a>
+                        <a href="{% url 'public_profile' %}" class="btn btn-primary btn-block mt-3">View Public Profile</a>
+                        <a href="#" id="accountSettingsLink" class="btn btn-primary btn-block mt-3">Account Settings</a>
+
+                        <a href="#" class="btn btn-primary btn-block mt-3" onclick="openModal('deleteAccountModal')">Delete Account</a>
+                        <a href="#" id="passwordSecurityLink" class="btn btn-primary btn-block mt-3">Password Security</a>
                     </div>
                 </div>
 
                 <div class="profile-main">
-                    <p class="font-size">Account Settings</p>
+                    <div id="accountSettingsSection" style="display: {% if not show_password_section %}block{% else %}none{% endif %};">
+                        <p class="font-size">Account Settings</p>
+                        <form class="profile-form mt-3" method="POST" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label for="firstName">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" name="first_name" value="{{ user.first_name|default_if_none:"" }}" placeholder="Enter First Name">
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" name="last_name" value="{{ user.last_name|default_if_none:"" }}" placeholder="Enter Last Name">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label for="phoneNumber">Phone Number</label>
+                                    <input type="text" class="form-control" id="phoneNumber" name="phone_number" value="{{ user.yapsteruser.phone_number|default_if_none:"" }}" placeholder="Enter Phone Number">
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="email">Email address</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email|default_if_none:"Enter Email Address" }}" placeholder="Enter Email Address">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label for="city">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" value="{{ user.yapsteruser.city|default_if_none:"" }}" placeholder="Enter City">
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="state">Municipality</label>
+                                    <input type="text" class="form-control" id="state" name="state" value="{{ user.yapsteruser.state|default_if_none:"" }}" placeholder="Enter State">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label for="postcode">Postcode</label>
+                                    <input type="text" class="form-control" id="postcode" name="postcode" value="{{ user.yapsteruser.postcode|default_if_none:"" }}" placeholder="Enter Postal Code">
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="country">Country</label>
+                                    <input type="text" class="form-control" id="country" name="country" value="{{ user.yapsteruser.country|default_if_none:"" }}" placeholder="Enter Country">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-11">
+                                    <label for="bio">Bio</label>
+                                    <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Enter Bio">{{ user.yapsteruser.bio|default_if_none:"" }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label>Profile Image</label>
+                                    <input type="file" class="form-control-file" id="profileImageInput" name="profile_image" accept="image/*">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary1 mt-3">Update</button>
+                        </form>
+                    </div>
 
-                    <form class="profile-form mt-3" method="POST" action="{% url 'update_profile' %}"
-                          enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                <label for="firstName">First Name</label>
-                                <input type="text" class="form-control" id="firstName" name="first_name"
-                                       value="{{ user.first_name|default_if_none:"" }}" placeholder="Enter First Name">
+                    <div id="passwordSecuritySection" style="display: {% if show_password_section %}block{% else %}none{% endif %};">
+                        <h2>Change Password</h2>
+                        <form id="changePasswordForm" method="POST" action="{% url 'change_password' %}">
+                            {% csrf_token %}
+                            <div class="form-group row justify-content-center form-group-margin">
+                                <label for="old_password" class="col-sm-4 col-form-label text-right">Current Password</label>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control form-control-half" id="old_password" name="old_password" required>
+                                </div>
                             </div>
-                            <div class="form-group col-md-5">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" name="last_name"
-                                       value="{{ user.last_name|default_if_none:"" }}" placeholder="Enter Last Name">
+                            <div class="form-group row justify-content-center">
+                                <label for="new_password1" class="col-sm-4 col-form-label text-right">New Password</label>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control form-control-half" id="new_password1" name="new_password1" required>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                <label for="phoneNumber">Phone Number</label>
-                                <input type="text" class="form-control" id="phoneNumber" name="phone_number"
-                                       value="{{ user.yapsteruser.phone_number|default_if_none:"" }}"
-                                       placeholder="Enter Phone Number">
+                            <div class="form-group row justify-content-center">
+                                <label for="new_password2" class="col-sm-4 col-form-label text-right">Confirm New Password</label>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control form-control-half" id="new_password2" name="new_password2" required>
+                                </div>
                             </div>
-                            <div class="form-group col-md-5">
-                                <label for="email">Email address</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                       value="{{ user.email|default_if_none:"Enter Email Address" }}"
-                                       placeholder="Enter Email Address">
+                            <div id="changePasswordMessage">
+                                {% for message in messages %}
+                                    {% if 'change_password' in message.tags %}
+                                        <div class="alert alert-{{ message.level_tag }}">{{ message }}</div>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                <label for="city">City</label>
-                                <input type="text" class="form-control" id="city" name="city"
-                                       value="{{ user.yapsteruser.city|default_if_none:"" }}" placeholder="Enter City">
+                            <div class="d-flex justify-content-center group-margin">
+                                <button type="submit" class="btn btn-primary2">Change Password</button>
+                                <button type="button" class="btn btn-secondary ml-2" onclick="toggleSections()">Cancel</button>
                             </div>
-                            <div class="form-group col-md-5">
-                                <label for="state">State/County</label>
-                                <input type="text" class="form-control" id="state" name="state"
-                                       value="{{ user.yapsteruser.state|default_if_none:"" }}"
-                                       placeholder="Enter State">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                <label for="postcode">Postcode</label>
-                                <input type="text" class="form-control" id="postcode" name="postcode"
-                                       value="{{ user.yapsteruser.postcode|default_if_none:"" }}"
-                                       placeholder="Enter Postal Code">
-                            </div>
-                            <div class="form-group col-md-5">
-                                <label for="country">Country</label>
-                                <input type="text" class="form-control" id="country" name="country"
-                                       value="{{ user.yapsteruser.country|default_if_none:"" }}"
-                                       placeholder="Enter Country">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-11">
-                                <label for="bio">Bio</label>
-                                <textarea class="form-control" id="bio" name="bio" rows="4"
-                                          placeholder="Enter Bio">{{ user.yapsteruser.bio|default_if_none:"" }}</textarea>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                <label>Profile Image</label>
-                                <input type="file" class="form-control-file" id="profileImageInput" name="profile_image"
-                                       accept="image/*">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary1 mt-3">Update</button>
-                    </form>
+                        </form>
+                    </div>
+
                 </div>
             </div>
 
@@ -143,6 +144,20 @@
                          alt="Profile Picture">
                 </div>
             </div>
+
+            <div id="deleteAccountModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('deleteAccountModal')">&times;</span>
+                    <h2>Delete Account</h2>
+                    <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                    <form id="deleteAccountForm" method="POST" action="{% url 'delete_account' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete Account</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('deleteAccountModal')">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

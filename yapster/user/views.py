@@ -7,6 +7,12 @@ from .models import YapsterUser, User
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm
 from django.core.files.base import File
+from django.contrib.auth import logout
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
+from django.contrib.auth.hashers import check_password
+
 
 """
 @login_required
@@ -165,3 +171,32 @@ def public_profile(request, user_id):
     yapster_user = user.yapsteruser
     return render(request, 'public_profile.html', {'user': user, 'yapster_user': yapster_user})
 
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        logout(request)
+        return redirect('landing_page')
+
+
+@login_required
+def change_password(request):
+    context = {'show_password_section': True}
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password1 = request.POST.get('new_password1')
+        new_password2 = request.POST.get('new_password2')
+
+        if not request.user.check_password(old_password):
+            messages.error(request, 'Current password is incorrect.', extra_tags='change_password')
+        elif new_password1 != new_password2:
+            messages.error(request, 'New passwords do not match.', extra_tags='change_password')
+        else:
+            request.user.set_password(new_password1)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            messages.success(request, 'Your password was successfully updated! Re-login!', extra_tags='change_password')
+            return redirect('login')
+    return render(request, 'profile_settings.html', context)

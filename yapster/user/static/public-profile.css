@@ -211,16 +211,19 @@ body {
 }
 
 .content {
-    display: flex;
     padding: 1.7rem 2.5rem 2.6rem 2.5rem;
+    position: relative;
 }
+
+
 
 .right {
     padding-top: 1.5rem;
     display: flex;
     flex-direction: column;
     text-align: right;
-    margin-left: 2.1rem;
+    margin-left: 15rem;
+    position: fixed;
 }
 
 .number {
@@ -229,6 +232,7 @@ body {
     color: #333;
     line-height: 1.2;
     margin-top: -20px;
+    /* margin-left: 150px; */
 }
 
 .number-title {
