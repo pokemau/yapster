@@ -1,14 +1,52 @@
 import { WORDS } from "./wordlist.js";
 
-let SECRET_WORD = "cream";
-
+const keyboard = document.querySelector(".keyboard");
 const keys = document.querySelectorAll(".key");
+
+document.addEventListener("keydown", handleKeyboardInput);
+keyboard.addEventListener("click", handleOnScreenKeyboardInput);
+
 
 let guessCount = 0;
 let letterCount = 0;
 let guess = "";
 
-function inWordList(guess) {}
+function handleKeyboardInput(e) {
+	const key = e.key.toUpperCase();
+
+	if (key == " ") {
+		return;
+	}
+	if (key == "BACKSPACE") {
+		eraseLetter();
+		return;
+	}
+	if (key == "ENTER") {
+		submitGuess();
+		return;
+	}
+
+	if (isLetter(key)) setTileText(key);
+}
+
+function handleOnScreenKeyboardInput(e) {
+	const target = e.target.getAttribute("data-key");
+	if (!target) {
+		return;
+	}
+	const key = target.toUpperCase();
+
+	if (key == "BACKSPACE") {
+		eraseLetter();
+		return;
+	}
+	if (key == "ENTER") {
+		submitGuess();
+		return;
+	}
+
+	if (isLetter(key)) setTileText(key);
+}
 
 function eraseLetter() {
 	if (letterCount == 0) {
@@ -49,45 +87,7 @@ function checkCorrectLetter(guessLetter, wordLetter, SECRET_WORD) {
 	else return "wrong";
 }
 
-function handleKeyboardInput(e) {
-	const key = e.key.toUpperCase();
-
-	if (key == " ") {
-		return;
-	}
-	if (key == "BACKSPACE") {
-		eraseLetter();
-		return;
-	}
-	if (key == "ENTER") {
-		submitGuess();
-		return;
-	}
-
-	if (isLetter(key)) setTileText(key);
-}
-
-function handleOnScreenKeyboardInput(e) {
-	const target = e.target.getAttribute("data-key");
-	if (!target) {
-		return;
-	}
-	const key = target.toUpperCase();
-
-	if (key == "BACKSPACE") {
-		eraseLetter();
-		return;
-	}
-	if (key == "ENTER") {
-		submitGuess();
-		return;
-	}
-
-	if (isLetter(key)) setTileText(key);
-}
-
 function submitGuess() {
-	console.log(letterCount);
 	if (letterCount != 5) {
 		alert("not enough letters");
 		return;
@@ -99,17 +99,45 @@ function checkGuess() {
 	guess = guess.toLowerCase();
 	SECRET_WORD = SECRET_WORD.toLowerCase();
 
-	if (guess == SECRET_WORD) {
-		guessCount++;
-		alert(`YOU GUESSED THE WORD IN ${guessCount} TRIES!`);
-		return;
-	}
 	if (!WORDS.includes(guess)) {
 		console.log(guess);
 		alert(`INVALID WORD`);
 		return;
 	}
+	updateColors();
 
+	if (guess == SECRET_WORD) {
+		gameWin();
+		return;
+	}
+
+	letterCount = 0;
+	if (guessCount < 5) guessCount++;
+	guess = "";
+}
+
+function gameWin() {
+	guessCount++;
+	alert(`YOU GUESSED THE WORD IN ${guessCount} TRIES!`);
+	document.removeEventListener("keydown", handleKeyboardInput);
+	keyboard.removeEventListener("click", handleOnScreenKeyboardInput);
+
+	const chatRoom = window.localStorage.getItem('chatName')
+	const boardCont = document.querySelector('.board-cont');
+	boardCont.innerHTML += `
+		<div class="win-cont">
+			<h2 class="win-cont__title">Guessed in ${guessCount} tries!</h2>	
+			<h2 class="win-cont__word">${SECRET_WORD}</h2>	
+			<a href=/chat/${chatRoom} class="win-cont__button">Share</a>
+		</div>
+	`
+
+	window.localStorage.setItem('guessCount', guessCount)
+
+	console.log(`CHAT NAEEEEEEEEEEEEEEEEEEEEEE ${chatRoom}`)
+}
+
+function updateColors() {
   for (let i = 0; i < SECRET_WORD.length; i++) {
     const currRow = document.getElementsByClassName("row")[guessCount];
     const currLetter = currRow.getElementsByClassName("tile")[i];
@@ -125,12 +153,5 @@ function checkGuess() {
     console.log(keyboardKey);
     keyboardKey.classList.add(correctness);
   }
-
-	letterCount = 0;
-	if (guessCount < 5) guessCount++;
-	guess = "";
 }
 
-const keyboard = document.querySelector(".keyboard");
-document.addEventListener("keydown", handleKeyboardInput);
-keyboard.addEventListener("click", handleOnScreenKeyboardInput);
