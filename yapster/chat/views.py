@@ -142,6 +142,15 @@ def message_view(request, chat_name):
         last_sender = message.sender  # Update the last sender
         counter+=1
 
+    #Chat room users
+    print("Chat room: ", chat_room.id)
+    chat_room_users = ChatUser.objects.filter(chat=chat_room.id)
+    print("Chat room users: ")
+    for user in chat_room_users:
+        print("User: ", user.member.user.username) 
+        print("Nickname: ", user.nickname)      
+        print("User ID: ", user.member.id)
+
     content = {
         "chat_room": chat_room,
         "content": content_messages,
@@ -149,7 +158,8 @@ def message_view(request, chat_name):
         'users': users, 
         'query': query,
         'chat_users_mapping' : chat_users_mapping,
-        "current_userID" : currentUserID
+        "current_userID" : currentUserID,
+        "chat_room_users" : chat_room_users
     }
     
     return render(request, 'chat.html', content)
