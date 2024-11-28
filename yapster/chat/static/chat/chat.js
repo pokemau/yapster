@@ -98,6 +98,12 @@ socket.addEventListener("message", (event) => {
     var messageDiv = document.querySelector('.messages');
     console.log("BufferVal: " + buffer);
 
+    let messageHTML = ``;
+    if (message.includes('[WORDLE]'))
+        messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
+    else 
+        messageHTML = `<p>${message}</p>`
+
     if (sender != user_logged_in) { 
         if(buffer == sender){
             messageDiv.innerHTML +=  
@@ -106,7 +112,7 @@ socket.addEventListener("message", (event) => {
             <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
             <div class="flex_message">
               <div class="bubble sender">
-                <p>${message}</p>
+                ${messageHTML}
               </div>
             </div>
           </div>
@@ -123,6 +129,12 @@ socket.addEventListener("message", (event) => {
             }
                 
         }else{
+            let messageHTML = ``;
+            if (message.includes('[WORDLE]'))
+                messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
+            else 
+                messageHTML = `<p>${message}</p>`
+
             messageDiv.innerHTML +=  
             `
             <div class="message_body" id="chatno${messageCount}">
@@ -132,14 +144,21 @@ socket.addEventListener("message", (event) => {
                         ${sender}
                     </div>
                     <div class="bubble sender">
-                        <p>${message}</p>
+                        ${messageHTML}
                     </div>
                 </div>
             </div>
             `
         }
     } else {
-        messageDiv.innerHTML += '<div class="bubble recipient"><p>' + message + '</p></div>';
+        if (message.includes('[WORDLE]'))
+            messageHTML = `<p>Guess my Wordle!</p>`
+        else 
+            messageHTML = `<p>${message}</p>`
+        messageDiv.innerHTML += `
+            <div class="bubble recipient">
+                ${messageHTML}
+            </div>`;
     }
 
     buffer = sender;
