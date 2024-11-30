@@ -1,3 +1,5 @@
+let selectedUsers = []; // Store selected users
+
 const closeUserDetail = document.querySelector("#close-icon");
 
 closeUserDetail.addEventListener("click", () => {
@@ -87,4 +89,96 @@ function loadChat(...targetUserId) {
 function toggleDropdown(element) {
   const dropdown = element.parentElement;
   dropdown.classList.toggle('show');
+}
+
+// Function to filter and display users based on query
+function filterUsers(query) {
+    const usersCont = document.getElementById("users-cont");
+    if (!query) {
+        usersCont.innerHTML = ""; // Clear queried users if input is empty
+        return;
+    }
+	
+    // Perform AJAX request to fetch users based on query
+    fetch(`/chat/query_stuff/query_users/?gc_query=${encodeURIComponent(query)}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+			"X-CSRFToken": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch users:  ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.users && data.users.length > 0) {
+                // Populate the users container
+                usersCont.innerHTML = data.users
+                    .map(
+                        (user) => `
+                    <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
+                        <div class="left-profile-pic"></div>
+                        <div class="name-time-msg">
+                            <div class="name-time">
+                                <p class="name">${user.first_name} ${user.last_name}</p>
+                                <p class="time-sent">@${user.username}</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+                    )
+                    .join("");
+            } else {
+                usersCont.innerHTML = "<p>No users found.</p>";
+            }
+        })
+        .catch((error) => console.error("Error fetching users:", error));
+}
+
+// Function to add a user to the selected names
+function addUser(firstName, lastName) {
+    const searchInput = document.getElementById("search-input");
+    const usersCont = document.getElementById("users-cont");
+
+    // Check if the user is already selected
+    if (selectedUsers.some((user) => user.firstName === firstName && user.lastName === lastName)) {
+        return;
+    }
+
+    // Add user to the selected list
+    selectedUsers.push({ firstName, lastName });
+
+    // Update the UI
+    const selectedNames = document.getElementById("selected-names");
+    const userDiv = document.createElement("div");
+    userDiv.className = "selected-name";
+    userDiv.innerHTML = `${firstName} ${lastName} 
+        <span class="remove-name" onclick="removeUser('${firstName}', '${lastName}')">&times;</span>`;
+    selectedNames.appendChild(userDiv);
+
+    // Clear the search input and query results
+    searchInput.value = "";
+    usersCont.innerHTML = "";
+}
+
+// Function to remove a user from the selected names
+function removeUser(firstName, lastName) {
+    selectedUsers = selectedUsers.filter(
+        (user) => user.firstName !== firstName || user.lastName !== lastName
+    );
+
+    // Update the UI
+    const selectedNames = document.getElementById("selected-names");
+    selectedNames.innerHTML = ""; // Clear all selected names
+    selectedUsers.forEach((user) => {
+        const userDiv = document.createElement("div");
+        userDiv.className = "selected-name";
+        userDiv.innerHTML = `${user.firstName} ${user.lastName} 
+            <span class="remove-name" onclick="removeUser('${user.firstName}', '${user.lastName}')">&times;</span>`;
+        selectedNames.appendChild(userDiv);
+    });
 }

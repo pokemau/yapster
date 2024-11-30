@@ -164,8 +164,31 @@ def message_view(request, chat_name):
     
     return render(request, 'chat.html', content)
 
-def create_gc(request):
-    pass
+def query_users(request):
+    if request.method == "GET":
+        query = request.GET.get('gc_query', '').strip()
+        if query:
+            users = YapsterUser.objects.filter(
+                Q(user__first_name__icontains=query) |
+                Q(user__last_name__icontains=query) |
+                Q(user__username__icontains=query)
+            ).exclude(id=request.user.yapsteruser.id)
+
+            users_data = [
+                {
+                    'id': user.id,
+                    'username': user.user.username,
+                    'first_name': user.user.first_name,
+                    'last_name': user.user.last_name,
+                } for user in users
+            ]
+            # print(json.dumps({"users": users_data}, indent=2))
+            return JsonResponse({"users": users_data})
+
+        return JsonResponse({"success": False, "error": "No query provided"}, status=400)
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
 
 def logout_user(request):
     logout(request)

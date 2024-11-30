@@ -22,12 +22,20 @@
     {% include 'html/navbar.html' %}
     <div id="main-cont">
       <div id="left-sidebar">
-        <div id="search-bar">
-          <form method="get" action="{% url 'chat' %}" class="input-bar">
-            <input type="text" name="search" placeholder="Search" value="{{ query }}" />
-          </form>
-          <p class="chat-create"><a href="{% url 'create_gc' %}">Create Chat</a></p>
-        </div>
+        <div id="search-bar-container">
+          <!-- Search input where selected names will appear -->
+          <div id="search-bar">
+              <div id="selected-names">
+                  <!-- Selected names will be dynamically added here -->
+              </div>
+              <input
+                  id="search-input"
+                  type="text"
+                  placeholder="Type a name..."
+                  oninput="filterUsers(this.value)"
+              />
+          </div>
+        </div>	
         <div id="users-cont">
           {% if query %}
               <!-- Search Results -->
