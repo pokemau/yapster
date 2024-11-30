@@ -154,6 +154,9 @@ def message_view(request, chat_name):
     
     return render(request, 'chat.html', content)
 
+def create_gc(request):
+    pass
+
 def logout_user(request):
     logout(request)
     return redirect('login')

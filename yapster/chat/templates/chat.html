@@ -23,9 +23,10 @@
     <div id="main-cont">
       <div id="left-sidebar">
         <div id="search-bar">
-          <form method="get" action="{% url 'chat' %}">
+          <form method="get" action="{% url 'chat' %}" class="input-bar">
             <input type="text" name="search" placeholder="Search" value="{{ query }}" />
           </form>
+          <p class="chat-create"><a href="{% url 'create_gc' %}">Create Chat</a></p>
         </div>
         <div id="users-cont">
           {% if query %}
