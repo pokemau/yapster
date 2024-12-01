@@ -16,6 +16,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         data = text_data_json
+        await self.create_message(data=data)
         # Trigger send_message method
         await self.channel_layer.group_send(
             self.chat_name,
@@ -27,7 +28,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def send_message(self, event):
         data = event['data']
         print(data)
-        await self.create_message(data=data)
+        # await self.create_message(data=data)
         # response_data = {
         #     'sender': data['sender'],
         #     'message': data['message']
@@ -46,19 +47,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender = User.objects.get(username=data['sender'])
             
             # Check for duplicates based on chat, sender, and content
-            if not Message.objects.filter(content=data['message'], chat=chat, sender=sender).exists():
-                new_message = Message(
-                    chat=chat,
-                    sender=sender,
-                    content=data['message']
-                )
-                new_message.save()
-                return {"success": True, "message": "Message saved successfully."}
-            else:
-                return {"success": False, "message": "Duplicate message not saved."}
+            # if not Message.objects.filter(content=data['message'], chat=chat, sender=sender).exists():
+            new_message = Message(
+                chat=chat,
+                sender=sender,
+                content=data['message']
+            )
+            new_message.save()
+            print(1)
+            return {"success": True, "message": "Message saved successfully."}
         except Chat.DoesNotExist:
+            print(2)
             return {"success": False, "message": "Chat room does not exist."}
         except User.DoesNotExist:
+            print(3)
             return {"success": False, "message": "Sender does not exist."}
         except Exception as e:
+            print(4)
             return {"success": False, "message": str(e)}

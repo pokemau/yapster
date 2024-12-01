@@ -24,6 +24,7 @@
         </div>
         <div class="user__actions">
           <a href="{% url 'friend:remove_friend' friend.user.id %}">Unfriend</a>
+          <a href="{% url 'friend:block_user' friend.user.id %}">Block</a>
         </div>
       </div>
       {% empty %}
