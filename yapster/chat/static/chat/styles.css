@@ -394,7 +394,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	width: 300px;
 	height: 100%;
 	border-left: 1px solid #cdd5de;
-	display: none;
+	/* display: none; */
 }
 
 .chat-sidebar-profile {
@@ -611,4 +611,47 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	cursor: pointer;
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
+}
+
+.nickname-popup {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 300px;
+  top: 0;
+  width: 60%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+}
+
+.nickname-popup-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.nickname-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nickname-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.edit-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
