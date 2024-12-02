@@ -93,31 +93,39 @@ function toggleDropdown(element) {
 
 // Function to filter and display users based on query
 function filterUsers(query) {
-    const usersCont = document.getElementById("users-cont");
+    const addMemberCont = document.getElementById("addMember-Cont"); // Div for queried users
+    const usersCont = document.getElementById("users-cont"); // Div for user's chats
+
     if (!query) {
-        usersCont.innerHTML = ""; // Clear queried users if input is empty
+        // If no query, show user's chats and clear queried users
+        addMemberCont.style.display = "none"; // Hide addMember-Cont
+        addMemberCont.innerHTML = ""; // Clear any previously displayed queried users
+        usersCont.style.display = "block"; // Show users-cont
         return;
     }
-	
+
     // Perform AJAX request to fetch users based on query
     fetch(`/chat/query_stuff/query_users/?gc_query=${encodeURIComponent(query)}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-			"X-CSRFToken": csrfToken,
+            "X-CSRFToken": csrfToken,
             "X-Requested-With": "XMLHttpRequest",
         },
     })
         .then((response) => {
             if (!response.ok) {
-                throw new Error(`Failed to fetch users:  ${response.status}`);
+                throw new Error(`Failed to fetch users: ${response.status}`);
             }
             return response.json();
         })
         .then((data) => {
             if (data.users && data.users.length > 0) {
-                // Populate the users container
-                usersCont.innerHTML = data.users
+                // Populate the addMember-Cont with queried users
+                addMemberCont.style.display = "block"; // Show addMember-Cont
+                usersCont.style.display = "none"; // Hide users-cont while displaying queried users
+
+                addMemberCont.innerHTML = data.users
                     .map(
                         (user) => `
                     <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
@@ -133,11 +141,19 @@ function filterUsers(query) {
                     )
                     .join("");
             } else {
-                usersCont.innerHTML = "<p>No users found.</p>";
+                // Show "No users found" message in addMember-Cont
+                addMemberCont.style.display = "block"; // Keep addMember-Cont visible
+                usersCont.style.display = "none"; // Hide users-cont
+                addMemberCont.innerHTML = "<p>No users found.</p>";
             }
         })
-        .catch((error) => console.error("Error fetching users:", error));
+        .catch((error) => {
+            console.error("Error fetching users:", error);
+            addMemberCont.style.display = "none"; // Hide addMember-Cont on error
+            usersCont.style.display = "block"; // Show users-cont again
+        });
 }
+
 
 // Function to add a user to the selected names
 function addUser(firstName, lastName) {

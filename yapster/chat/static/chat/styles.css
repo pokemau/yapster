@@ -44,11 +44,17 @@
 /*******************
 * USER
 *******************/
-#users-cont {
+.search-container{
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
 }
+
+/* #users-cont {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+} */
 
 .user {
 	padding: 10px 0;

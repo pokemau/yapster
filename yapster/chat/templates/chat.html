@@ -21,6 +21,7 @@
   <body>
     {% include 'html/navbar.html' %}
     <div id="main-cont">
+      <!-- 9999999999999999999999999l-vc -->
       <div id="left-sidebar">
         <div id="search-bar-container">
           <!-- Search input where selected names will appear -->
@@ -35,8 +36,12 @@
                   oninput="filterUsers(this.value)"
               />
           </div>
+          <p class="chat-create">Create Chat</p>
         </div>	
-        <div id="users-cont">
+        <div class="search-container" id="addMember-Cont">
+
+        </div>
+        <div class="search-container" id="users-cont">
           {% if query %}
               <!-- Search Results -->
               {% for user in users %}
