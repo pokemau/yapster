@@ -11,113 +11,125 @@
     <script src="{% static 'chat/index.js' %}" defer></script>
     <script type="module" src="{% static 'chat/chat.js' %}" defer></script>
     <script src="{% static 'yapster/index.js' %}" defer></script>
+    <script src="{% static 'chat/chat.js' %}" defer></script>
+    <script src="{% static 'chat/search.js' %}" defer></script>
 
     <title>Chat</title>
   </head>
   <script>
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
+    const currentUserID = {{ current_userID }};
   </script>
   <body>
     {% include 'html/navbar.html' %}
     <div id="main-cont">
+      <!-- 9999999999999999999999999l-vc -->
       <div id="left-sidebar">
-        <div id="search-bar">
-          <form method="get" action="{% url 'chat' %}">
-            <input type="text" name="search" placeholder="Search" value="{{ query }}" />
-          </form>
+        <div id="search-bar-container">
+          <!-- Search input where selected names will appear -->
+          <div id="search-bar">
+              <div id="selected-names" style="display: none;">
+                  <!-- Selected names will be dynamically added here in create-chat state -->
+              </div>
+              <input
+                  id="search-input"
+                  type="text"
+                  placeholder="Type a name..."
+                  oninput="handleSearchInput(this.value)"
+              />
+          </div>
+          <p class="chat-create" onclick="toggleCreateChatState()">Create Chat</p>
+          <p id="exit-create-chat" class="chat-exit" style="display: none;" onclick="toggleCreateChatState()">X</p>
         </div>
-        <div id="users-cont">
-          {% if query %}
-              <!-- Search Results -->
-              {% for user in users %}
-              <div class="user" onclick="loadUserDetails({{user.id}})" data-id="{{ user.id }}">
+        <div class="search-container" id="users-cont">
+          <div id="search-results"></div>
+          <div id="chat-list"></div>
+          <div id="current-chats">
+            <!-- Existing Chats -->
+            {% for chat in chat_users_mapping %}
+            <div class="user" onclick="loadChat({{ chat.user_ids|join:', ' }})" data-chat-id="{{ chat.chat_id }}">
                 <div class="left-profile-pic"></div>
                 <div class="name-time-msg">
-                  <div class="name-time">
-                    <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
-                    <p class="time-sent">Last seen: 1:06pm</p>
-                  </div>
-                  <p class="message">No message available</p>
-                </div>
-              </div>
-              {% empty %}
-              <p>No users found.</p>
-              {% endfor %}
-          {% else %}
-              <!-- Existing Chats -->
-              {% for chat in chat_users_mapping %}
-              <div class="user" 
-                  onclick="loadChat({{ chat.user_ids|join:', ' }})" 
-                   data-chat-id="{{ chat.chat_id }}">
-                  <div class="left-profile-pic"></div>
-                  <div class="name-time-msg">
-                      <div class="name-time">
-                        <p class="name">
+                    <div class="name-time">
+                      <p class="name">
+                        {% if chat.is_PM %}
+                          {% for nickname in chat.nicknames %}
+                            {% if nickname != chat.current_user_nickname %}
+                              {{ nickname }}
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
                           {{ chat.chat_name }}
-                        </p>
-                        <p class="members">
-                            {% for name in chat.user_names %}
-                                {{ name }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p>
-                        <p class="time-sent">Last seen: 1:06pm</p>
-                      </div>
-                      <p class="message">No message available</p>
-                  </div>
-              </div>
-              {% empty %}
-              <p>No chats available.</p>
-              {% endfor %}
-          {% endif %}
+                        {% endif %}
+                      </p>
+                      <!-- <p class="members">
+                          {% for name in chat.user_names %}
+                              {{ name }}{% if not forloop.last %}, {% endif %}
+                          {% endfor %}
+                      </p> -->
+
+                    </div>
+                    <p class="message">No message available</p>   
+                    <p class="time-sent">Last seen: 1:06pm</p>                      
+                </div>
+            </div>
+            {% empty %}
+            <p>No chats available.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
       <div id="mid-bar">
         <section class="messages">
-          <!-- received messages and displayed here -->
-          {% for i in content %} 
+          <!-- Messages rendered from the server -->
+          {% for i in content %}
+
+            
           {% if i.sender != user %}
-          <div class="bubble sender">
+              <div class="message_body" id="prevchat{{ forloop.counter }}">
             {% if "[WORDLE]"|contains:i.content %}
             <a href="/games/wordle/{{ i.content|slice }}">Guess my Wordle!</a>
             {% else %}
-            <p>{{i.content}}</p>
-            {% endif %}
+              {% if i.has_pfp %}
+                <div class="pfp" 
+                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
+                  {% endif %}
           </div>
-          {% else %}
-          <div class="bubble recipient">
-            {% if "[WORDLE]"|contains:i.content %}
+
+              {% else %}
+                <div class="empty_image"></div>
+
+              {% endif %}
+              <div class="flex_message">
+
+                {% if i.is_new_sender %}
+                  <div class="chatter_name">{{ i.sender }}</div>
+                {% endif %}
+
+                <div class="bubble sender">
+                  {% if "[WORDLE]"|contains:i.content %}
             <p>Guess my Wordle!</p>
             {% else %}
-            <p>{{i.content}}</p>
-            {% endif %}
+            <p>{{ i.message }}</p>
+                  {% endif %}
           </div>
-          {% endif %} {% endfor %}
-          <!-- end receive messages -->
-          <!-- test maessage -->
-          <!-- <div class="message_body">
-            <div class="empty_image"></div>
-            <div>
-              <div class="chatter_name">
-                Dunk it Jonathan
-              </div>
-              <div class="bubble sender">
-                <p>we gon be alrigth</p>
-              </div>
-            </div>
-          </div>
-        
-          <div class="message_body">
-            <div class="pfp one"></div>
-            <div class="bubble sender">
-              <p>we gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigth</p>
-            </div>
-          </div> -->
 
-          <!-- <p>STOOOOOOOP</p> -->
-          
-        </section>
+              </div>
+              </div>
+            {% else %}
+
+              <div class="bubble recipient" id="prevchat{{ forloop.counter }}">
+                <p>{{ i.message }}</p>
+              </div>
+
+            {% endif %}
+
+          {% endfor %}
+        </section>  
+        
+        
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
@@ -146,42 +158,6 @@
         </div>
 
       </div>
-      <!-- IMPLEMNMENT REALTIME HERE -->
-
-      <!--<div id="right-sidebar">
-         <div id="right-name-x">
-          <div id="pic-name-cont">
-            <div id="right-profile-pic"></div>
-            <p></p>
-          </div>
-          <div id="close-icon">
-            <img src="{% static 'chat/images/close.png' %}" alt="X Icon" />
-          </div>
-        </div>
-        <div id="right-info-cont">
-          <div id="right-username">
-            <h5></h5>
-            <p></p>
-          </div>
-          <div id="right-bio">
-            <h5></h5>
-            <p></p>
-          </div>
-        </div>
-        <div id="notifications-cont">
-          <h5>Notifications</h5>
-
-          <div class="checkbox-wrapper-2">
-            <input type="checkbox" class="sc-gJwTLC ikxBAC" />
-          </div>
-        </div>
-        <div id="user-options-cont">
-          <a href="#" id="block-user" class="user-option__a">Block User</a>
-          <p>Clear History</p>
-          <p>Delete Conversation</p>
-          <a href="#" id="add-friend" class="user-option__a">Add Friend</a>
-        </div> -->
-
         <div id="chat-sidebar">
           <div class="chat-sidebar-profile">
             <div class="chat-sidebar-profile-pic">
@@ -250,3 +226,61 @@
     </script>
   </body>
 </html>
+
+<!-- test maessage -->
+          <!-- <div class="message_body">
+            <div class="empty_image"></div>
+            <div>
+              <div class="chatter_name">
+                Dunk it Jonathan
+              </div>
+              <div class="bubble sender">
+                <p>we gon be alrigth</p>
+              </div>
+            </div>
+          </div>
+        
+          <div class="message_body">
+            <div class="pfp one"></div>
+            <div class="bubble sender">
+              <p>we gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigthwe gon be alrigth</p>
+            </div>
+          </div> -->
+
+          <!-- <p>STOOOOOOOP</p> -->
+
+      <!-- IMPLEMNMENT REALTIME HERE -->
+
+      <!--<div id="right-sidebar">
+         <div id="right-name-x">
+          <div id="pic-name-cont">
+            <div id="right-profile-pic"></div>
+            <p></p>
+          </div>
+          <div id="close-icon">
+            <img src="{% static 'chat/images/close.png' %}" alt="X Icon" />
+          </div>
+        </div>
+        <div id="right-info-cont">
+          <div id="right-username">
+            <h5></h5>
+            <p></p>
+          </div>
+          <div id="right-bio">
+            <h5></h5>
+            <p></p>
+          </div>
+        </div>
+        <div id="notifications-cont">
+          <h5>Notifications</h5>
+
+          <div class="checkbox-wrapper-2">
+            <input type="checkbox" class="sc-gJwTLC ikxBAC" />
+          </div>
+        </div>
+        <div id="user-options-cont">
+          <a href="#" id="block-user" class="user-option__a">Block User</a>
+          <p>Clear History</p>
+          <p>Delete Conversation</p>
+          <a href="#" id="add-friend" class="user-option__a">Add Friend</a>
+        </div> -->

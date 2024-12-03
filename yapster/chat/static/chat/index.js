@@ -1,8 +1,6 @@
-// const closeUserDetail = document.querySelector("#close-icon");
-
-// closeUserDetail.addEventListener("click", () => {
-// 	document.querySelector("#right-sidebar").style.display = "none";
-// });
+closeUserDetail.addEventListener("click", () => {
+	document.querySelector("#right-sidebar").style.display = "none";
+});
 
 async function loadUserDetails(userId) {
 	try {
@@ -62,8 +60,9 @@ async function loadUserDetails(userId) {
 }
 
 function loadChat(...targetUserId) {
+	console.log("Handa naba kayo mga pirata")
 	const allUserIDs = [...targetUserId]
-
+	
 	fetch(getOrCreateChatUrl, {
 		method: "POST",
 		headers: {

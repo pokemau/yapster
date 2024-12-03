@@ -12,9 +12,16 @@ class Chat(models.Model):
 class ChatUser(models.Model):
     member = models.ForeignKey(YapsterUser, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat , related_name='chatuser',on_delete=models.CASCADE)
+    nickname = models.CharField(max_length=255)
     #ChatUser
     #chatid = 0
     #member = 1
+    def save(self, *args, **kwargs):
+        if not self.nickname and self.member:
+            first_name = self.member.user.first_name or ""
+            last_name = self.member.user.last_name or ""
+            self.nickname = f"{first_name} {last_name}".strip()
+        super().save(*args, **kwargs)
 
 class Message(models.Model):
     

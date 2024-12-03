@@ -13,33 +13,80 @@
 * LEFT SIDEBAR 
 *******************/
 #left-sidebar {
-	width: 18rem;
+	width: 22rem;
 	border-right: 1px solid #cdd5de;
 }
 
 #search-bar {
 	width: 90%;
 	margin: 10px auto;
+	display: flex;
+}
+
+#search-bar .chat-create{
+	flex-grow: 1;
+}
+
+#search-bar .input-bar{
+	flex-grow: 4;
 }
 
 #search-bar input {
 	color: #8fa0af;
 	border: 1px solid #cdd5de;
 	border-radius: 8px;
-	width: 100%;
 	font-size: 0.8rem;
+	width: 100%;
 	padding: 5px 8px;
 	outline: none;
 }
 
+.chat-exit {
+    color: red;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+    display: inline;
+}
+
+#selected-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    padding: 5px;
+    background: #fff;
+}
+
+.selected-user {
+    background: #e0e0e0;
+    border-radius: 15px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.selected-user .remove-user {
+    margin-left: 10px;
+    color: red;
+    cursor: pointer;
+}
+
+
 /*******************
 * USER
 *******************/
-#users-cont {
+.search-container{
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
 }
+
+/* #users-cont {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+} */
 
 .user {
 	padding: 10px 0;
@@ -393,6 +440,10 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	background-color: #f1f1f1;
 	width: 300px;
 	height: 100%;
+	/* position: fixed; */
+	right: 0;
+	top: 0;
+	margin-top: 55px;
 	border-left: 1px solid #cdd5de;
 	display: none;
 }
