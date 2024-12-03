@@ -125,6 +125,8 @@ socket.addEventListener("message", (event) => {
 
             var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
 
+            console.log("Does it have pfp: " + hasNoPfp.length)
+
             if(hasNoPfp.length > 0){
                 document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
                 document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";

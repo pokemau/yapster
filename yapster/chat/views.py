@@ -10,11 +10,13 @@ from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 
 def chat_view(request):
+    #Message View Stuff
     if not request.user.is_authenticated:
         return redirect('login')
     
     query = request.GET.get('search', '').strip()
     users = None
+    currentUserID = request.user.yapsteruser.id
     chat_users_mapping = []
 
     if query:
@@ -32,17 +34,161 @@ def chat_view(request):
         for chat in chats:
             users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
             user_ids = [cu.member.id for cu in users_in_chat]
+            is_PM = len(user_ids) == 2
             user_names = [
                 f"{cu.member.user.first_name} {cu.member.user.last_name}" for cu in users_in_chat
             ]
+            nicknames_in_chat = ChatUser.objects.filter(chat=chat)
+            nicknames = [
+                f"{cu.nickname}" for cu in nicknames_in_chat
+            ]
+
+            current_user_chat_user = users_in_chat.get(member=request.user.yapsteruser)
+            current_user_nickname = current_user_chat_user.nickname
+
             chat_users_mapping.append({
                 'chat_id': chat.id,
                 'chat_name': chat.chat_name,
                 'user_ids': user_ids,
                 'user_names': user_names,
+                'is_PM': is_PM,
+                'nicknames': nicknames,
+                'current_user_nickname': current_user_nickname
             })
+
+    return render(request, 'chat.html', {'users': users, 'query': query, 'chat_users_mapping' : chat_users_mapping, "current_userID" : currentUserID})
+
+def message_view(request, chat_name):
+    #Message View Stuff
+    if not request.user.is_authenticated:
+        return redirect('login')
     
-    return render(request, 'chat.html', {'users': users, 'query': query, 'chat_users_mapping' : chat_users_mapping})
+    query = request.GET.get('search', '').strip()
+    users = None
+    currentUserID = request.user.yapsteruser.id
+    chat_users_mapping = []
+
+    if query:
+        users = YapsterUser.objects.filter(
+            (Q(user__first_name__icontains=query) |
+            Q(user__last_name__icontains=query) |
+            Q(user__username__icontains=query))
+        ).exclude(id=request.user.yapsteruser.id)
+    else:
+        # Get all chats involving the logged-in user
+        chat_ids = ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
+        chats = Chat.objects.filter(id__in=chat_ids)
+
+        # Build the chat_users_mapping
+        for chat in chats:
+            users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
+            user_ids = [cu.member.id for cu in users_in_chat]
+            is_PM = len(user_ids) == 2
+            user_names = [
+                f"{cu.member.user.first_name} {cu.member.user.last_name}" for cu in users_in_chat
+            ]
+            nicknames_in_chat = ChatUser.objects.filter(chat=chat)
+            nicknames = [
+                f"{cu.nickname}" for cu in nicknames_in_chat
+            ]
+
+            current_user_chat_user = users_in_chat.get(member=request.user.yapsteruser)
+            current_user_nickname = current_user_chat_user.nickname
+
+            nicknames_without_curruser = []
+
+            for cu in nicknames_in_chat:
+                if cu != current_user_nickname:
+                    nicknames_without_curruser.append(cu)
+            
+            chat_users_mapping.append({
+                'chat_id': chat.id,
+                'chat_name': chat.chat_name,
+                'user_ids': user_ids,
+                'user_names': user_names,
+                'is_PM': is_PM,
+                'nicknames': nicknames,
+                'current_user_nickname': current_user_nickname,
+                'nicknames_without_curruser': nicknames_without_curruser 
+            })
+
+    #Chat View Stuff
+    chat_room = Chat.objects.get(chat_name=chat_name)
+    messages = Message.objects.filter(chat=chat_room)
+
+    content_messages = []
+    last_sender = None
+
+    #Last sender functionality
+    senders = []
+    counter = 0
+
+    for message in messages:
+        senders.append(message.sender)
+
+    withPfp = [0] * len(senders)
+
+    for i in range(len(senders) - 1, -1, -1):
+        if i == len(senders) - 1 or senders[i] != senders[i + 1]:
+            withPfp[i] = 1
+
+    for message in messages:
+        content_messages.append({
+            'sender': message.sender,
+            'message': message.content,
+            'is_new_sender': last_sender != message.sender,  # Check if the sender is different
+            'has_pfp': withPfp[counter] == 1
+        })
+        last_sender = message.sender  # Update the last sender
+        counter+=1
+
+    #Chat room users
+    print("Chat room: ", chat_room.id)
+    chat_room_users = ChatUser.objects.filter(chat=chat_room.id)
+    print("Chat room users: ")
+    for user in chat_room_users:
+        print("User: ", user.member.user.username) 
+        print("Nickname: ", user.nickname)      
+        print("User ID: ", user.member.id)
+
+    content = {
+        "chat_room": chat_room,
+        "content": content_messages,
+        "sender" : request.user.username,
+        'users': users, 
+        'query': query,
+        'chat_users_mapping' : chat_users_mapping,
+        "current_userID" : currentUserID,
+        "chat_room_users" : chat_room_users
+    }
+    
+    return render(request, 'chat.html', content)
+
+def query_users(request):
+    if request.method == "GET":
+        query = request.GET.get('gc_query', '').strip()
+        if query:
+            users = YapsterUser.objects.filter(
+                Q(user__first_name__icontains=query) |
+                Q(user__last_name__icontains=query) |
+                Q(user__username__icontains=query)
+            ).exclude(id=request.user.yapsteruser.id)
+
+            users_data = [
+                {
+                    'id': user.id,
+                    'username': user.user.username,
+                    'first_name': user.user.first_name,
+                    'last_name': user.user.last_name,
+                } for user in users
+            ]
+            # print(json.dumps({"users": users_data}, indent=2))
+            return JsonResponse({"users": users_data})
+
+        return JsonResponse({"success": False, "error": "No query provided"}, status=400)
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
 
 def logout_user(request):
     logout(request)
@@ -144,36 +290,8 @@ def find_chat(user_ids):
 
     return None
 
-def get_user_chats_with_id(request):
-    pass
-
-def message_view(request, chat_name):
-    query = request.GET.get('search', '').strip()
-    if query:
-        users = YapsterUser.objects.filter(
-            (Q(user__first_name__icontains=query) |
-            Q(user__last_name__icontains=query) |
-            Q(user__username__icontains=query))
-        ).exclude(id=request.user.yapsteruser.id)
-    else:
-        #Chat list here
-        users = YapsterUser.objects.exclude(id=request.user.yapsteruser.id)
-
-    chat_room = Chat.objects.get(chat_name=chat_name)
-    content_messages = Message.objects.filter(chat=chat_room)
-    content = {
-        "chat_room": chat_room,
-        "content": content_messages,
-        "sender" : request.user.username,
-        'users': users, 
-        'query': query
-    }
-    print("CHAT: \n", chat_room)
-    
-
-
-    return render(request, 'chat.html', content)
-
+def test_chat_view(request):
+    return render(request, 'test_chat_selector.html')
 
 #Temp Chat for chatting unchatted user
 # def temp_chat_view(request, user_id):

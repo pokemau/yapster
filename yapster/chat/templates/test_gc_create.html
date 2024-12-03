@@ -1,0 +1,7 @@
+<h1>Select Members</h1>
+<form action="{% url 'create_gc' %}" method="POST">
+    {% csrf_token %}
+    <input type="text" placeholder="Chat name" name="chat"><br>
+    
+    <button type="submit">Submit</button>
+</form>
