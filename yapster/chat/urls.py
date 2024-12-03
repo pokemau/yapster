@@ -11,8 +11,6 @@ urlpatterns = [
     path('<str:chat_name>/', views.message_view, name='chat_name'),
     path('query_stuff/query_users/', views.query_users, name="query_users"),
 
-    path('test_chat_selector/', views.test_chat_view, name='test_chat_selector'),
-
     # path('search/', views.search_user, name='search_user'),
     # path('temp/<int:user_id>/', views.temp_chat_view, name="temp_chat"),
 ]

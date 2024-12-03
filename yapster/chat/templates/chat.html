@@ -48,7 +48,7 @@
           <div id="current-chats">
             <!-- Existing Chats -->
             {% for chat in chat_users_mapping %}
-            <div class="user" onclick="loadChat({{ chat.user_ids|join:', ' }})" data-chat-id="{{ chat.chat_id }}">
+            <div class="user" onclick="loadChatWithID({{ chat.chat_id }})" data-chat-id="{{ chat.chat_id }}">
                 <div class="left-profile-pic"></div>
                 <div class="name-time-msg">
                     <div class="name-time">

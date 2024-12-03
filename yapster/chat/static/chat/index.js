@@ -83,6 +83,13 @@ function loadChat(...targetUserId) {
 		.catch((error) => console.error("Error:", error));
 }
 
+function loadChatWithID(chatId) {
+    console.log("Loading chat with ID:", chatId);
+
+    // Redirect the user to the chat URL based on the chat ID
+    window.location.href = `/chat/${chatId}/`;
+}
+
 function toggleDropdown(element) {
   const dropdown = element.parentElement;
 	dropdown.classList.toggle("show");
