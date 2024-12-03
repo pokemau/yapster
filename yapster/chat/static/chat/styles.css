@@ -588,7 +588,9 @@ html { font-family: 'PT Sans', Georgia, serif; }
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+	width: 50%;
+	min-width: 600px;
+	text-align: center;
 }
 
 /* The Close Button */
@@ -611,4 +613,22 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	cursor: pointer;
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
+}
+#word-input {
+	margin-top: 10px;
+  padding: 5px;
+  outline: none;
+  width: 300px;
+
+  color: #1c1c1c;
+  border: 1px solid #cdd5de;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 5px 8px;
+  outline: none;
+}
+#wordle-form {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }

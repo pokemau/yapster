@@ -43,9 +43,11 @@ const wordleForm = document.querySelector('#wordle-form');
 wordleForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const inputWord = document.querySelector('#word-input').value
+    if (inputWord.length != 5) {
+        alert("Word must be of length 5!")
+        return
+    }
     if (WORDS.includes(inputWord)) {
-        console.log("VALID WORD");
-        
         fetch('/games/wordle/create_game', {
             method: 'POST',
             headers: {
@@ -63,15 +65,15 @@ wordleForm.addEventListener('submit', function(e) {
                         'message': `[WORDLE]${data.game}`,
                         'chat_name': `${chat_name}`,
                         'sender': `${user_logged_in}`,
-                })
-        );
+                }));
+                alert("Wordle created successfully!")
             } else {
                 console.error("Failed to create WordleGame:", data.error);
             }
         })
         .catch(error => console.error("Error:", error));
     } else {
-        console.log("INVALID WORD")
+        alert("INVALID WORD")
     }
 })
 
