@@ -10,6 +10,7 @@
     <script src="{% static 'chat/index.js' %}" defer></script>
     <script src="{% static 'yapster/index.js' %}" defer></script>
     <script src="{% static 'chat/chat.js' %}" defer></script>
+    <script src="{% static 'chat/search.js' %}" defer></script>
 
     <title>Chat</title>
   </head>
@@ -26,73 +27,57 @@
         <div id="search-bar-container">
           <!-- Search input where selected names will appear -->
           <div id="search-bar">
-              <div id="selected-names">
-                  <!-- Selected names will be dynamically added here -->
+              <div id="selected-names" style="display: none;">
+                  <!-- Selected names will be dynamically added here in create-chat state -->
               </div>
               <input
                   id="search-input"
                   type="text"
                   placeholder="Type a name..."
-                  oninput="filterUsers(this.value)"
+                  oninput="handleSearchInput(this.value)"
               />
           </div>
-          <p class="chat-create">Create Chat</p>
-        </div>	
-        <div class="search-container" id="addMember-Cont">
-
+          <p class="chat-create" onclick="toggleCreateChatState()">Create Chat</p>
+          <p id="exit-create-chat" class="chat-exit" style="display: none;" onclick="toggleCreateChatState()">X</p>
         </div>
         <div class="search-container" id="users-cont">
-          {% if query %}
-              <!-- Search Results -->
-              {% for user in users %}
-              <div class="user" onclick="loadUserDetails({{user.id}})" data-id="{{ user.id }}">
+          <div id="search-results"></div>
+          <div id="chat-list"></div>
+          <div id="current-chats">
+            <!-- Existing Chats -->
+            {% for chat in chat_users_mapping %}
+            <div class="user" onclick="loadChat({{ chat.user_ids|join:', ' }})" data-chat-id="{{ chat.chat_id }}">
                 <div class="left-profile-pic"></div>
                 <div class="name-time-msg">
-                  <div class="name-time">
-                    <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
-                    <p class="time-sent">Last seen: 1:06pm</p>
-                  </div>
-                  <p class="message">No message available</p>
-                </div>
-              </div>
-              {% empty %}
-              <p>No users found.</p>
-              {% endfor %}
-          {% else %}
-              <!-- Existing Chats -->
-              {% for chat in chat_users_mapping %}
-              <div class="user" onclick="loadChat({{ chat.user_ids|join:', ' }})" data-chat-id="{{ chat.chat_id }}">
-                  <div class="left-profile-pic"></div>
-                  <div class="name-time-msg">
-                      <div class="name-time">
-                        <p class="name">
-                          {% if chat.is_PM %}
-                            {% for nickname in chat.nicknames %}
-                              {% if nickname != chat.current_user_nickname %}
-                                {{ nickname }}
-                              {% endif %}
-                            {% endfor %}
-                          {% else %}
-                            {{ chat.chat_name }}
-                          {% endif %}
-                        </p>
-                        <!-- <p class="members">
-                            {% for name in chat.user_names %}
-                                {{ name }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p> -->
+                    <div class="name-time">
+                      <p class="name">
+                        {% if chat.is_PM %}
+                          {% for nickname in chat.nicknames %}
+                            {% if nickname != chat.current_user_nickname %}
+                              {{ nickname }}
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
+                          {{ chat.chat_name }}
+                        {% endif %}
+                      </p>
+                      <!-- <p class="members">
+                          {% for name in chat.user_names %}
+                              {{ name }}{% if not forloop.last %}, {% endif %}
+                          {% endfor %}
+                      </p> -->
 
-                      </div>
-                      <p class="message">No message available</p>   
-                      <p class="time-sent">Last seen: 1:06pm</p>                      
-                  </div>
-              </div>
-              {% empty %}
-              <p>No chats available.</p>
-              {% endfor %}
-          {% endif %}
+                    </div>
+                    <p class="message">No message available</p>   
+                    <p class="time-sent">Last seen: 1:06pm</p>                      
+                </div>
+            </div>
+            {% empty %}
+            <p>No chats available.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
       <div id="mid-bar">
         <section class="messages">

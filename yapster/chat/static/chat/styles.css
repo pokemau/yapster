@@ -41,6 +41,38 @@
 	outline: none;
 }
 
+.chat-exit {
+    color: red;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+    display: inline;
+}
+
+#selected-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    padding: 5px;
+    background: #fff;
+}
+
+.selected-user {
+    background: #e0e0e0;
+    border-radius: 15px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.selected-user .remove-user {
+    margin-left: 10px;
+    color: red;
+    cursor: pointer;
+}
+
+
 /*******************
 * USER
 *******************/

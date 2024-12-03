@@ -1,7 +1,3 @@
-let selectedUsers = []; // Store selected users
-
-const closeUserDetail = document.querySelector("#close-icon");
-
 closeUserDetail.addEventListener("click", () => {
 	document.querySelector("#right-sidebar").style.display = "none";
 });
@@ -64,6 +60,7 @@ async function loadUserDetails(userId) {
 }
 
 function loadChat(...targetUserId) {
+	console.log("Handa naba kayo mga pirata")
 	const allUserIDs = [...targetUserId]
 	
 	fetch(getOrCreateChatUrl, {
@@ -89,112 +86,4 @@ function loadChat(...targetUserId) {
 function toggleDropdown(element) {
   const dropdown = element.parentElement;
   dropdown.classList.toggle('show');
-}
-
-// Function to filter and display users based on query
-function filterUsers(query) {
-    const addMemberCont = document.getElementById("addMember-Cont"); // Div for queried users
-    const usersCont = document.getElementById("users-cont"); // Div for user's chats
-
-    if (!query) {
-        // If no query, show user's chats and clear queried users
-        addMemberCont.style.display = "none"; // Hide addMember-Cont
-        addMemberCont.innerHTML = ""; // Clear any previously displayed queried users
-        usersCont.style.display = "block"; // Show users-cont
-        return;
-    }
-
-    // Perform AJAX request to fetch users based on query
-    fetch(`/chat/query_stuff/query_users/?gc_query=${encodeURIComponent(query)}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken,
-            "X-Requested-With": "XMLHttpRequest",
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch users: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.users && data.users.length > 0) {
-                // Populate the addMember-Cont with queried users
-                addMemberCont.style.display = "block"; // Show addMember-Cont
-                usersCont.style.display = "none"; // Hide users-cont while displaying queried users
-
-                addMemberCont.innerHTML = data.users
-                    .map(
-                        (user) => `
-                    <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
-                        <div class="left-profile-pic"></div>
-                        <div class="name-time-msg">
-                            <div class="name-time">
-                                <p class="name">${user.first_name} ${user.last_name}</p>
-                                <p class="time-sent">@${user.username}</p>
-                            </div>
-                        </div>
-                    </div>
-                `
-                    )
-                    .join("");
-            } else {
-                // Show "No users found" message in addMember-Cont
-                addMemberCont.style.display = "block"; // Keep addMember-Cont visible
-                usersCont.style.display = "none"; // Hide users-cont
-                addMemberCont.innerHTML = "<p>No users found.</p>";
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching users:", error);
-            addMemberCont.style.display = "none"; // Hide addMember-Cont on error
-            usersCont.style.display = "block"; // Show users-cont again
-        });
-}
-
-
-// Function to add a user to the selected names
-function addUser(firstName, lastName) {
-    const searchInput = document.getElementById("search-input");
-    const usersCont = document.getElementById("users-cont");
-
-    // Check if the user is already selected
-    if (selectedUsers.some((user) => user.firstName === firstName && user.lastName === lastName)) {
-        return;
-    }
-
-    // Add user to the selected list
-    selectedUsers.push({ firstName, lastName });
-
-    // Update the UI
-    const selectedNames = document.getElementById("selected-names");
-    const userDiv = document.createElement("div");
-    userDiv.className = "selected-name";
-    userDiv.innerHTML = `${firstName} ${lastName} 
-        <span class="remove-name" onclick="removeUser('${firstName}', '${lastName}')">&times;</span>`;
-    selectedNames.appendChild(userDiv);
-
-    // Clear the search input and query results
-    searchInput.value = "";
-    usersCont.innerHTML = "";
-}
-
-// Function to remove a user from the selected names
-function removeUser(firstName, lastName) {
-    selectedUsers = selectedUsers.filter(
-        (user) => user.firstName !== firstName || user.lastName !== lastName
-    );
-
-    // Update the UI
-    const selectedNames = document.getElementById("selected-names");
-    selectedNames.innerHTML = ""; // Clear all selected names
-    selectedUsers.forEach((user) => {
-        const userDiv = document.createElement("div");
-        userDiv.className = "selected-name";
-        userDiv.innerHTML = `${user.firstName} ${user.lastName} 
-            <span class="remove-name" onclick="removeUser('${user.firstName}', '${user.lastName}')">&times;</span>`;
-        selectedNames.appendChild(userDiv);
-    });
 }
