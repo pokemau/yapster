@@ -8,10 +8,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
-    <script src="{% static 'chat/index.js' %}" defer></script>
+
     <script type="module" src="{% static 'chat/chat.js' %}" defer></script>
+    <script src="{% static 'chat/index.js' %}" defer></script>
     <script src="{% static 'yapster/index.js' %}" defer></script>
-    <script src="{% static 'chat/chat.js' %}" defer></script>
     <script src="{% static 'chat/search.js' %}" defer></script>
 
     <title>Chat</title>
@@ -87,19 +87,14 @@
           {% for i in content %}
           {% if i.sender != user %}
           <div class="message_body" id="prevchat{{ forloop.counter }}">
-            {% if "[WORDLE]"|contains:i.content %}
-            <a href="/games/wordle/{{ i.content|slice }}">Guess my Wordle!</a>
+            {% if i.has_pfp %}
+              <div class="pfp" 
+                style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
+              </div>
             {% else %}
-
-              {% if i.has_pfp %}
-                <div class="pfp" 
-                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
-                </div>
-              {% else %}
-                <div class="empty_image"></div>
-              {% endif %}
-
+              <div class="empty_image"></div>
             {% endif %}
+
 
             <div class="flex_message">
               {% if i.is_new_sender %}
@@ -107,25 +102,28 @@
               {% endif %}
 
               <div class="bubble sender">
-              {% if "[WORDLE]"|contains:i.content %}
-              <p>Guess my Wordle!</p>
+              {% if "[WORDLE]"|contains:i.message %}
+                <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
               {% else %}
-              <p>{{ i.message }}</p>
+                <p>{{ i.message }}</p>
               {% endif %}
               </div>
-
             </div>
           </div>
 
           {% else %}
             <div class="bubble recipient" id="prevchat{{ forloop.counter }}">
+            {% if "[WORDLE]"|contains:i.message %}
+              <p>Guess my Wordle!</p>
+            {% else %}
               <p>{{ i.message }}</p>
-            </div>
             {% endif %}
+            </div>
+          {% endif %}
           {% endfor %}
 
-        </section>  
-        
+        </section>
+
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
@@ -134,6 +132,7 @@
                 <button id="send-btn" type="submit">Send</button>
             </div>
         </form>
+      </div>
 
 
         <div id="myModal" class="modal">

@@ -1,6 +1,6 @@
-closeUserDetail.addEventListener("click", () => {
-	document.querySelector("#right-sidebar").style.display = "none";
-});
+// closeUserDetail.addEventListener("click", () => {
+// 	document.querySelector("#right-sidebar").style.display = "none";
+// });
 
 async function loadUserDetails(userId) {
 	try {
