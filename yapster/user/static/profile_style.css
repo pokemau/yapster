@@ -55,7 +55,6 @@
     width: 300px;
     padding: 20px;
     background: linear-gradient(90deg, #D2736F, #E89686, #E6B09E ) no-repeat center center fixed;
-    background-size: 200% 50%;
     border-radius: 5px 5px 5px 5px;
     box-shadow: 5px 0 35px rgba(0, 0, 0, 0.1),
     0 -15px 35px rgba(0, 0, 0, 0.1),
@@ -72,6 +71,7 @@
     height: 150px;
     object-fit: cover;
     border-radius: 50%;
+    margin: 0 auto;
 }
 
 .profile-sidebar h4 {
@@ -159,6 +159,21 @@
     color: #4b4b4b;
 }
 
+.btn-primary2 {
+    background-color: rgb(239, 121, 121);
+    border-color: #d58077;
+    color: #ffffff;
+    width: 40%;
+    font-weight: 250;
+    border-radius: 5px;
+}
+
+.btn-primary2:hover {
+    background-color: #fbbdbd;
+    border-color: #fbbdbd;
+    color: #4b4b4b;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -199,8 +214,9 @@
 }
 
 .modal-content img {
-    max-width: 70%;
-    height: 100%;
+    width: auto;
+    height: auto;
+    max-width: 100%;
     display: block;
     margin: 0 auto;
     align-items: center;
@@ -221,11 +237,6 @@
     color: black;
     text-decoration: none;
     cursor: pointer;
-}
-
-.modal-content img {
-    max-width: 70%;
-    height: auto;
 }
 
 .font-size {
@@ -302,6 +313,18 @@ nav {
     .profile-form .form-group {
         width: 100%;
     }
+}
+
+.form-control-half {
+    width: 100%;
+}
+
+.form-group-margin {
+    margin-top: 50px;
+}
+
+.group-margin {
+    margin-top: 50px;
 }
 
 /* #profileImageInput {

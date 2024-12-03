@@ -80,10 +80,26 @@ function loadChat(...targetUserId) {
 			console.error("Error:", data.error);
 		}
 	})
-	.catch(error => console.error("Error:", error));
+		.catch((error) => console.error("Error:", error));
 }
 
 function toggleDropdown(element) {
   const dropdown = element.parentElement;
-  dropdown.classList.toggle('show');
+	dropdown.classList.toggle("show");
+}
+
+// Modal stuff
+var modal = document.getElementById("myModal");
+const btn = document.querySelector("#wordle-btn");
+btn.addEventListener('click', () => {
+  modal.style.display = "block";
+})
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+var span = document.getElementsByClassName("close")[0];
+span.onclick = function() {
+  modal.style.display = "none";
 }
