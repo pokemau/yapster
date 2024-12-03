@@ -85,50 +85,46 @@
         <section class="messages">
           <!-- Messages rendered from the server -->
           {% for i in content %}
-
-            
           {% if i.sender != user %}
-              <div class="message_body" id="prevchat{{ forloop.counter }}">
+          <div class="message_body" id="prevchat{{ forloop.counter }}">
             {% if "[WORDLE]"|contains:i.content %}
             <a href="/games/wordle/{{ i.content|slice }}">Guess my Wordle!</a>
             {% else %}
+
               {% if i.has_pfp %}
                 <div class="pfp" 
                   style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
-                  {% endif %}
-          </div>
-
+                </div>
               {% else %}
                 <div class="empty_image"></div>
-
               {% endif %}
-              <div class="flex_message">
-
-                {% if i.is_new_sender %}
-                  <div class="chatter_name">{{ i.sender }}</div>
-                {% endif %}
-
-                <div class="bubble sender">
-                  {% if "[WORDLE]"|contains:i.content %}
-            <p>Guess my Wordle!</p>
-            {% else %}
-            <p>{{ i.message }}</p>
-                  {% endif %}
-          </div>
-
-              </div>
-              </div>
-            {% else %}
-
-              <div class="bubble recipient" id="prevchat{{ forloop.counter }}">
-                <p>{{ i.message }}</p>
-              </div>
 
             {% endif %}
 
+            <div class="flex_message">
+              {% if i.is_new_sender %}
+                <div class="chatter_name">{{ i.sender }}</div>
+              {% endif %}
+
+              <div class="bubble sender">
+              {% if "[WORDLE]"|contains:i.content %}
+              <p>Guess my Wordle!</p>
+              {% else %}
+              <p>{{ i.message }}</p>
+              {% endif %}
+              </div>
+
+            </div>
+          </div>
+
+          {% else %}
+            <div class="bubble recipient" id="prevchat{{ forloop.counter }}">
+              <p>{{ i.message }}</p>
+            </div>
+            {% endif %}
           {% endfor %}
+
         </section>  
-        
         
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
