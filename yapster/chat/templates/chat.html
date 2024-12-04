@@ -210,6 +210,18 @@
       window.localStorage.setItem('chatName',chat_name)
       if (!window.localStorage.getItem('guessCount'))
         window.localStorage.setItem('guessCount', 0)
+
+      function togglePopup(popupId) {
+      const popup = document.getElementById(popupId);
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+        }
+
+      window.onclick = function(event) {
+        const popup = document.getElementById('nickname-popup');
+        if (event.target === popup) {
+          popup.style.display = "none";
+        }
+      }
     </script>
   </body>
 </html>
