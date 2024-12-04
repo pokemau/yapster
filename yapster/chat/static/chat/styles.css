@@ -692,15 +692,12 @@ html { font-family: 'PT Sans', Georgia, serif; }
     margin-bottom: 10px;
     position: relative;
 }
-
 .nickname-item .profile-pic {
     margin-right: 10px;
 }
-
 .nickname-item .nickname {
     flex-grow: 1;
 }
-
 .nickname-item .edit-icon,
 .nickname-item .save-nickname-btn {
     width: 20px;
@@ -708,7 +705,6 @@ html { font-family: 'PT Sans', Georgia, serif; }
     margin-left: auto; /* Push icons to the right */
     cursor: pointer;
 }
-
 .nickname-item .edit-nickname-input {
     width: 400px; /* Set a fixed width */
 	height: 30px;
@@ -716,7 +712,6 @@ html { font-family: 'PT Sans', Georgia, serif; }
     margin-left: 10px;
     flex-grow: 0; /* Prevent it from growing */
 }
-
 .nickname-item .save-nickname-btn {
     width: 20px; /* Adjust the width as needed */
     height: 20px; /* Adjust the height as needed */
@@ -735,7 +730,6 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	height: 20px;
 	cursor: pointer;
 }
-
 .save-nickname-btn {
     margin-left: 10px;
     cursor: pointer;
