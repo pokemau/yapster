@@ -203,3 +203,56 @@ socket.onclose = (event) => {
     console.log("WebSocket connection closed!");
 };
 
+document.addEventListener('DOMContentLoaded', function() {
+    const editIcons = document.querySelectorAll('.edit-icon');
+    editIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const nicknameItem = this.closest('.nickname-item');
+            const nicknameSpan = nicknameItem.querySelector('.nickname');
+            const editInput = nicknameItem.querySelector('.edit-nickname-input');
+            const saveButton = nicknameItem.querySelector('.save-nickname-btn');
+            nicknameSpan.style.display = 'none';
+            editInput.style.display = 'block';
+            saveButton.style.display = 'block';
+            this.style.display = 'none';
+            editInput.value = nicknameSpan.textContent;
+        });
+    });
+    const saveButtons = document.querySelectorAll('.save-nickname-btn');
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const nicknameItem = this.closest('.nickname-item');
+            const nicknameSpan = nicknameItem.querySelector('.nickname');
+            const editInput = nicknameItem.querySelector('.edit-nickname-input');
+            const editIcon = nicknameItem.querySelector('.edit-icon');
+            nicknameSpan.textContent = editInput.value;
+            nicknameSpan.style.display = 'block';
+            editInput.style.display = 'none';
+            this.style.display = 'none';
+            editIcon.style.display = 'block';
+            // Optionally, send the updated nickname to the server
+            fetch('/update-nickname/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ nickname: editInput.value })
+            });
+        });
+    });
+});
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

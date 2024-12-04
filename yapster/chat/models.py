@@ -6,7 +6,7 @@ from user.models import YapsterUser, User
 # Chat Contains User and Message
 class Chat(models.Model):
     chat_name = models.CharField(max_length=255, default="", blank=True)
-    is_pm = models.BooleanField(default=True)
+    is_pm = models.BooleanField(default=False)
     def __str(self):
         return self.chat_name
 
