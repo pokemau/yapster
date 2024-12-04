@@ -201,12 +201,13 @@
           </div>
       </div>
 
+    <!--
       <div id="nickname-popup" class="nickname-popup">
         <div class="nickname-popup-content">
           <span class="close" onclick="togglePopup('nickname-popup')">&times;</span>
           <h2>Edit Nicknames</h2>
           <div class="nickname-list">
-            <!-- {% for chat in chat_users_mapping %}
+             {% for chat in chat_users_mapping %}
                 {% for user in chat.user_names %}
                   <div class="nickname-item">
                     <img id="profileImage" src="
@@ -217,11 +218,32 @@
                     <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
                   </div>
                 {% endfor %}
-            {% endfor %} -->
+            {% endfor %}
               <p>[LAYOUT ONLY, NO FUNCTION] di ko sure unson ni pag test pero please check code for more info</p>
           </div>
         </div>
       </div>
+    -->
+
+    <div id="nickname-popup" class="nickname-popup">
+      <div class="nickname-popup-content">
+        <span class="close" onclick="togglePopup('nickname-popup')">&times;</span>
+        <h2>Edit Nicknames</h2>
+        <div class="nickname-list">
+          <div class="nickname-item">
+            <img src="{% static 'images/default_profile.jpg' %}" alt="Profile Picture" class="profile-pic">
+            <span class="nickname">Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr.</span>
+            <input type="text" class="edit-nickname-input" style="display: none;">
+            <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
+            <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+
     </div>
 
     <script>

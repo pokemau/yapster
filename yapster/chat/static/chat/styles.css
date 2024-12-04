@@ -671,33 +671,72 @@ html { font-family: 'PT Sans', Georgia, serif; }
   }
   
 .nickname-popup-content {
-background-color: #fefefe;
-margin: 15% auto;
-padding: 20px;
-border: 1px solid #888;
-width: 80%;
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
 }
 
 .nickname-list {
-display: flex;
-flex-direction: column;
-gap: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 20px;
 }
 
 .nickname-item {
-display: flex;
-align-items: center;
-gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.nickname-item .profile-pic {
+    margin-right: 10px;
+}
+
+.nickname-item .nickname {
+    flex-grow: 1;
+}
+
+.nickname-item .edit-icon,
+.nickname-item .save-nickname-btn {
+    width: 20px;
+    height: 20px;
+    margin-left: auto; /* Push icons to the right */
+    cursor: pointer;
+}
+
+.nickname-item .edit-nickname-input {
+    width: 400px; /* Set a fixed width */
+	height: 30px;
+	font-size: 16px;
+    margin-left: 10px;
+    flex-grow: 0; /* Prevent it from growing */
+}
+
+.nickname-item .save-nickname-btn {
+    width: 20px; /* Adjust the width as needed */
+    height: 20px; /* Adjust the height as needed */
+    margin-left: auto; /* Push icons to the right */
+    cursor: pointer;
 }
 
 .profile-pic {
-width: 40px;
-height: 40px;
-border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
 }
 
 .edit-icon {
-width: 20px;
-height: 20px;
-cursor: pointer;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.save-nickname-btn {
+    margin-left: 10px;
+    cursor: pointer;
 }
