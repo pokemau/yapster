@@ -658,3 +658,46 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
+
+.nickname-popup {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	left: 300px;
+	top: 0;
+	width: 60%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+  }
+  
+.nickname-popup-content {
+background-color: #fefefe;
+margin: 15% auto;
+padding: 20px;
+border: 1px solid #888;
+width: 80%;
+}
+
+.nickname-list {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.nickname-item {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.profile-pic {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+}
+
+.edit-icon {
+width: 20px;
+height: 20px;
+cursor: pointer;
+}
