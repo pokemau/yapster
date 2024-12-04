@@ -75,6 +75,7 @@ function handleSearchInput(query) {
 }
 
 // Function to filter users or chats based on query
+// Function to filter users or chats based on query
 function filterUsers(query, isAddingToGroup) {
     const searchResults = document.getElementById("search-results");
     const chatList = document.getElementById("chat-list");
@@ -98,47 +99,67 @@ function filterUsers(query, isAddingToGroup) {
     })
         .then((response) => {
             if (!response.ok) {
-                throw new Error(`Failed to fetch users: ${response.status}`);
+                throw new Error(`Failed to fetch users and chats: ${response.status}`);
             }
             return response.json();
         })
         .then((data) => {
-            if (data.users && data.users.length > 0) {
-                if (searchResults) {
-                    searchResults.style.display = "block";
-                    searchResults.innerHTML = data.users
-                        .map((user) => {
-                            if (isAddingToGroup) {
-                                return `
-                                    <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
-                                        <div class="left-profile-pic"></div>
-                                        <div class="name-time-msg">
-                                            <p class="name">${user.first_name} ${user.last_name}</p>
-                                            <p class="time-sent">@${user.username}</p>
-                                        </div>
-                                    </div>
-                                `;
-                            } else {
-                                return `
-                                    <div class="user" onclick="loadUserDetails(${user.id})">
-                                        <div class="left-profile-pic"></div>
-                                        <div class="name-time-msg">
-                                            <p class="name">${user.first_name} ${user.last_name}</p>
-                                            <p class="time-sent">@${user.username}</p>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        })
-                        .join("");
+            if (searchResults) {
+                searchResults.style.display = "block";
+
+                // Combine user results and group chats with appropriate actions
+                const userResults = data.users.map((user) => {
+                    if (isAddingToGroup) {
+                        // Add user functionality for Create GC state
+                        return `
+                            <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
+                                <div class="left-profile-pic"></div>
+                                <div class="name-time-msg">
+                                    <p class="name">${user.first_name} ${user.last_name}</p>
+                                    <p class="time-sent">@${user.username}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Load private chat functionality for normal search
+                        return `
+                            <div class="user" onclick="loadChat(${user.id})">
+                                <div class="left-profile-pic"></div>
+                                <div class="name-time-msg">
+                                    <p class="name">${user.first_name} ${user.last_name}</p>
+                                    <p class="time-sent">@${user.username}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                let results = userResults;
+
+                // Add group chat results only in normal search mode
+                if (!isAddingToGroup) {
+                    const chatResults = data.group_chats.map((chat) => {
+                        return `
+                            <div class="user" onclick="loadChatWithID(${chat.chat_id})">
+                                <div class="left-profile-pic"></div>
+                                <div class="name-time-msg">
+                                    <p class="name">${chat.chat_name}</p>
+                                    <p class="time-sent">${chat.member_count} members</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    results = [...userResults, ...chatResults];
                 }
+
+                searchResults.innerHTML = results.join("");
                 if (chatList) chatList.style.display = "none"; // Hide chats during search
-            } else {
-                if (searchResults) searchResults.innerHTML = "<p>No users found.</p>";
             }
         })
-        .catch((error) => console.error("Error fetching users:", error));
+        .catch((error) => console.error("Error fetching users and chats:", error));
 }
+
 
 // Adds a user to the selected users list in create-chat state
 function addUser(userId, firstName, lastName) {

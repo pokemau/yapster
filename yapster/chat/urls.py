@@ -8,7 +8,7 @@ urlpatterns = [
     
     path('user-details/<int:user_id>/', views.get_user_details, name="user_details"),
     path('get_or_create_chat/', views.get_or_create_chat, name="get_or_create_chat"),
-    path('<str:chat_name>/', views.message_view, name='chat_name'),
+    path('<str:chat_id>/', views.message_view, name='chat_name'),
     path('query_stuff/query_users/', views.query_users, name="query_users"),
 
     # path('search/', views.search_user, name='search_user'),
