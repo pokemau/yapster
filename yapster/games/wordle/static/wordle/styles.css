@@ -1,4 +1,8 @@
 
+.main-cont {
+  position: relative;
+}
+
 .title {
   text-align: center;
 }
@@ -114,4 +118,23 @@
 }
 .win-cont__button:hover {
   background-color: rgb(203, 105, 105);
+}
+
+.message-cont {
+  background-color: rgb(196, 196, 196);
+
+  position: absolute;
+  top: 80px;
+  right: 0;
+  left: 0;
+  margin-inline: auto;
+  width: 250px;
+
+  height: 50px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
 }

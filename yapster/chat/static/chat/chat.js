@@ -63,8 +63,9 @@ wordleForm.addEventListener('submit', function(e) {
                         'message': `[WORDLE]${data.game}`,
                         'chat_name': `${chat_name}`,
                         'sender': `${user_logged_in}`,
-                })
-        );
+                }));
+                document.getElementById("myModal").style.display = 'none';
+                document.querySelector('#word-input').value = '';
             } else {
                 console.error("Failed to create WordleGame:", data.error);
             }

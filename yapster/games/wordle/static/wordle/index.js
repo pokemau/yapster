@@ -89,7 +89,7 @@ function checkCorrectLetter(guessLetter, wordLetter, SECRET_WORD) {
 
 function submitGuess() {
 	if (letterCount != 5) {
-		alert("not enough letters");
+		showMessage('MUST BE 5 LETTERS')
 		return;
 	}
 	checkGuess();
@@ -100,8 +100,7 @@ function checkGuess() {
 	SECRET_WORD = SECRET_WORD.toLowerCase();
 
 	if (!WORDS.includes(guess)) {
-		console.log(guess);
-		alert(`INVALID WORD`);
+		showMessage('INVALID WORD')
 		return;
 	}
 	updateColors();
@@ -118,23 +117,40 @@ function checkGuess() {
 
 function gameWin() {
 	guessCount++;
-	alert(`YOU GUESSED THE WORD IN ${guessCount} TRIES!`);
-	document.removeEventListener("keydown", handleKeyboardInput);
-	keyboard.removeEventListener("click", handleOnScreenKeyboardInput);
+	pauseEvents();
 
 	const chatRoom = window.localStorage.getItem('chatName')
 	const boardCont = document.querySelector('.board-cont');
 	boardCont.innerHTML += `
 		<div class="win-cont">
-			<h2 class="win-cont__title">Guessed in ${guessCount} tries!</h2>	
+			<h2 class="win-cont__title">Guessed in ${guessCount} ${guessCount === 1 ? 'try' : 'tries'}!</h2>	
 			<h2 class="win-cont__word">${SECRET_WORD}</h2>	
 			<a href=/chat/${chatRoom} class="win-cont__button">Share</a>
 		</div>
 	`
-
 	window.localStorage.setItem('guessCount', guessCount)
+}
 
-	console.log(`CHAT NAEEEEEEEEEEEEEEEEEEEEEE ${chatRoom}`)
+function pauseEvents() {
+	document.removeEventListener("keydown", handleKeyboardInput);
+	keyboard.removeEventListener("click", handleOnScreenKeyboardInput);
+}
+function resumeEvents() {
+document.addEventListener("keydown", handleKeyboardInput);
+keyboard.addEventListener("click", handleOnScreenKeyboardInput);
+}
+
+const messageCont = document.querySelector('.message-cont')
+const messageP = document.querySelector('.message__content')
+function showMessage(message) {
+	document.querySelector('.message-cont').classList.remove('hidden')
+	messageP.textContent = message;
+	pauseEvents();
+	setTimeout(() => {
+		document.querySelector('.message-cont').classList.add('hidden')
+		messageP.textContent = ''
+		resumeEvents();
+	}, 1000);
 }
 
 function updateColors() {
@@ -144,13 +160,8 @@ function updateColors() {
     const guessL = guess[i];
     const wordL = SECRET_WORD[i];
     const correctness = checkCorrectLetter(guessL, wordL, SECRET_WORD);
-
     currLetter.classList.add(correctness);
-    
-    console.log(guessL);
-
     const keyboardKey = document.getElementById(guessL);
-    console.log(keyboardKey);
     keyboardKey.classList.add(correctness);
   }
 }

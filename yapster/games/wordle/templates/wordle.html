@@ -8,11 +8,11 @@
   <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
   <script type="module" src="{% static 'wordle/index.js' %}" defer></script>
   <script src="{% static 'yapster/index.js' %}" defer></script>
-  <title>Games | Worlde</title>
+  <title>Games | Wordle</title>
 </head>
 <body>
   {% include 'html/navbar.html' %}
-  <div>
+  <div class="main-cont">
     <h1 class="title">WORDLE</h1>
 
     <div class="board-cont noselect">
@@ -96,6 +96,10 @@
         <div id="delete" data-key="backspace">DEL</div>
       </div>
     </div>
+
+    <div class='message-cont hidden'>
+			<p class="message__content"></p>
+		</div>
   </div>
 
   <script>
