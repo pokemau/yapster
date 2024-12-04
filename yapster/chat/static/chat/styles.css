@@ -334,8 +334,6 @@ html { font-family: 'PT Sans', Georgia, serif; }
 .messages {
 	/* max-width: 400px; */
 	/* margin: 0% auto; */
-	margin-left: 5%;
-	margin-right: 5%;
 	
 	display: flex;
 	flex-flow: column;
@@ -432,20 +430,17 @@ html { font-family: 'PT Sans', Georgia, serif; }
 * Chat Sidebar
 *******************/
 #chat-sidebar {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	padding: 20px;
-	visibility: visible;
-	background-color: #f1f1f1;
-	width: 300px;
-	height: 100%;
-	/* position: fixed; */
-	right: 0;
-	top: 0;
-	margin-top: 55px;
-	border-left: 1px solid #cdd5de;
-	display: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    visibility: visible;
+    background-color: #f1f1f1;
+    width: 300px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    border-left: 1px solid #cdd5de;
 }
 
 .chat-sidebar-profile {
