@@ -10,11 +10,12 @@ from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 
 # Helper function for shared logic
-def get_chat_data(request):
+def get_chat_data(request, active_chat_id=None):
     """Retrieve common chat data shared by chat_view and message_view."""
     query = request.GET.get('search', '').strip()
     users = None
     chat_users_mapping = []
+    active_chat_data = None  # Stores specific data about the active chat
     
     # Search for users if a query is provided
     if query:
@@ -28,7 +29,6 @@ def get_chat_data(request):
     chat_ids = ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
     chats = Chat.objects.filter(id__in=chat_ids)
 
-    # Build the chat_users_mapping
     for chat in chats:
         users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
         user_ids = [cu.member.id for cu in users_in_chat]
@@ -48,7 +48,7 @@ def get_chat_data(request):
         # Generate dynamic display name for group chats without a chat_name
         display_name = chat.chat_name or ", ".join(nicknames_without_curruser)
 
-        chat_users_mapping.append({
+        chat_data = {
             'chat_id': chat.id,
             'chat_name': display_name,
             'user_ids': user_ids,
@@ -56,16 +56,31 @@ def get_chat_data(request):
             'nicknames': nicknames,
             'current_user_nickname': current_user_nickname,
             'nicknames_without_curruser': nicknames_without_curruser,
-        })
+        }
 
-    return query, users, chat_users_mapping
+        chat_users_mapping.append(chat_data)
+
+        print(f"Checking chat: {chat.id}, active_chat_id: {active_chat_id}")
+
+        # Fix: Explicitly compare with active_chat_id as an integer
+        if active_chat_id and int(chat.id) == int(active_chat_id):
+            active_chat_data = {
+                'chat_room': chat,
+                'display_name': display_name,
+                'chat_users': users_in_chat,
+                'is_pm': is_PM,
+            }
+
+    return query, users, chat_users_mapping, active_chat_data
+
+
 
 # Updated chat_view
 def chat_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    query, users, chat_users_mapping = get_chat_data(request)
+    query, users, chat_users_mapping, _ = get_chat_data(request)
 
     # Redirect to the latest chat if available
     if chat_users_mapping:
@@ -82,18 +97,33 @@ def chat_view(request):
         'chat_room_users': [],  # No users in a new chat
     })
 
+
 # Updated message_view
 def message_view(request, chat_id):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    query, users, chat_users_mapping = get_chat_data(request)
+    # Retrieve chat data, including active chat details
+    query, users, chat_users_mapping, active_chat_data = get_chat_data(request, active_chat_id=chat_id)
 
-    # Fetch chat and messages
-    try:
-        chat_room = Chat.objects.get(id=chat_id)
-    except Chat.DoesNotExist:
-        raise Http404("Chat not found")
+    if not active_chat_data:
+        raise Http404(f"Chat with id {chat_id} not found or not accessible.")
+
+    chat_room = active_chat_data['chat_room']
+    chat_users = active_chat_data['chat_users']
+
+    # Determine the display name for the chat
+    if active_chat_data['is_pm']:
+        # For PM, display the other user's first and last name
+        chat_users_without_current = [cu for cu in chat_users if cu.member != request.user.yapsteruser]
+        if chat_users_without_current:
+            # display_name = f"{chat_users_without_current[0].member.user.first_name} {chat_users_without_current[0].member.user.last_name}"
+            display_name = chat_users_without_current[0].nickname
+        else:
+            display_name = "Unknown User"
+    else:
+        # For group chats, use the provided display name
+        display_name = active_chat_data['display_name']
 
     messages = Message.objects.filter(chat=chat_room)
     content_messages = []
@@ -116,8 +146,14 @@ def message_view(request, chat_id):
         })
         last_sender = message.sender
         counter += 1
+    
+    pm_username = None
+    chat_users_without_current = None
+    if active_chat_data['is_pm']:
+        chat_users_without_current = [cu for cu in active_chat_data['chat_users'] if cu.member != request.user.yapsteruser]
+    if chat_users_without_current:
+        pm_username = chat_users_without_current[0].member.user.username
 
-    chat_room_users = ChatUser.objects.filter(chat=chat_room)
 
     return render(request, 'chat.html', {
         'users': users,
@@ -126,8 +162,15 @@ def message_view(request, chat_id):
         'current_userID': request.user.yapsteruser.id,
         'content': content_messages,
         'chat_room': chat_room,
-        'chat_room_users': chat_room_users,
+        'chat_room_users': chat_users,
+        'display_name': display_name,
+        'is_pm': active_chat_data['is_pm'],
+        'pm_username': pm_username,
+
     })
+
+
+
 
 def query_users(request):
     if request.method == "GET":
