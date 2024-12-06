@@ -38,7 +38,6 @@ document.getElementById('message-input').addEventListener('submit', function(eve
 });
 
 
-
 const wordleForm = document.querySelector('#wordle-form');
 wordleForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -52,7 +51,7 @@ wordleForm.addEventListener('submit', function(e) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: JSON.stringify({ word: inputWord })
+            body: JSON.stringify({ word: inputWord, room: chat_name })
         })
         .then(response => response.json())
         .then(data => {

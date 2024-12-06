@@ -1,5 +1,6 @@
 import { WORDS } from "./wordlist.js";
 
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 const keyboard = document.querySelector(".keyboard");
 const keys = document.querySelectorAll(".key");
 
@@ -10,6 +11,47 @@ keyboard.addEventListener("click", handleOnScreenKeyboardInput);
 let guessCount = 0;
 let letterCount = 0;
 let guess = "";
+let guesses = [];
+
+
+if (GAME.solved == 'True') {
+	guesses = GAME.guesses
+	fillBoard()
+}
+
+function fillBoard() {
+	for (let i = 0; i < guesses.length; i++) {
+		const word = guesses[i];
+		guess = word
+		for (let j = 0; j < word.length; j++) {
+			setTileText(word[j])
+		}
+		updateColors()
+		letterCount = 0
+		guessCount++
+	}
+
+	const chatRoom = window.localStorage.getItem('chatName')
+	const boardCont = document.querySelector('.board-cont');
+	pauseEvents();
+
+	boardCont.innerHTML += `
+		<div class="win-cont">
+			<h2 class="win-cont__title">Guessed in ${guessCount} ${guessCount === 1 ? 'try' : 'tries'}!</h2>	
+			<h2 class="win-cont__word">${SECRET_WORD}</h2>	
+
+			<div class="win-cont__btn-cont">
+				<button class='win-cont__button ok-btn'>Ok</button>
+			</div>
+		</div>
+	`
+	
+	document.querySelector('.ok-btn').addEventListener('click', () => {
+		document.querySelector('.win-cont').classList.add('hidden')
+	})
+
+}
+
 
 function handleKeyboardInput(e) {
 	const key = e.key.toUpperCase();
@@ -63,12 +105,12 @@ function getCurrTile() {
 }
 
 function setTileText(letter) {
-	if (letterCount == 5) {
+	if (letterCount == 5 && GAME.solved == 'False') {
 		return;
 	}
 	const currRow = document.getElementsByClassName("row")[guessCount];
 	const currTile = currRow.getElementsByClassName("tile")[letterCount];
-	currTile.textContent = letter;
+	currTile.textContent = letter.toUpperCase();
 	guess += letter;
 	letterCount++;
 }
@@ -103,6 +145,8 @@ function checkGuess() {
 		showMessage('INVALID WORD')
 		return;
 	}
+	
+	guesses.push(guess)
 	updateColors();
 
 	if (guess == SECRET_WORD) {
@@ -115,12 +159,16 @@ function checkGuess() {
 	guess = "";
 }
 
-function gameWin() {
-	guessCount++;
-	pauseEvents();
+async function gameWin() {
 
 	const chatRoom = window.localStorage.getItem('chatName')
 	const boardCont = document.querySelector('.board-cont');
+
+	await updateWordleGame(chatRoom);
+
+	guessCount++;
+	pauseEvents();
+
 	boardCont.innerHTML += `
 		<div class="win-cont">
 			<h2 class="win-cont__title">Guessed in ${guessCount} ${guessCount === 1 ? 'try' : 'tries'}!</h2>	
@@ -129,6 +177,31 @@ function gameWin() {
 		</div>
 	`
 	window.localStorage.setItem('guessCount', guessCount)
+}
+
+async function updateWordleGame(chatRoom) {
+	try {
+		const gameID = window.location.href.split('/').pop()
+		const response = await fetch(`/games/wordle/update_game/${gameID}`, {
+			method: 'POST',
+			headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+			},
+			body: JSON.stringify({
+				guesses: guesses.toString(),
+			})
+		})
+		const data = await response.json()
+		if (data.success) {
+			console.log("UPDATED SUCCESSFULLY");
+		} else {
+			console.log(data.error);
+		}
+		
+	} catch (error) {
+		console.error(error)
+	}
 }
 
 function pauseEvents() {

@@ -87,7 +87,7 @@
 
 .win-cont {
   position: absolute;
-  top: 50px;
+  top: 100px;
   left: 0;
   right: 0;
   text-align: center;
@@ -96,6 +96,10 @@
   border-radius: 8px;
   margin-inline: auto;
   background-color: rgb(212, 212, 212);
+}
+
+.win-cont__btn-cont {
+  display: flex;
 }
 
 .win-cont__title {

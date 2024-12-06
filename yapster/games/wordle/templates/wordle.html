@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <link rel="stylesheet" href="{% static 'wordle/styles.css' %}" />
   <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
   <script type="module" src="{% static 'wordle/index.js' %}" defer></script>
@@ -104,6 +105,17 @@
 
   <script>
     window.SECRET_WORD = "{{ game.word|escapejs }}";
+
+    window.GAME = {
+      id: '{{ game.id }}',
+      guesses: '{{ game.guesses }}'.split(','),
+      solved: '{{game.solved}}'
+    }
+
+    const chatName = window.localStorage.getItem('chatName')
+    if ( !chatName || '{{ game.chatroom.chat_name }}' != chatName ) {
+      window.location.href = `/chat/${chatName}`;
+    }
   </script>
 </body>
 </html>
