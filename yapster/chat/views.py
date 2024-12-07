@@ -158,6 +158,53 @@ def message_view(request, chat_id):
     #     print("INVOLVED USER: ", i.nickname)
     #     print("ID: ", i.member.user.id)
 
+    """
+    Semi Charmed Life
+
+    Logic for chat validation
+    - if blocked
+    - is not friend, etc.
+    """
+
+    validation = {}
+
+    if active_chat_data['is_pm']:
+
+        for c in chat_users:
+            if c.member != request.user.yapsteruser:
+                receiver = c.member
+                other = c.member
+
+        validation['other'] = other.user.id
+
+        if len(content_messages) == 1:
+            """
+            If chat is a 'message request' or is the first message
+            """
+            message_sender = content_messages[0]['sender'].yapsteruser
+            for c in chat_users:
+                if c.member != message_sender:
+                    receiver = c.member
+
+            validation['is_first_message'] = True
+            validation['is_sender'] = message_sender == request.user.yapsteruser
+            validation['is_friend'] = FriendList.objects.filter(
+                user = message_sender,
+                friends = receiver
+            ).exists()
+
+        else:
+            try:
+                receiver_block_list = BlockList.objects.get(user=receiver)
+                you_are_blocked = receiver_block_list.blocked_users.filter(id=request.user.yapsteruser.id).exists()
+            except BlockList.DoesNotExist:
+                you_are_blocked = False
+
+            validation['you_are_blocked'] = you_are_blocked
+
+        block_list = BlockList.objects.get(user=request.user.yapsteruser)
+        validation['is_blocked'] = block_list.blocked_users.filter(id=receiver.id).exists()
+
     return render(request, 'chat.html', {
         'users': users,
         'query': query,
@@ -169,7 +216,7 @@ def message_view(request, chat_id):
         'display_name': display_name,
         'is_pm': active_chat_data['is_pm'],
         'pm_username': pm_username,
-
+        'validation': validation
     })
 
 def query_users(request):

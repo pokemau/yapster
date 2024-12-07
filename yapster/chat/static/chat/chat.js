@@ -35,8 +35,15 @@ document.getElementById('message-input').addEventListener('submit', function(eve
             'sender': `${user_logged_in}`,
         })
     );
+    updateUI();
 });
 
+
+function updateUI() {
+    const elem = document.querySelector('.user-option__a')
+    if (elem)
+        elem.style.display = 'none'
+}
 
 const wordleForm = document.querySelector('#wordle-form');
 wordleForm.addEventListener('submit', function(e) {
@@ -65,6 +72,7 @@ wordleForm.addEventListener('submit', function(e) {
                 }));
                 document.getElementById("myModal").style.display = 'none';
                 document.querySelector('#word-input').value = '';
+                updateUI()
             } else {
                 console.error("Failed to create WordleGame:", data.error);
             }

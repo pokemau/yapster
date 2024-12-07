@@ -111,3 +111,13 @@ span.onclick = function() {
   modal.style.display = "none";
 	document.querySelector('#word-input').value = '';
 }
+
+if (youreBlocked == 'True') {
+	document.querySelector('#typed-message').disabled = 'disabled'
+	document.querySelector('#wordle-btn').disabled = 'disabled'
+	document.querySelector('#send-btn').disabled = 'disabled'
+} else {
+	document.querySelector('#typed-message').disabled = false
+	document.querySelector('#wordle-btn').disabled = false
+	document.querySelector('#send-btn').disabled = false
+}
