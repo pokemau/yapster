@@ -410,13 +410,16 @@ def add_members_to_group(request, chat_id):
             ChatUser.objects.create(chat=chat, member=user)
 
         # Create the system message about the added members
-        added_users = ", ".join([f"{user.user.first_name} {user.user.last_name}" for user in YapsterUser.objects.filter(id__in=new_user_ids)])
+        added_users = ", ".join([f"{chat_user.nickname}" for chat_user in ChatUser.objects.filter(chat=chat, member__id__in=new_user_ids)])
+
+        current_user_chatuser = ChatUser.objects.get(chat=chat, member=request.user.yapsteruser)
+        current_user_nickname = current_user_chatuser.nickname
       
         # Create a system message for the chat
         Message.objects.create(
             chat=chat,
             sender=request.user,
-            content=f"{request.user.username} added {added_users}",
+            content=f"{current_user_nickname} added {added_users}",
             system_message=True,
         )
 
