@@ -131,6 +131,26 @@
             {% endif %}
           {% endfor %}
 
+          {% if validation.is_first_message and not validation.is_sender and not validation.is_friend %}
+
+            <div class='user-option'>
+              <a class='user-option__a' href="/friend/block_user/{{ validation.other }}">Block</a>
+            </div>
+
+          {% elif validation.is_blocked %}
+
+            <div class='user-option'>
+              <a class='user-option__a' href="{% url 'friend:unblock_user' validation.other %}">Unblock</a>
+            </div>
+
+          {% elif validation.you_are_blocked %}
+
+            <div class='user-option'>
+              <p>This user is unavailable.</p>
+            </div>
+
+          {% endif %}
+
         </section>
 
         <form action="" id="message-input" method="POST">
@@ -142,7 +162,7 @@
             </div>
         </form>
       </div>
-      
+
       <div id="myModal" class="modal">
         <div class="modal-content">
           <span class="close">&times;</span>
@@ -269,6 +289,7 @@
           popup.style.display = "none";
         }
       }
+      const youreBlocked = '{{ validation.you_are_blocked }}'
     </script>
   </body>
 </html>

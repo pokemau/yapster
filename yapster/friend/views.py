@@ -64,7 +64,7 @@ def remove_friend(request, target_id):
     friend_list = get_friends_list(current_user)
     target_user = get_object_or_404(YapsterUser, user__id=target_id)
     friend_list.unfriend(target_user)
-    return redirect('friend:friends_list', user_id=request.user.id)
+    return redirect('chat')
 
 def block_list_view(request):
     blocked_list, created = BlockList.objects.get_or_create(user=request.user.yapsteruser)

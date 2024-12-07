@@ -251,6 +251,10 @@
 	gap: 4px;
 }
 
+.user-option {
+	margin-top: auto;
+}
+
 #user-options-cont p,
 .user-option__a {
 	cursor: pointer;
