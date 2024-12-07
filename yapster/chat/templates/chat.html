@@ -19,16 +19,11 @@
   <script>
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
+    {% if not no_chat_open %}
     const currentUserID = {{ current_userID }};
     const currentChatID = {{ chat_room.id }};
     const chat_users_id = {{ chat_room_users_id }};
-    
-    const nicknames_without_current = {{ nicknames_without_current | safe }};
-    const usernames_without_current = {{ usernames_without_current | safe}};
-    // for(let i = 0; i < nicknames_without_current.length; i++){
-    //   console.log("Nickanme: ", nicknames_without_current[i]);
-    // }
-
+    {% endif %}
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -179,7 +174,10 @@
           </form>
         </div>
       </div>
-
+      {% if no_chat_open %}
+      <div id="chat-sidebar">
+      </div>
+      {% else %}
       <div id="chat-sidebar">
         <div class="chat-sidebar-profile">
           <div class="chat-sidebar-profile-pic">
@@ -247,6 +245,7 @@
             </div>
           </div>
       </div>
+      {% endif %}
 
       <div id="nickname-popup" class="nickname-popup">
           <div class="nickname-popup-content">

@@ -87,6 +87,8 @@ def chat_view(request):
         latest_chat_id = chat_users_mapping[0]['chat_id']  # Use the first chat as a fallback
         return redirect('chat_name', chat_id=latest_chat_id)
     
+    print("HAS CHAT? ",  bool(chat_users_mapping) )
+    
     # If no chats, show a default view
     return render(request, 'chat.html', {
         'users': users,
@@ -95,6 +97,8 @@ def chat_view(request):
         'current_userID': request.user.yapsteruser.id,
         'content': [],  # Empty content for new users
         'chat_room_users': [],  # No users in a new chat
+        'display_name': " ",
+        'no_chat_open': True
     })
 
 # Updated message_view
@@ -203,14 +207,14 @@ def message_view(request, chat_id):
 
         else:
             try:
-                receiver_block_list = BlockList.objects.get(user=receiver)
+                receiver_block_list, created = BlockList.objects.get_or_create(user=receiver)
                 you_are_blocked = receiver_block_list.blocked_users.filter(id=request.user.yapsteruser.id).exists()
             except BlockList.DoesNotExist:
                 you_are_blocked = False
 
             validation['you_are_blocked'] = you_are_blocked
 
-        block_list = BlockList.objects.get(user=request.user.yapsteruser)
+        block_list, created = BlockList.objects.get_or_create(user=request.user.yapsteruser)
         validation['is_blocked'] = block_list.blocked_users.filter(id=receiver.id).exists()
 
     return render(request, 'chat.html', {
@@ -228,7 +232,7 @@ def message_view(request, chat_id):
         'display_name': display_name,
         'is_pm': active_chat_data['is_pm'],
         'pm_username': pm_username,
-        'validation': validation
+        'validation': validation,
     })
 
 def query_users(request):
