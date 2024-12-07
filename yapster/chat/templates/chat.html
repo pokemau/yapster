@@ -229,21 +229,25 @@
       </div>
 
       <div id="nickname-popup" class="nickname-popup">
-          <div class="nickname-popup-content">
+        <div class="nickname-popup-content">
             <span class="close" onclick="togglePopup('nickname-popup')">&times;</span>
             <h2>Edit Nicknames</h2>
             <div class="nickname-list">
-              <div class="nickname-item">
-                <img src="{% static 'images/default_profile.jpg' %}" alt="Profile Picture" class="profile-pic">
-                <span class="nickname">Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr.</span>
-                <input type="text" class="edit-nickname-input" style="display: none;">
-                <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
-                <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
-              </div>
+                {% for member in chat_room_users %}
+                <div class="nickname-item">
+                    <img 
+                        src="{% if member.member.user.profile_image %}{{ member.member.user.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}" 
+                        alt="Profile Picture" class="profile-pic">
+                    <span class="nickname">{{ member.nickname }}</span>
+                    <input type="text" class="edit-nickname-input" style="display: none;" value="{{ member.nickname }}">
+                    <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
+                    <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
+                </div>
+                {% endfor %}
             </div>
-          </div>
         </div>
       </div>
+    </div>
 
     <script>
       let chat_name = `{{ chat_room.chat_name }}`;

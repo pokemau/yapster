@@ -160,6 +160,8 @@ def message_view(request, chat_id):
     chat_users_nicknames_without_current = [cu.nickname for cu in chat_users if cu.member != request.user.yapsteruser]
     chat_users_usernames_without_current = [cu.member.user.username for cu in chat_users if cu.member != request.user.yapsteruser]
 
+    chat_room_users = ChatUser.objects.filter(chat=chat_room).select_related('member__user')
+
     # for i in chat_users:
     #     print("INVOLVED USER: ", i.nickname)
     #     print("ID: ", i.member.user.id)
@@ -173,6 +175,7 @@ def message_view(request, chat_id):
         'chat_room': chat_room,
         'chat_room_users_id': chat_users_id,
         'chat_users': chat_users,
+        'chat_room_users': chat_room_users, #para nis nicknames chuchu
         'nicknames_without_current': chat_users_nicknames_without_current,
         'usernames_without_current': chat_users_usernames_without_current,
         'display_name': display_name,
