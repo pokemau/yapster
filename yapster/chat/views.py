@@ -139,8 +139,10 @@ def message_view(request, chat_id):
             'sender': message.sender,
             'message': message.content,
             'is_new_sender': last_sender != message.sender,
-            'has_pfp': withPfp[counter] == 1
+            'has_pfp': withPfp[counter] == 1,
+            'system_message': message.system_message
         })
+        print("SYTSTEM MESSAGE: ", message.system_message)
         last_sender = message.sender
         counter += 1
     
@@ -336,6 +338,11 @@ def find_chat(user_ids):
 
     return None
 
+from django.http import JsonResponse, Http404
+from django.shortcuts import get_object_or_404
+from .models import Chat, ChatUser, YapsterUser, Message
+import json
+
 def add_members_to_group(request, chat_id):
     """Add members to a group chat."""
     if not request.user.is_authenticated:
@@ -360,7 +367,7 @@ def add_members_to_group(request, chat_id):
         existing_user_ids = [user.member.id for user in existing_users]
 
         # Check if any user is already in the group
-        new_user_ids = [user_id for user_id in user_ids if user_id not in existing_user_ids]
+        new_user_ids = [int(user_id) for user_id in user_ids if int(user_id) not in existing_user_ids]
 
         if not new_user_ids:
             return JsonResponse({"success": False, "error": "All users are already in the group."}, status=400)
@@ -369,6 +376,17 @@ def add_members_to_group(request, chat_id):
         for user_id in new_user_ids:
             user = get_object_or_404(YapsterUser, id=user_id)
             ChatUser.objects.create(chat=chat, member=user)
+
+        # Create the system message about the added members
+        added_users = ", ".join([f"{user.user.first_name} {user.user.last_name}" for user in YapsterUser.objects.filter(id__in=new_user_ids)])
+      
+        # Create a system message for the chat
+        Message.objects.create(
+            chat=chat,
+            sender=request.user,
+            content=f"{request.user.username} added {added_users}",
+            system_message=True,
+        )
 
         # Return a success response
         return JsonResponse({"success": True, "message": "Members added successfully!"})
