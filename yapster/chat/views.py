@@ -313,8 +313,9 @@ def get_or_create_chat(request):
             chat.save()
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({"success": True, "chat_name": chat.chat_name})
+            return JsonResponse({"success": True, "chat_name": chat.id})
         
+        #chat id siguro ni dapat
         return redirect('chat_name', chat_name=chat.chat_name)
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)

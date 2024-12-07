@@ -4,7 +4,6 @@ let selectedUsers = []; // Stores selected users in create-chat state
 
 
 function toggleCreateChatState() {
-    if (isAddMemberState) toggleAddMemberState(); // Exit Add Member state if active
     isCreateChatState = !isCreateChatState;
 
     // Update UI based on the state
@@ -26,7 +25,7 @@ function toggleCreateChatState() {
         if (currentChats) currentChats.style.display = "none"; // Hide current chats
 
         // Change button functionality to finalize group creation
-        createChatButton.textContent = "Create GC";
+        createChatButton.textContent = "Create Chat";
         createChatButton.onclick = createGroupChat;
     } else {
         resetSearchState(); // Use shared reset for consistency
@@ -71,19 +70,7 @@ function toggleAddMemberState() {
         addMemberButton.textContent = "Add Member(s)";
         addMemberButton.onclick = addMemberToGroup;
     } else {
-        selectedNames.style.display = "none"; // Hide selected names container
-        selectedUsers = []; // Clear selected users
-        selectedNames.innerHTML = ""; // Clear capsules
-        searchInput.placeholder = "Search chats or users...";
-        searchInput.value = ""; // Clear input
-        if (exitButton) exitButton.style.display = "none"; // Hide exit button
-        if (chatList) chatList.style.display = "block"; // Show existing chats
-        if (searchResults) searchResults.innerHTML = ""; // Clear search results
-        if (currentChats) currentChats.style.display = "block"; // Show current chats
-
-        // Restore button functionality to toggle Add Member state
-        addMemberButton.textContent = "Add a Member";
-        addMemberButton.onclick = toggleAddMemberState;
+        resetSearchState();
     }
 }
 
@@ -131,6 +118,42 @@ function addMemberToGroup() {
     })
     .catch(error => console.error("Error adding members:", error));
 }
+
+function toggleRemoveMemberState(){
+    isCreateChatState = !isCreateChatState;
+    
+    // Update UI based on the state
+    const selectedNames = document.getElementById("selected-names");
+    const searchInput = document.getElementById("search-input");
+    const exitButton = document.getElementById("exit-create-chat"); // Exit button
+    const chatList = document.getElementById("chat-list"); // Existing chats
+    const searchResults = document.getElementById("search-results"); // Queried users
+    const currentChats = document.getElementById("current-chats"); // Current user's chats
+    const addMemberButton = document.querySelector(".chat-create"); // Add Member button
+
+    if (isCreateChatState) {
+        selectedNames.style.display = "flex"; // Show selected names container
+        searchInput.placeholder = "Remove users to group...";
+        searchInput.value = ""; // Clear input for new search
+        if (exitButton) exitButton.style.display = "inline"; // Show exit button
+        if (chatList) chatList.style.display = "none"; // Hide existing chats
+        if (searchResults) searchResults.innerHTML = ""; // Clear search results
+        if (currentChats) currentChats.style.display = "none"; // Hide current chats
+
+        // Change button functionality to add members to group
+        addMemberButton.textContent = "Remove Member(s)";
+        addMemberButton.onclick = removeMemberFromGroup;
+    } else {
+        resetSearchState();
+    }
+}
+
+function removeMemberFromGroup(){
+
+}
+
+// Remove selected users to the group chgat
+// function toggl
 
 // Adds a user to the selected users list in create-chat state
 function addUser(userId, firstName, lastName) {
@@ -297,6 +320,9 @@ function resetSearchState() {
     if (searchResults) searchResults.innerHTML = "";
     if (currentChats) currentChats.style.display = "block";
     if (createChatButton) createChatButton.style.display = "inline";
+
+    createChatButton.textContent = "Create Chat";
+    createChatButton.onclick = toggleCreateChatState;
 
     isAddMemberState = false;
     isCreateChatState = false;
