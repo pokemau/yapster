@@ -22,10 +22,12 @@
     const currentUserID = {{ current_userID }};
     const currentChatID = {{ chat_room.id }};
     const chat_users_id = {{ chat_room_users_id }};
-    for(let i = 0; i < chat_users_id.length; i++){
-      console.log("Chat user: ", chat_users_id[i]);
-    }
-
+    
+    const nicknames_without_current = {{ nicknames_without_current | safe }};
+    const usernames_without_current = {{ usernames_without_current | safe}};
+    // for(let i = 0; i < nicknames_without_current.length; i++){
+    //   console.log("Nickanme: ", nicknames_without_current[i]);
+    // }
 
   </script>
   <body>
@@ -216,9 +218,9 @@
                 <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
               </button>
               <div class="dropdown-content">
-                <a href="#" onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
+                <a onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
                 <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
-                <a href="#">Option 3</a>
+                <a class="removeMemberButton" onclick="toggleRemoveMemberState()">Remove member</a>
               </div>
             </div>
             <div class="dropdown">
@@ -248,20 +250,24 @@
 
       <div id="nickname-popup" class="nickname-popup">
           <div class="nickname-popup-content">
-            <span class="close" onclick="togglePopup('nickname-popup')">&times;</span>
+            <span class="close-nicknames" onclick="togglePopup('nickname-popup')">&times;</span>
             <h2>Edit Nicknames</h2>
             <div class="nickname-list">
-              <div class="nickname-item">
-                <img src="{% static 'images/default_profile.jpg' %}" alt="Profile Picture" class="profile-pic">
-                <span class="nickname">Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr.</span>
-                <input type="text" class="edit-nickname-input" style="display: none;">
-                <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
-                <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
-              </div>
+                {% for member in chat_room_users %}
+                <div class="nickname-item">
+                    <img 
+                        src="{% if member.member.user.profile_image %}{{ member.member.user.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}" 
+                        alt="Profile Picture" class="profile-pic">
+                    <span class="nickname">{{ member.nickname }}</span>
+                    <input type="text" class="edit-nickname-input" style="display: none;" value="{{ member.nickname }}">
+                    <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
+                    <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
+                </div>
+                {% endfor %}
             </div>
           </div>
-        </div>
       </div>
+    </div>
 
     <script>
       let chat_name = `{{ chat_room.chat_name }}`;

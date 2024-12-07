@@ -1,10 +1,10 @@
 let isCreateChatState = false; // Tracks the state of the search bar
 let isAddMemberState = false; // Tracks the state for Add Member
+let isRemoveMemberState = false;
 let selectedUsers = []; // Stores selected users in create-chat state
 
 
 function toggleCreateChatState() {
-    if (isAddMemberState) toggleAddMemberState(); // Exit Add Member state if active
     isCreateChatState = !isCreateChatState;
 
     // Update UI based on the state
@@ -17,6 +17,9 @@ function toggleCreateChatState() {
     const createChatButton = document.querySelector(".chat-create"); // Create GC button
 
     if (isCreateChatState) {
+        isAddMemberState = false;
+        isRemoveMemberState = false;
+
         selectedNames.style.display = "flex"; // Show selected names container
         searchInput.placeholder = "Add users to group...";
         searchInput.value = ""; // Clear input for new search
@@ -26,11 +29,14 @@ function toggleCreateChatState() {
         if (currentChats) currentChats.style.display = "none"; // Hide current chats
 
         // Change button functionality to finalize group creation
-        createChatButton.textContent = "Create GC";
+        createChatButton.textContent = "Create Chat";
         createChatButton.onclick = createGroupChat;
     } else {
         resetSearchState(); // Use shared reset for consistency
     }
+    console.log("Create Chat: ", isCreateChatState);
+    console.log("Add Membeer: ", isAddMemberState);
+    console.log("Remove memer: ", isRemoveMemberState);
 }
 
 // Finalize group creation
@@ -47,7 +53,7 @@ function createGroupChat() {
 
 // Recycle Create GC button for Add Member functionality
 function toggleAddMemberState() {
-    isCreateChatState = !isCreateChatState;
+    isAddMemberState = !isAddMemberState;
     
     // Update UI based on the state
     const selectedNames = document.getElementById("selected-names");
@@ -58,7 +64,12 @@ function toggleAddMemberState() {
     const currentChats = document.getElementById("current-chats"); // Current user's chats
     const addMemberButton = document.querySelector(".chat-create"); // Add Member button
 
-    if (isCreateChatState) {
+    exitButton.onclick = toggleAddMemberState;
+
+    if (isAddMemberState) {
+        isCreateChatState = false;
+        isRemoveMemberState = false;
+
         selectedNames.style.display = "flex"; // Show selected names container
         searchInput.placeholder = "Add users to group...";
         searchInput.value = ""; // Clear input for new search
@@ -71,20 +82,11 @@ function toggleAddMemberState() {
         addMemberButton.textContent = "Add Member(s)";
         addMemberButton.onclick = addMemberToGroup;
     } else {
-        selectedNames.style.display = "none"; // Hide selected names container
-        selectedUsers = []; // Clear selected users
-        selectedNames.innerHTML = ""; // Clear capsules
-        searchInput.placeholder = "Search chats or users...";
-        searchInput.value = ""; // Clear input
-        if (exitButton) exitButton.style.display = "none"; // Hide exit button
-        if (chatList) chatList.style.display = "block"; // Show existing chats
-        if (searchResults) searchResults.innerHTML = ""; // Clear search results
-        if (currentChats) currentChats.style.display = "block"; // Show current chats
-
-        // Restore button functionality to toggle Add Member state
-        addMemberButton.textContent = "Add a Member";
-        addMemberButton.onclick = toggleAddMemberState;
+        resetSearchState();
     }
+    console.log("Create Chat: ", isCreateChatState);
+    console.log("Add Membeer: ", isAddMemberState);
+    console.log("Remove memer: ", isRemoveMemberState);
 }
 
 // Add selected users to the group chat
@@ -130,6 +132,112 @@ function addMemberToGroup() {
         }
     })
     .catch(error => console.error("Error adding members:", error));
+}
+
+function toggleRemoveMemberState(){
+    isRemoveMemberState = !isRemoveMemberState;
+    
+    // Update UI based on the state
+    const selectedNames = document.getElementById("selected-names");
+    const searchInput = document.getElementById("search-input");
+    const exitButton = document.getElementById("exit-create-chat"); // Exit button
+    const chatList = document.getElementById("chat-list"); // Existing chats
+    const searchResults = document.getElementById("search-results"); // Queried users
+    const currentChats = document.getElementById("current-chats"); // Current user's chats
+    const addMemberButton = document.querySelector(".chat-create"); // Add Member button
+
+    exitButton.onclick = toggleRemoveMemberState;
+
+    if (isRemoveMemberState) {
+        isCreateChatState = false;
+        isAddMemberState = false;
+
+        selectedNames.style.display = "flex"; // Show selected names container
+        searchInput.placeholder = "Remove users to group...";
+        searchInput.value = ""; // Clear input for new search
+        if (exitButton) exitButton.style.display = "inline"; // Show exit button
+        if (chatList) chatList.style.display = "inline"; // Hide existing chats
+        if (searchResults) searchResults.innerHTML = ""; // Clear search results
+        if (currentChats) currentChats.style.display = "none"; // Hide current chats
+
+        loadChatMembersForRemoval();
+
+        // Change button functionality to add members to group
+        addMemberButton.textContent = "Remove Member(s)";
+        addMemberButton.onclick = removeMemberFromGroup;
+    } else {
+        resetSearchState();
+    }
+    console.log("Create Chat: ", isCreateChatState);
+    console.log("Add Membeer: ", isAddMemberState);
+    console.log("Remove memer: ", isRemoveMemberState);
+}
+
+function removeMemberFromGroup(){
+    // Extract user IDs from selectedUsers
+    const userIds = selectedUsers.map(user => user.id);
+
+    // Get the chat ID and current members
+    const chatId = currentChatID; // Use your global currentChatID variable
+    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
+
+    // Check if at least one user is selected
+    if (selectedUsers.length === 0) {
+        alert("Please remove at least one user.");
+        return;
+    }
+
+    // Check for duplicates (if the user is already in the chat)
+    // for (const userId of userIds) {
+    //     if (currentMembers.includes(userId)) {
+    //         alert("This user is already a member of the group chat.");
+    //         return;
+    //     }
+    // }
+
+    // Send the request to add members
+    fetch(`/chat/${chatId}/remove_members/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // alert("Members added successfully!");
+            // Update UI or reload chat to reflect changes
+            location.reload()
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error("Error removing members:", error));
+}
+
+function loadChatMembersForRemoval() {
+    fetchChatMembers(currentChatID).then((members) => {
+        const chatList = document.getElementById("chat-list");
+        const memberListHTML = members
+            .filter((user) => user.id !== currentUserID) // Exclude current user
+            .map((user) => {
+                return `
+                    <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
+                        <div class="left-profile-pic"></div>
+                        <div class="name-time-msg">
+                            <p class="name">${user.first_name} ${user.last_name}</p>
+                            <p class="time-sent">@${user.username}</p>
+                        </div>
+                    </div>
+                `;
+            })
+            .join("");
+    
+        chatList.innerHTML = memberListHTML || "<p>No members available for removal.</p>";
+    });
+    
 }
 
 // Adds a user to the selected users list in create-chat state
@@ -293,11 +401,43 @@ function resetSearchState() {
     searchInput.placeholder = "Search chats or users...";
     searchInput.value = "";
     if (exitButton) exitButton.style.display = "none";
-    if (chatList) chatList.style.display = "block";
+    if (chatList) chatList.style.display = "none";
     if (searchResults) searchResults.innerHTML = "";
     if (currentChats) currentChats.style.display = "block";
     if (createChatButton) createChatButton.style.display = "inline";
 
+    createChatButton.textContent = "Create Chat";
+    createChatButton.onclick = toggleCreateChatState;
+
     isAddMemberState = false;
+    isRemoveMemberState = false;
     isCreateChatState = false;
+}
+
+function fetchChatMembers(chatId) {
+    return fetch(`/chat/${chatId}/members/`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch chat members for ID: ${chatId}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.success) {
+                return data.members; // Return the list of members
+            } else {
+                console.error(`Error fetching members: ${data.error}`);
+                return [];
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching chat members:", error);
+            return [];
+        });
 }
