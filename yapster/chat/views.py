@@ -339,6 +339,31 @@ def find_chat(user_ids):
 
     return None
 
+# @csrf_exempt
+def add_members(request, chat_id):
+    """Adds members to a group chat."""
+    if request.method == "POST":
+        try:
+            user_ids = json.loads(request.body).get("user_ids", [])
+            chat = Chat.objects.get(id=chat_id)
+
+            for user_id in user_ids:
+                user = YapsterUser.objects.get(id=user_id)
+                ChatUser.objects.create(chat=chat, member=user)
+
+            # Add a system message for the action
+            Message.objects.create(
+                chat=chat,
+                sender=request.user.yapsteruser,
+                content=f"{request.user.first_name} added {', '.join([str(user_id) for user_id in user_ids])}."
+            )
+
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
 #Temp Chat for chatting unchatted user
 # def temp_chat_view(request, user_id):
 #     target_user = get_object_or_404(YapsterUser, id=user_id)
