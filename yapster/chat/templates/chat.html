@@ -8,94 +8,268 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{% static 'chat/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
-    <script src="{% static 'chat/index.js' %}" defer></script>
+
     <script type="module" src="{% static 'chat/chat.js' %}" defer></script>
+    <script src="{% static 'chat/index.js' %}" defer></script>
     <script src="{% static 'yapster/index.js' %}" defer></script>
+    <script src="{% static 'chat/search.js' %}" defer></script>
 
     <title>Chat</title>
   </head>
   <script>
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
+    const currentUserID = {{ current_userID }};
+    const currentChatID = {{ chat_room.id }};
+    const chat_users_id = {{ chat_room_users_id }};
+    
+    const nicknames_without_current = {{ nicknames_without_current | safe }};
+    const usernames_without_current = {{ usernames_without_current | safe}};
+    // for(let i = 0; i < nicknames_without_current.length; i++){
+    //   console.log("Nickanme: ", nicknames_without_current[i]);
+    // }
+
   </script>
   <body>
     {% include 'html/navbar.html' %}
     <div id="main-cont">
+      <!-- 9999999999999999999999999l-vc -->
       <div id="left-sidebar">
-        <div id="search-bar">
-          <form method="get" action="{% url 'chat' %}">
-            <input type="text" name="search" placeholder="Search" value="{{ query }}" />
-          </form>
+        <div id="search-bar-container">
+          <!-- Search input where selected names will appear -->
+          <div id="search-bar">
+              <div id="selected-names" style="display: none;">
+                  <!-- Selected names will be dynamically added here in create-chat state -->
+              </div>
+              <input
+                  id="search-input"
+                  type="text"
+                  placeholder="Type a name..."
+                  oninput="handleSearchInput(this.value)"
+              />
+          </div>
+          <p class="chat-create" onclick="toggleCreateChatState()">Create Chat</p>
+          <p id="exit-create-chat" class="chat-exit" style="display: none;" onclick="toggleCreateChatState()">X</p>
         </div>
-        <div id="users-cont">
-          {% if query %}
-              <!-- Search Results -->
-              {% for user in users %}
-              <div class="user" onclick="loadUserDetails({{user.id}})" data-id="{{ user.id }}">
+        <div class="search-container" id="users-cont">
+          <div id="search-results"></div>
+          <div id="chat-list"></div>
+          <div id="current-chats">
+            <!-- Existing Chats -->
+            {% for chat in chat_users_mapping %}
+            <div class="user" onclick="loadChatWithID({{ chat.chat_id }})" data-chat-id="{{ chat.chat_id }}">
                 <div class="left-profile-pic"></div>
                 <div class="name-time-msg">
-                  <div class="name-time">
-                    <p class="name">{{ user.user.first_name }} {{ user.user.last_name }}</p>
-                    <p class="time-sent">Last seen: 1:06pm</p>
-                  </div>
-                  <p class="message">No message available</p>
-                </div>
-              </div>
-              {% empty %}
-              <p>No users found.</p>
-              {% endfor %}
-          {% else %}
-              <!-- Existing Chats -->
-              {% for chat in chat_users_mapping %}
-              <div class="user" 
-                  onclick="loadChat({{ chat.user_ids|join:', ' }})" 
-                   data-chat-id="{{ chat.chat_id }}">
-                  <div class="left-profile-pic"></div>
-                  <div class="name-time-msg">
-                      <div class="name-time">
-                        <p class="name">
+                    <div class="name-time">
+                      <p class="name">
+                        {% if chat.is_PM %}
+                          {% for nickname in chat.nicknames %}
+                            {% if nickname != chat.current_user_nickname %}
+                              {{ nickname }}
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
                           {{ chat.chat_name }}
-                        </p>
-                        <p class="members">
-                            {% for name in chat.user_names %}
-                                {{ name }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p>
-                        <p class="time-sent">Last seen: 1:06pm</p>
-                      </div>
-                      <p class="message">No message available</p>
-                  </div>
-              </div>
-              {% empty %}
-              <p>No chats available.</p>
-              {% endfor %}
-          {% endif %}
+                        {% endif %}
+                      </p>
+                    </div>
+                    <p class="message">No message available</p>   
+                    <p class="time-sent">Last seen: 1:06pm</p>                      
+                </div>
+            </div>
+            {% empty %}
+            <p>No chats available.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    </div>
+
       <!-- IMPLEMNMENT REALTIME HERE -->
       <div id="mid-bar">
         <section class="messages">
-          <!-- received messages and displayed here -->
-          {% for i in content %} 
-          {% if i.sender != user %}
-          <div class="bubble sender">
-            {% if "[WORDLE]"|contains:i.content %}
-            <a href="/games/wordle/{{ i.content|slice }}">Guess my Wordle!</a>
+          <!-- Messages rendered from the server -->
+          {% for i in content %}
+            {% if i.system_message %}
+                <div class="system-message">
+                    <p>{{ i.message }}</p>
+                </div>
             {% else %}
-            <p>{{i.content}}</p>
+            {% if i.sender != user %}
+            <div class="message_body" id="prevchat{{ forloop.counter }}">
+              {% if i.has_pfp %}
+                <div class="pfp" 
+                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
+                </div>
+              {% else %}
+                <div class="empty_image"></div>
+              {% endif %}
+
+              <div class="flex_message">
+                {% if i.is_new_sender %}
+                  <div class="chatter_name">{{ i.sender }}</div>
+                {% endif %}
+
+                <div class="bubble sender">
+                {% if "[WORDLE]"|contains:i.message %}
+                  <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
+                {% else %}
+                  <p>{{ i.message }}</p>
             {% endif %}
+              </div>
+            </div>
           </div>
+
           {% else %}
-          <div class="bubble recipient">
-            {% if "[WORDLE]"|contains:i.content %}
-            <p>Guess my Wordle!</p>
+            <div class="bubble recipient" id="prevchat{{ forloop.counter }}">
+            {% if "[WORDLE]"|contains:i.message %}
+              <p>Guess my Wordle!</p>
             {% else %}
-            <p>{{i.content}}</p>
+              <p>{{ i.message }}</p>
             {% endif %}
+            </div>
+          {% endif %}
+            {% endif %}
+          {% endfor %}
+
+        </section>
+
+        <form action="" id="message-input" method="POST">
+            {% csrf_token %}
+            <div id="mid-message">
+                <input id="typed-message" type="text" name="message" placeholder="Your message..." />
+                <button id="wordle-btn" type="button">Game</button>
+                <button id="send-btn" type="submit">Send</button>
+            </div>
+        </form>
+      </div>
+      
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <label for="secretWord">Enter your word:</label>
+
+          <form action="" id="wordle-form" method="POST">
+            {% csrf_token %}
+            <div>
+              <input id="word-input" maxlength="5" type="text" name="message" placeholder="..." />
+            </div>
+            <div class="wordle__btn-cont">
+              <button type="submit" class="wordle__btn">Create Wordle!</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="chat-sidebar">
+        <div class="chat-sidebar-profile">
+          <div class="chat-sidebar-profile-pic">
+              <div class="image">
+                  <img id="profileImage" src="
+                          {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+                       width="100" height="100" alt="Profile Picture"
+                       onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
+              </div>
+
+              <div class="chat-sidebar-info">
+                <h2>
+                  {% if is_pm %}
+                      {{ display_name }}
+                  {% else %}
+                      {{ chat_room.chat_name|default:display_name }}
+                  {% endif %}
+              </h2>
+              <p class="chat-sidebar-status">
+                  {% if is_pm %}
+                      @{{ pm_username }}
+                  {% else %}
+                      Group Chat
+                  {% endif %}
+              </p>
+                <a href="#" class="chat-sidebar-search">
+                    <img src="{% static 'chat/images/search.png' %}" alt="Search Icon" />
+                    <span>Search</span>
+                </a>
+            </div>
+        </div>
+        <div class="chat-sidebar-options">
+            <div class="dropdown">
+              <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                Chat info
+                <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+              </button>
+              <div class="dropdown-content">
+                <a onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
+                <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
+                <a class="removeMemberButton" onclick="toggleRemoveMemberState()">Remove member</a>
+              </div>
+            </div>
+            <div class="dropdown">
+              <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                Customize chat
+                <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+              </button>
+              <div class="dropdown-content">
+                <a href="#">Option 1</a>
+                <a href="#">Option 2</a>
+                <a href="#">Option 3</a>
+              </div>
+            </div>
+            <div class="dropdown">
+              <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                Chat members
+                <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+              </button>
+              <div class="dropdown-content">
+                <a href="#">Option 1</a>
+                <a href="#">Option 2</a>
+                <a href="#">Option 3</a>
+              </div>
+            </div>
           </div>
-          {% endif %} {% endfor %}
-          <!-- end receive messages -->
-          <!-- test maessage -->
+      </div>
+
+      <div id="nickname-popup" class="nickname-popup">
+          <div class="nickname-popup-content">
+            <span class="close" onclick="togglePopup('nickname-popup')">&times;</span>
+            <h2>Edit Nicknames</h2>
+            <div class="nickname-list">
+              <div class="nickname-item">
+                <img src="{% static 'images/default_profile.jpg' %}" alt="Profile Picture" class="profile-pic">
+                <span class="nickname">Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr.</span>
+                <input type="text" class="edit-nickname-input" style="display: none;">
+                <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
+                <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <script>
+      let chat_name = `{{ chat_room.chat_name }}`;
+      console.log("Room:", chat_name);
+      let user_logged_in = `{{ user.username }}`;
+      console.log("Logged-in user:", user_logged_in);
+      window.localStorage.setItem('chatName',chat_name)
+      if (!window.localStorage.getItem('guessCount'))
+        window.localStorage.setItem('guessCount', 0)
+
+      function togglePopup(popupId) {
+      const popup = document.getElementById(popupId);
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+        }
+
+      window.onclick = function(event) {
+        const popup = document.getElementById('nickname-popup');
+        if (event.target === popup) {
+          popup.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<!-- test maessage -->
           <!-- <div class="message_body">
             <div class="empty_image"></div>
             <div>
@@ -116,36 +290,7 @@
           </div> -->
 
           <!-- <p>STOOOOOOOP</p> -->
-          
-        </section>
-        <form action="" id="message-input" method="POST">
-            {% csrf_token %}
-            <div id="mid-message">
-                <input id="typed-message" type="text" name="message" placeholder="Your message..." />
-                <button id="wordle-btn" type="button">Game</button>
-                <button id="send-btn" type="submit">Send</button>
-            </div>
-        </form>
 
-
-        <div id="myModal" class="modal">
-          <div class="modal-content">
-            <span class="close">&times;</span>
-            <label for="secretWord">Enter word:</label>
-
-            <form action="" id="wordle-form" method="POST">
-              {% csrf_token %}
-              <input id="word-input" maxlength="5" type="text" name="message" placeholder="Your message..." />
-            </form>
-
-            <!-- <form class="word-form" action="#">
-              <input type="text" name="secretWord" class="word-input" maxlength="5">
-            </form> -->
-
-          </div>
-        </div>
-
-      </div>
       <!-- IMPLEMNMENT REALTIME HERE -->
 
       <!--<div id="right-sidebar">
@@ -181,72 +326,3 @@
           <p>Delete Conversation</p>
           <a href="#" id="add-friend" class="user-option__a">Add Friend</a>
         </div> -->
-
-        <div id="chat-sidebar">
-          <div class="chat-sidebar-profile">
-            <div class="chat-sidebar-profile-pic">
-                <div class="image">
-                    <img id="profileImage" src="
-                            {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
-                         width="100" height="100" alt="Profile Picture"
-                         onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
-                </div>
-            <div class="chat-sidebar-info">
-              <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-              <p class="chat-sidebar-status">@{{ user.username }}</p>
-                <a href="#" class="chat-sidebar-search">
-                    <img src="{% static 'chat/images/search.png' %}" alt="Search Icon" />
-                    <span>Search</span>
-                </a>
-            </div>
-          </div>
-          <div class="chat-sidebar-options">
-              <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                  Chat info
-                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
-                </button>
-                <div class="dropdown-content">
-                  <a href="#">Option 1</a>
-                  <a href="#">Option 2</a>
-                  <a href="#">Option 3</a>
-                </div>
-              </div>
-              <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                  Customize chat
-                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
-                </button>
-                <div class="dropdown-content">
-                  <a href="#">Option 1</a>
-                  <a href="#">Option 2</a>
-                  <a href="#">Option 3</a>
-                </div>
-              </div>
-              <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                  Chat members
-                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
-                </button>
-                <div class="dropdown-content">
-                  <a href="#">Option 1</a>
-                  <a href="#">Option 2</a>
-                  <a href="#">Option 3</a>
-                </div>
-              </div>
-            </div>
-
-      </div> <!-- closing div for right-sidebar -->
-    </div>
-
-    <script>
-      let chat_name = `{{ chat_room.chat_name }}`;
-      console.log("Room:", chat_name);
-      let user_logged_in = `{{ user.username }}`;
-      console.log("Logged-in user:", user_logged_in);
-      window.localStorage.setItem('chatName',chat_name)
-      if (!window.localStorage.getItem('guessCount'))
-        window.localStorage.setItem('guessCount', 0)
-    </script>
-  </body>
-</html>
