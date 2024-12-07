@@ -30,5 +30,7 @@ class Message(models.Model):
     #change to yapster user
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     # temp ra nang null equal true
-    content = models.CharField(max_length=5000)
+    content = models.CharField(max_length=5000) 
     date_sent = models.DateField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    system_message = models.BooleanField(default=False)

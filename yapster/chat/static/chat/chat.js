@@ -104,64 +104,69 @@ socket.addEventListener("message", (event) => {
     else 
         messageHTML = `<p>${message}</p>`
 
-    if (sender != user_logged_in) { 
-        if(buffer == sender){
-            messageDiv.innerHTML +=  
-            `
-            <div class="message_body" id="chatno${messageCount}">
-            <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-            <div class="flex_message">
-              <div class="bubble sender">
-                ${messageHTML}
-              </div>
-            </div>
-          </div>
-          `
-
-            chat = "chatno"+(messageCount-1);
-            console.log("Changing chat:" + chat);
-
-            var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
-
-            console.log("Does it have pfp: " + hasNoPfp.length)
-
-            if(hasNoPfp.length > 0){
-                document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
-                document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
-            }
-                
-        }else{
-            let messageHTML = ``;
-            if (message.includes('[WORDLE]'))
-                messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
-            else 
-                messageHTML = `<p>${message}</p>`
-
-            messageDiv.innerHTML +=  
-            `
-            <div class="message_body" id="chatno${messageCount}">
+    if (messageData.system_message){
+        messageDiv.innerHTML += `<div class="system-message"><p>${message}</p></div>`;
+    }else{
+        if (sender != user_logged_in) { 
+            if(buffer == sender){
+                messageDiv.innerHTML +=  
+                `
+                <div class="message_body" id="chatno${messageCount}">
                 <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
                 <div class="flex_message">
-                    <div class="chatter_name">
-                        ${sender}
-                    </div>
-                    <div class="bubble sender">
-                        ${messageHTML}
+                  <div class="bubble sender">
+                    ${messageHTML}
+                  </div>
+                </div>
+              </div>
+              `
+    
+                chat = "chatno"+(messageCount-1);
+                console.log("Changing chat:" + chat);
+    
+                var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
+    
+                console.log("Does it have pfp: " + hasNoPfp.length)
+    
+                if(hasNoPfp.length > 0){
+                    document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
+                    document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
+                }
+                    
+            }else{
+                let messageHTML = ``;
+                if (message.includes('[WORDLE]'))
+                    messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
+                else 
+                    messageHTML = `<p>${message}</p>`
+    
+                messageDiv.innerHTML +=  
+                `
+                <div class="message_body" id="chatno${messageCount}">
+                    <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
+                    <div class="flex_message">
+                        <div class="chatter_name">
+                            ${sender}
+                        </div>
+                        <div class="bubble sender">
+                            ${messageHTML}
+                        </div>
                     </div>
                 </div>
-            </div>
-            `
+                `
+            }
+        } else {
+            if (message.includes('[WORDLE]'))
+                messageHTML = `<p>Guess my Wordle!</p>`
+            else 
+                messageHTML = `<p>${message}</p>`
+            messageDiv.innerHTML += `
+                <div class="bubble recipient">
+                    ${messageHTML}
+                </div>`;
         }
-    } else {
-        if (message.includes('[WORDLE]'))
-            messageHTML = `<p>Guess my Wordle!</p>`
-        else 
-            messageHTML = `<p>${message}</p>`
-        messageDiv.innerHTML += `
-            <div class="bubble recipient">
-                ${messageHTML}
-            </div>`;
     }
+
 
     buffer = sender;
     messageCount++;

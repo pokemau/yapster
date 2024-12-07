@@ -87,28 +87,33 @@
         <section class="messages">
           <!-- Messages rendered from the server -->
           {% for i in content %}
-          {% if i.sender != user %}
-          <div class="message_body" id="prevchat{{ forloop.counter }}">
-            {% if i.has_pfp %}
-              <div class="pfp" 
-                style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
-              </div>
+            {% if i.system_message %}
+                <div class="system-message">
+                    <p>{{ i.content }}</p>
+                </div>
             {% else %}
-              <div class="empty_image"></div>
-            {% endif %}
-
-
-            <div class="flex_message">
-              {% if i.is_new_sender %}
-                <div class="chatter_name">{{ i.sender }}</div>
-              {% endif %}
-
-              <div class="bubble sender">
-              {% if "[WORDLE]"|contains:i.message %}
-                <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
+            {% if i.sender != user %}
+            <div class="message_body" id="prevchat{{ forloop.counter }}">
+              {% if i.has_pfp %}
+                <div class="pfp" 
+                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
+                </div>
               {% else %}
-                <p>{{ i.message }}</p>
+                <div class="empty_image"></div>
               {% endif %}
+
+
+              <div class="flex_message">
+                {% if i.is_new_sender %}
+                  <div class="chatter_name">{{ i.sender }}</div>
+                {% endif %}
+
+                <div class="bubble sender">
+                {% if "[WORDLE]"|contains:i.message %}
+                  <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
+                {% else %}
+                  <p>{{ i.message }}</p>
+            {% endif %}
               </div>
             </div>
           </div>
@@ -122,6 +127,7 @@
             {% endif %}
             </div>
           {% endif %}
+            {% endif %}
           {% endfor %}
 
         </section>
