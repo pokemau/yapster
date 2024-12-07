@@ -140,7 +140,25 @@
             </div>
         </form>
       </div>
+      
+        <div id="myModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <label for="secretWord">Enter your word:</label>
 
+            <form action="" id="wordle-form" method="POST">
+              {% csrf_token %}
+              <div>
+                <input id="word-input" maxlength="5" type="text" name="message" placeholder="..." />
+              </div>
+              <div class="wordle__btn-cont">
+                <button type="submit" class="wordle__btn">Create Wordle!</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
       <div id="chat-sidebar">
         <div class="chat-sidebar-profile">
           <div class="chat-sidebar-profile-pic">

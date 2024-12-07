@@ -38,7 +38,6 @@ document.getElementById('message-input').addEventListener('submit', function(eve
 });
 
 
-
 const wordleForm = document.querySelector('#wordle-form');
 wordleForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -52,7 +51,7 @@ wordleForm.addEventListener('submit', function(e) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: JSON.stringify({ word: inputWord })
+            body: JSON.stringify({ word: inputWord, room: chat_name })
         })
         .then(response => response.json())
         .then(data => {
@@ -63,8 +62,9 @@ wordleForm.addEventListener('submit', function(e) {
                         'message': `[WORDLE]${data.game}`,
                         'chat_name': `${chat_name}`,
                         'sender': `${user_logged_in}`,
-                })
-        );
+                }));
+                document.getElementById("myModal").style.display = 'none';
+                document.querySelector('#word-input').value = '';
             } else {
                 console.error("Failed to create WordleGame:", data.error);
             }
