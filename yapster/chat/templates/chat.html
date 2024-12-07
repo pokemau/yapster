@@ -20,6 +20,13 @@
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
     const currentUserID = {{ current_userID }};
+    const currentChatID = {{ chat_room.id }};
+    const chat_users_id = {{ chat_room_users_id }};
+    for(let i = 0; i < chat_users_id.length; i++){
+      console.log("Chat user: ", chat_users_id[i]);
+    }
+
+
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -63,12 +70,6 @@
                           {{ chat.chat_name }}
                         {% endif %}
                       </p>
-                      <!-- <p class="members">
-                          {% for name in chat.user_names %}
-                              {{ name }}{% if not forloop.last %}, {% endif %}
-                          {% endfor %}
-                      </p> -->
-
                     </div>
                     <p class="message">No message available</p>   
                     <p class="time-sent">Last seen: 1:06pm</p>                      
@@ -80,33 +81,38 @@
           </div>
         </div>
       </div>
+
       <!-- IMPLEMNMENT REALTIME HERE -->
       <div id="mid-bar">
         <section class="messages">
           <!-- Messages rendered from the server -->
           {% for i in content %}
-          {% if i.sender != user %}
-          <div class="message_body" id="prevchat{{ forloop.counter }}">
-            {% if i.has_pfp %}
-              <div class="pfp" 
-                style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
-              </div>
+            {% if i.system_message %}
+                <div class="system-message">
+                    <p>{{ i.message }}</p>
+                </div>
             {% else %}
-              <div class="empty_image"></div>
-            {% endif %}
-
-
-            <div class="flex_message">
-              {% if i.is_new_sender %}
-                <div class="chatter_name">{{ i.sender }}</div>
-              {% endif %}
-
-              <div class="bubble sender">
-              {% if "[WORDLE]"|contains:i.message %}
-                <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
+            {% if i.sender != user %}
+            <div class="message_body" id="prevchat{{ forloop.counter }}">
+              {% if i.has_pfp %}
+                <div class="pfp" 
+                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
+                </div>
               {% else %}
-                <p>{{ i.message }}</p>
+                <div class="empty_image"></div>
               {% endif %}
+
+              <div class="flex_message">
+                {% if i.is_new_sender %}
+                  <div class="chatter_name">{{ i.sender }}</div>
+                {% endif %}
+
+                <div class="bubble sender">
+                {% if "[WORDLE]"|contains:i.message %}
+                  <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
+                {% else %}
+                  <p>{{ i.message }}</p>
+            {% endif %}
               </div>
             </div>
           </div>
@@ -120,6 +126,7 @@
             {% endif %}
             </div>
           {% endif %}
+            {% endif %}
           {% endfor %}
 
         </section>
@@ -134,80 +141,107 @@
         </form>
       </div>
       
-        <div id="myModal" class="modal">
-          <div class="modal-content">
-            <span class="close">&times;</span>
-            <label for="secretWord">Enter your word:</label>
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <label for="secretWord">Enter your word:</label>
 
-            <form action="" id="wordle-form" method="POST">
-              {% csrf_token %}
-              <div>
-                <input id="word-input" maxlength="5" type="text" name="message" placeholder="..." />
-              </div>
-              <div class="wordle__btn-cont">
-                <button type="submit" class="wordle__btn">Create Wordle!</button>
-              </div>
-            </form>
-          </div>
+          <form action="" id="wordle-form" method="POST">
+            {% csrf_token %}
+            <div>
+              <input id="word-input" maxlength="5" type="text" name="message" placeholder="..." />
+            </div>
+            <div class="wordle__btn-cont">
+              <button type="submit" class="wordle__btn">Create Wordle!</button>
+            </div>
+          </form>
         </div>
-
       </div>
-        <div id="chat-sidebar">
-          <div class="chat-sidebar-profile">
-            <div class="chat-sidebar-profile-pic">
-                <div class="image">
-                    <img id="profileImage" src="
-                            {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
-                         width="100" height="100" alt="Profile Picture"
-                         onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
-                </div>
-            <div class="chat-sidebar-info">
-              <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-              <p class="chat-sidebar-status">@{{ user.username }}</p>
+
+      <div id="chat-sidebar">
+        <div class="chat-sidebar-profile">
+          <div class="chat-sidebar-profile-pic">
+              <div class="image">
+                  <img id="profileImage" src="
+                          {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+                       width="100" height="100" alt="Profile Picture"
+                       onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
+              </div>
+
+              <div class="chat-sidebar-info">
+                <h2>
+                  {% if is_pm %}
+                      {{ display_name }}
+                  {% else %}
+                      {{ chat_room.chat_name|default:display_name }}
+                  {% endif %}
+              </h2>
+              <p class="chat-sidebar-status">
+                  {% if is_pm %}
+                      @{{ pm_username }}
+                  {% else %}
+                      Group Chat
+                  {% endif %}
+              </p>
                 <a href="#" class="chat-sidebar-search">
                     <img src="{% static 'chat/images/search.png' %}" alt="Search Icon" />
                     <span>Search</span>
                 </a>
             </div>
-          </div>
-          <div class="chat-sidebar-options">
-              <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                  Chat info
-                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
-                </button>
-                <div class="dropdown-content">
-                  <a href="#">Option 1</a>
-                  <a href="#">Option 2</a>
-                  <a href="#">Option 3</a>
-                </div>
-              </div>
-              <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                  Customize chat
-                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
-                </button>
-                <div class="dropdown-content">
-                  <a href="#">Option 1</a>
-                  <a href="#">Option 2</a>
-                  <a href="#">Option 3</a>
-                </div>
-              </div>
-              <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                  Chat members
-                  <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
-                </button>
-                <div class="dropdown-content">
-                  <a href="#">Option 1</a>
-                  <a href="#">Option 2</a>
-                  <a href="#">Option 3</a>
-                </div>
+        </div>
+        <div class="chat-sidebar-options">
+            <div class="dropdown">
+              <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                Chat info
+                <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+              </button>
+              <div class="dropdown-content">
+                <a href="#" onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
+                <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
+                <a href="#">Option 3</a>
               </div>
             </div>
+            <div class="dropdown">
+              <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                Customize chat
+                <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+              </button>
+              <div class="dropdown-content">
+                <a href="#">Option 1</a>
+                <a href="#">Option 2</a>
+                <a href="#">Option 3</a>
+              </div>
+            </div>
+            <div class="dropdown">
+              <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                Chat members
+                <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
+              </button>
+              <div class="dropdown-content">
+                <a href="#">Option 1</a>
+                <a href="#">Option 2</a>
+                <a href="#">Option 3</a>
+              </div>
+            </div>
+          </div>
+      </div>
 
-      </div> <!-- closing div for right-sidebar -->
-    </div>
+      <div id="nickname-popup" class="nickname-popup">
+          <div class="nickname-popup-content">
+            <span class="close" onclick="togglePopup('nickname-popup')">&times;</span>
+            <h2>Edit Nicknames</h2>
+            <div class="nickname-list">
+              <div class="nickname-item">
+                <img src="{% static 'images/default_profile.jpg' %}" alt="Profile Picture" class="profile-pic">
+                <span class="nickname">Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr.</span>
+                <input type="text" class="edit-nickname-input" style="display: none;">
+                <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
+                <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     <script>
       let chat_name = `{{ chat_room.chat_name }}`;
@@ -217,6 +251,18 @@
       window.localStorage.setItem('chatName',chat_name)
       if (!window.localStorage.getItem('guessCount'))
         window.localStorage.setItem('guessCount', 0)
+
+      function togglePopup(popupId) {
+      const popup = document.getElementById(popupId);
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+        }
+
+      window.onclick = function(event) {
+        const popup = document.getElementById('nickname-popup');
+        if (event.target === popup) {
+          popup.style.display = "none";
+        }
+      }
     </script>
   </body>
 </html>

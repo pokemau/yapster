@@ -104,64 +104,69 @@ socket.addEventListener("message", (event) => {
     else 
         messageHTML = `<p>${message}</p>`
 
-    if (sender != user_logged_in) { 
-        if(buffer == sender){
-            messageDiv.innerHTML +=  
-            `
-            <div class="message_body" id="chatno${messageCount}">
-            <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-            <div class="flex_message">
-              <div class="bubble sender">
-                ${messageHTML}
-              </div>
-            </div>
-          </div>
-          `
-
-            chat = "chatno"+(messageCount-1);
-            console.log("Changing chat:" + chat);
-
-            var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
-
-            console.log("Does it have pfp: " + hasNoPfp.length)
-
-            if(hasNoPfp.length > 0){
-                document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
-                document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
-            }
-                
-        }else{
-            let messageHTML = ``;
-            if (message.includes('[WORDLE]'))
-                messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
-            else 
-                messageHTML = `<p>${message}</p>`
-
-            messageDiv.innerHTML +=  
-            `
-            <div class="message_body" id="chatno${messageCount}">
+    if (messageData.system_message){
+        messageDiv.innerHTML += `<div class="system-message"><p>${message}</p></div>`;
+    }else{
+        if (sender != user_logged_in) { 
+            if(buffer == sender){
+                messageDiv.innerHTML +=  
+                `
+                <div class="message_body" id="chatno${messageCount}">
                 <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
                 <div class="flex_message">
-                    <div class="chatter_name">
-                        ${sender}
-                    </div>
-                    <div class="bubble sender">
-                        ${messageHTML}
+                  <div class="bubble sender">
+                    ${messageHTML}
+                  </div>
+                </div>
+              </div>
+              `
+    
+                chat = "chatno"+(messageCount-1);
+                console.log("Changing chat:" + chat);
+    
+                var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
+    
+                console.log("Does it have pfp: " + hasNoPfp.length)
+    
+                if(hasNoPfp.length > 0){
+                    document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
+                    document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
+                }
+                    
+            }else{
+                let messageHTML = ``;
+                if (message.includes('[WORDLE]'))
+                    messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
+                else 
+                    messageHTML = `<p>${message}</p>`
+    
+                messageDiv.innerHTML +=  
+                `
+                <div class="message_body" id="chatno${messageCount}">
+                    <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
+                    <div class="flex_message">
+                        <div class="chatter_name">
+                            ${sender}
+                        </div>
+                        <div class="bubble sender">
+                            ${messageHTML}
+                        </div>
                     </div>
                 </div>
-            </div>
-            `
+                `
+            }
+        } else {
+            if (message.includes('[WORDLE]'))
+                messageHTML = `<p>Guess my Wordle!</p>`
+            else 
+                messageHTML = `<p>${message}</p>`
+            messageDiv.innerHTML += `
+                <div class="bubble recipient">
+                    ${messageHTML}
+                </div>`;
         }
-    } else {
-        if (message.includes('[WORDLE]'))
-            messageHTML = `<p>Guess my Wordle!</p>`
-        else 
-            messageHTML = `<p>${message}</p>`
-        messageDiv.innerHTML += `
-            <div class="bubble recipient">
-                ${messageHTML}
-            </div>`;
     }
+
 
     buffer = sender;
     messageCount++;
@@ -203,3 +208,61 @@ socket.onclose = (event) => {
     console.log("WebSocket connection closed!");
 };
 
+document.addEventListener('DOMContentLoaded', function() {
+    const editIcons = document.querySelectorAll('.edit-icon');
+    editIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const nicknameItem = this.closest('.nickname-item');
+            const nicknameSpan = nicknameItem.querySelector('.nickname');
+            const editInput = nicknameItem.querySelector('.edit-nickname-input');
+            const saveButton = nicknameItem.querySelector('.save-nickname-btn');
+
+            nicknameSpan.style.display = 'none';
+            editInput.style.display = 'block';
+            saveButton.style.display = 'block';
+            this.style.display = 'none';
+            editInput.value = nicknameSpan.textContent;
+        });
+    });
+
+    const saveButtons = document.querySelectorAll('.save-nickname-btn');
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const nicknameItem = this.closest('.nickname-item');
+            const nicknameSpan = nicknameItem.querySelector('.nickname');
+            const editInput = nicknameItem.querySelector('.edit-nickname-input');
+            const editIcon = nicknameItem.querySelector('.edit-icon');
+
+            nicknameSpan.textContent = editInput.value;
+            nicknameSpan.style.display = 'block';
+            editInput.style.display = 'none';
+            this.style.display = 'none';
+            editIcon.style.display = 'block';
+
+            // Optionally, send the updated nickname to the server
+            fetch('/update-nickname/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ nickname: editInput.value })
+            });
+        });
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

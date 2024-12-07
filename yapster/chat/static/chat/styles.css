@@ -334,8 +334,6 @@ html { font-family: 'PT Sans', Georgia, serif; }
 .messages {
 	/* max-width: 400px; */
 	/* margin: 0% auto; */
-	margin-left: 5%;
-	margin-right: 5%;
 	
 	display: flex;
 	flex-flow: column;
@@ -432,20 +430,17 @@ html { font-family: 'PT Sans', Georgia, serif; }
 * Chat Sidebar
 *******************/
 #chat-sidebar {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	padding: 20px;
-	visibility: visible;
-	background-color: #f1f1f1;
-	width: 300px;
-	height: 100%;
-	/* position: fixed; */
-	right: 0;
-	top: 0;
-	margin-top: 55px;
-	border-left: 1px solid #cdd5de;
-	display: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    visibility: visible;
+    background-color: #f1f1f1;
+    width: 300px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    border-left: 1px solid #cdd5de;
 }
 
 .chat-sidebar-profile {
@@ -472,6 +467,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	font-size: 1.2rem;
 	font-weight: 600;
 	margin: 30px 0 0;
+	text-align: center;
 }
 
 .chat-sidebar-info .chat-sidebar-status {
@@ -693,4 +689,80 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	cursor: pointer;
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
+}
+
+.nickname-popup {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	left: 300px;
+	top: 0;
+	width: 60%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+  }
+  
+.nickname-popup-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+}
+
+.nickname-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.nickname-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    position: relative;
+}
+.nickname-item .profile-pic {
+    margin-right: 10px;
+}
+.nickname-item .nickname {
+    flex-grow: 1;
+}
+.nickname-item .edit-icon,
+.nickname-item .save-nickname-btn {
+    width: 20px;
+    height: 20px;
+    margin-left: auto; /* Push icons to the right */
+    cursor: pointer;
+}
+.nickname-item .edit-nickname-input {
+    width: 400px; /* Set a fixed width */
+	height: 30px;
+	font-size: 16px;
+    margin-left: 10px;
+    flex-grow: 0; /* Prevent it from growing */
+}
+.nickname-item .save-nickname-btn {
+    width: 20px; /* Adjust the width as needed */
+    height: 20px; /* Adjust the height as needed */
+    margin-left: auto; /* Push icons to the right */
+    cursor: pointer;
+}
+
+.profile-pic {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+}
+
+.edit-icon {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+.save-nickname-btn {
+    margin-left: 10px;
+    cursor: pointer;
 }

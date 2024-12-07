@@ -5,7 +5,8 @@ from user.models import YapsterUser, User
 
 # Chat Contains User and Message
 class Chat(models.Model):
-    chat_name = models.CharField(max_length=255)
+    chat_name = models.CharField(max_length=255, default="", blank=True)
+    is_pm = models.BooleanField(default=False)
     def __str(self):
         return self.chat_name
 
@@ -29,5 +30,7 @@ class Message(models.Model):
     #change to yapster user
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     # temp ra nang null equal true
-    content = models.CharField(max_length=5000)
+    content = models.CharField(max_length=5000) 
     date_sent = models.DateField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    system_message = models.BooleanField(default=False)
