@@ -224,19 +224,53 @@ function filterUsers(query, isAddingToGroup) {
             if (searchResults) {
                 searchResults.style.display = "block";
 
+                // Combine user results and group chats with appropriate actions
                 const userResults = data.users.map((user) => {
-                    return `
-                        <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
-                            <div class="left-profile-pic"></div>
-                            <div class="name-time-msg">
-                                <p class="name">${user.first_name} ${user.last_name}</p>
-                                <p class="time-sent">@${user.username}</p>
+                    if (isAddingToGroup) {
+                        // Add user functionality for Create GC state
+                        return `
+                            <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
+                                <div class="left-profile-pic"></div>
+                                <div class="name-time-msg">
+                                    <p class="name">${user.first_name} ${user.last_name}</p>
+                                    <p class="time-sent">@${user.username}</p>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        // Load private chat functionality for normal search
+                        return `
+                            <div class="user" onclick="loadChat(${user.id})">
+                                <div class="left-profile-pic"></div>
+                                <div class="name-time-msg">
+                                    <p class="name">${user.first_name} ${user.last_name}</p>
+                                    <p class="time-sent">@${user.username}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
 
-                searchResults.innerHTML = userResults.join("");
+                let results = userResults;
+
+                // Add group chat results only in normal search mode
+                if (!isAddingToGroup) {
+                    const chatResults = data.group_chats.map((chat) => {
+                        return `
+                            <div class="user" onclick="loadChatWithID(${chat.chat_id})">
+                                <div class="left-profile-pic"></div>
+                                <div class="name-time-msg">
+                                    <p class="name">${chat.chat_name}</p>
+                                    <p class="time-sent">${chat.member_count} members</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    results = [...userResults, ...chatResults];
+                }
+
+                searchResults.innerHTML = results.join("");
                 if (chatList) chatList.style.display = "none"; // Hide chats during search
             }
         })
