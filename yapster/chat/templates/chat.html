@@ -20,6 +20,13 @@
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
     const currentUserID = {{ current_userID }};
+    const currentChatID = {{ chat_room.id }};
+    const chat_users_id = {{ chat_room_users_id }};
+    for(let i = 0; i < chat_users_id.length; i++){
+      console.log("Chat user: ", chat_users_id[i]);
+    }
+
+
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -169,7 +176,7 @@
               </button>
               <div class="dropdown-content">
                 <a href="#" onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
-                <a href="#">Option 2</a>
+                <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
                 <a href="#">Option 3</a>
               </div>
             </div>

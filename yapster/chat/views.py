@@ -73,8 +73,6 @@ def get_chat_data(request, active_chat_id=None):
 
     return query, users, chat_users_mapping, active_chat_data
 
-
-
 # Updated chat_view
 def chat_view(request):
     if not request.user.is_authenticated:
@@ -96,7 +94,6 @@ def chat_view(request):
         'content': [],  # Empty content for new users
         'chat_room_users': [],  # No users in a new chat
     })
-
 
 # Updated message_view
 def message_view(request, chat_id):
@@ -154,6 +151,10 @@ def message_view(request, chat_id):
     if chat_users_without_current:
         pm_username = chat_users_without_current[0].member.user.username
 
+    chat_users_id = [cu.member.user.id for cu in chat_users]
+    # for i in chat_users:
+    #     print("INVOLVED USER: ", i.nickname)
+    #     print("ID: ", i.member.user.id)
 
     return render(request, 'chat.html', {
         'users': users,
@@ -162,15 +163,12 @@ def message_view(request, chat_id):
         'current_userID': request.user.yapsteruser.id,
         'content': content_messages,
         'chat_room': chat_room,
-        'chat_room_users': chat_users,
+        'chat_room_users_id': chat_users_id,
         'display_name': display_name,
         'is_pm': active_chat_data['is_pm'],
         'pm_username': pm_username,
 
     })
-
-
-
 
 def query_users(request):
     if request.method == "GET":
@@ -231,7 +229,6 @@ def query_users(request):
         return JsonResponse({"success": False, "error": "No query provided"}, status=400)
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
-
 
 def logout_user(request):
     logout(request)
@@ -338,6 +335,45 @@ def find_chat(user_ids):
             return chat
 
     return None
+
+def add_members_to_group(request, chat_id):
+    """Add members to a group chat."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "error": "User not authenticated"}, status=401)
+
+    # Get the chat object
+    chat = get_object_or_404(Chat, id=chat_id)
+
+    # Ensure that it's a group chat (not a PM)
+    if chat.is_pm:
+        return JsonResponse({"success": False, "error": "Cannot add members to a private message chat"}, status=400)
+
+    if request.method == "POST":
+        # Get the list of user IDs to add
+        user_ids = request.POST.get('user_ids') or json.loads(request.body).get('user_ids')
+
+        if not user_ids:
+            return JsonResponse({"success": False, "error": "No users provided"}, status=400)
+
+        # Filter out users who are already in the group chat
+        existing_users = ChatUser.objects.filter(chat=chat, member__id__in=user_ids)
+        existing_user_ids = [user.member.id for user in existing_users]
+
+        # Check if any user is already in the group
+        new_user_ids = [user_id for user_id in user_ids if user_id not in existing_user_ids]
+
+        if not new_user_ids:
+            return JsonResponse({"success": False, "error": "All users are already in the group."}, status=400)
+
+        # Add new users to the chat
+        for user_id in new_user_ids:
+            user = get_object_or_404(YapsterUser, id=user_id)
+            ChatUser.objects.create(chat=chat, member=user)
+
+        # Return a success response
+        return JsonResponse({"success": True, "message": "Members added successfully!"})
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
 #Temp Chat for chatting unchatted user
 # def temp_chat_view(request, user_id):
