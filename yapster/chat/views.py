@@ -455,17 +455,20 @@ def remove_members_from_group(request, chat_id):
 
         if not chat_user_ids:
             return JsonResponse({"success": False, "error": "None of the provided users are in the group."}, status=400)
+        
+        # Create the system message about the removed members
+        removed_users  = ", ".join([f"{chat_user.nickname}" for chat_user in ChatUser.objects.filter(chat=chat, member__id__in=chat_user_ids)])
 
         # Remove the users from the chat
         for user_id in chat_user_ids:
             ChatUser.objects.filter(chat=chat, member__id=user_id).delete()
 
-        # Create the system message about the removed members
-        removed_users = ", ".join([f"{user.user.first_name} {user.user.last_name}" for user in YapsterUser.objects.filter(id__in=chat_user_ids)])
+        current_user_chatuser = ChatUser.objects.get(chat=chat, member=request.user.yapsteruser)
+        current_user_nickname = current_user_chatuser.nickname
         Message.objects.create(
             chat=chat,
             sender=request.user,
-            content=f"{request.user.username} removed {removed_users}",
+            content=f"{current_user_nickname} removed {removed_users}",
             system_message=True,
         )
 
