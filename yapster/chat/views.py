@@ -8,6 +8,8 @@ from django.http import JsonResponse, Http404
 import json
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
+from django.core import serializers
+
 
 # Helper function for shared logic
 def get_chat_data(request, active_chat_id=None):
@@ -68,7 +70,7 @@ def get_chat_data(request, active_chat_id=None):
                 'chat_room': chat,
                 'display_name': display_name,
                 'chat_users': users_in_chat,
-                'is_pm': is_PM,
+                'is_pm': is_PM, 
             }
 
     return query, users, chat_users_mapping, active_chat_data
@@ -154,6 +156,10 @@ def message_view(request, chat_id):
         pm_username = chat_users_without_current[0].member.user.username
 
     chat_users_id = [cu.member.user.id for cu in chat_users]
+    #random bullshit time
+    chat_users_nicknames_without_current = [cu.nickname for cu in chat_users if cu.member != request.user.yapsteruser]
+    chat_users_usernames_without_current = [cu.member.user.username for cu in chat_users if cu.member != request.user.yapsteruser]
+
     # for i in chat_users:
     #     print("INVOLVED USER: ", i.nickname)
     #     print("ID: ", i.member.user.id)
@@ -166,6 +172,9 @@ def message_view(request, chat_id):
         'content': content_messages,
         'chat_room': chat_room,
         'chat_room_users_id': chat_users_id,
+        'chat_users': chat_users,
+        'nicknames_without_current': chat_users_nicknames_without_current,
+        'usernames_without_current': chat_users_usernames_without_current,
         'display_name': display_name,
         'is_pm': active_chat_data['is_pm'],
         'pm_username': pm_username,
@@ -286,6 +295,32 @@ def get_user_details(request, user_id):
             return JsonResponse({"success": False, "error": "User not found"})
     return JsonResponse({"success": False, "error": "Invalid request"})
 
+@login_required
+def get_chat_members(request, chat_id):
+    """Fetch members of a specific chat."""
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # Fetch the chat
+        chat = get_object_or_404(Chat, id=chat_id)
+
+        # Get all members of the chat
+        chat_users = ChatUser.objects.filter(chat=chat).select_related('member__user')
+
+        # Create a list of user data
+        members_data = [
+            {
+                'id': chat_user.member.id,
+                'first_name': chat_user.member.user.first_name,
+                'last_name': chat_user.member.user.last_name,
+                'username': chat_user.member.user.username,
+                'nickname': chat_user.nickname,  # Use nickname if available
+            }
+            for chat_user in chat_users
+        ]
+
+        return JsonResponse({"success": True, "members": members_data})
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
 def get_or_create_chat(request):
     # Based on users involved
     if request.method == "POST":
@@ -313,8 +348,9 @@ def get_or_create_chat(request):
             chat.save()
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({"success": True, "chat_name": chat.chat_name})
+            return JsonResponse({"success": True, "chat_name": chat.id})
         
+        #chat id siguro ni dapat
         return redirect('chat_name', chat_name=chat.chat_name)
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
@@ -338,10 +374,6 @@ def find_chat(user_ids):
 
     return None
 
-from django.http import JsonResponse, Http404
-from django.shortcuts import get_object_or_404
-from .models import Chat, ChatUser, YapsterUser, Message
-import json
 
 def add_members_to_group(request, chat_id):
     """Add members to a group chat."""
@@ -393,6 +425,51 @@ def add_members_to_group(request, chat_id):
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
+
+@login_required
+def remove_members_from_group(request, chat_id):
+    """Remove members from a group chat."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "error": "User not authenticated"}, status=401)
+
+    # Get the chat object
+    chat = get_object_or_404(Chat, id=chat_id)
+
+    # Ensure that it's a group chat (not a PM)
+    if chat.is_pm:
+        return JsonResponse({"success": False, "error": "Cannot remove members from a private message chat"}, status=400)
+
+    if request.method == "POST":
+        # Get the list of user IDs to remove
+        user_ids = request.POST.get('user_ids') or json.loads(request.body).get('user_ids')
+
+        if not user_ids:
+            return JsonResponse({"success": False, "error": "No users provided"}, status=400)
+
+        # Filter out users who are not in the group chat
+        chat_users = ChatUser.objects.filter(chat=chat, member__id__in=user_ids)
+        chat_user_ids = [user.member.id for user in chat_users]
+
+        if not chat_user_ids:
+            return JsonResponse({"success": False, "error": "None of the provided users are in the group."}, status=400)
+
+        # Remove the users from the chat
+        for user_id in chat_user_ids:
+            ChatUser.objects.filter(chat=chat, member__id=user_id).delete()
+
+        # Create the system message about the removed members
+        removed_users = ", ".join([f"{user.user.first_name} {user.user.last_name}" for user in YapsterUser.objects.filter(id__in=chat_user_ids)])
+        Message.objects.create(
+            chat=chat,
+            sender=request.user,
+            content=f"{request.user.username} removed {removed_users}",
+            system_message=True,
+        )
+
+        # Return a success response
+        return JsonResponse({"success": True, "message": "Members removed successfully!"})
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 #Temp Chat for chatting unchatted user
 # def temp_chat_view(request, user_id):
 #     target_user = get_object_or_404(YapsterUser, id=user_id)

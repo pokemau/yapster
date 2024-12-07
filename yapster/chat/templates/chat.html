@@ -22,10 +22,12 @@
     const currentUserID = {{ current_userID }};
     const currentChatID = {{ chat_room.id }};
     const chat_users_id = {{ chat_room_users_id }};
-    for(let i = 0; i < chat_users_id.length; i++){
-      console.log("Chat user: ", chat_users_id[i]);
-    }
-
+    
+    const nicknames_without_current = {{ nicknames_without_current | safe }};
+    const usernames_without_current = {{ usernames_without_current | safe}};
+    // for(let i = 0; i < nicknames_without_current.length; i++){
+    //   console.log("Nickanme: ", nicknames_without_current[i]);
+    // }
 
   </script>
   <body>
@@ -196,9 +198,9 @@
                 <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
               </button>
               <div class="dropdown-content">
-                <a href="#" onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
+                <a onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
                 <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
-                <a href="#">Option 3</a>
+                <a class="removeMemberButton" onclick="toggleRemoveMemberState()">Remove member</a>
               </div>
             </div>
             <div class="dropdown">
