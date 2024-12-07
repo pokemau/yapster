@@ -207,14 +207,14 @@ def message_view(request, chat_id):
 
         else:
             try:
-                receiver_block_list = BlockList.objects.get(user=receiver)
+                receiver_block_list, created = BlockList.objects.get_or_create(user=receiver)
                 you_are_blocked = receiver_block_list.blocked_users.filter(id=request.user.yapsteruser.id).exists()
             except BlockList.DoesNotExist:
                 you_are_blocked = False
 
             validation['you_are_blocked'] = you_are_blocked
 
-        block_list = BlockList.objects.get(user=request.user.yapsteruser)
+        block_list, created = BlockList.objects.get_or_create(user=request.user.yapsteruser)
         validation['is_blocked'] = block_list.blocked_users.filter(id=receiver.id).exists()
 
     return render(request, 'chat.html', {
