@@ -27,6 +27,8 @@
     const chat_users_id = {{ chat_room_users_id }};
     const currentUserNickname = "{{ current_userNickname }}";
     {% endif %}
+    let buffer = "@@@@";
+    let chatCounter = {{ content|length }};
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -90,6 +92,7 @@
             {% if i.system_message %}
                 <div class="system-message">
                     <p>{{ i.message }}</p>
+                    <script>buffer = "@@@@";</script>
                 </div>
             {% else %}
             {% if i.sender != user %}
@@ -110,8 +113,11 @@
                 <div class="bubble sender">
                 {% if "[WORDLE]"|contains:i.message %}
                   <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
-                {% else %}
-                  <p>{{ i.message }}</p>
+                
+                <script>buffer = "{{ i.sender_nickname }}";</script>
+            {% else %}
+                <p>{{ i.message }}</p>
+                <script>buffer = "{{ i.sender_nickname }}";</script>
             {% endif %}
               </div>
             </div>
@@ -150,7 +156,7 @@
           {% endif %}
 
         </section>
-
+        <script>console.log(chatCounter);</script>
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
@@ -242,9 +248,15 @@
                 <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
               </button>
               <div class="dropdown-content">
-                <a href="#">Option 1</a>
-                <a href="#">Option 2</a>
-                <a href="#">Option 3</a>
+                {% for user in chat_users %}
+                  <div class="user" onclick="loadChat({{user.member.id}})">
+                    <div class="left-profile-pic"></div>
+                    <div class="name-time-msg">
+                        <p class="name">{{ user.member.user.first_name }} {{ user.member.user.last_name }}</p>
+                        <p class="time-sent">@{{ user.member.user.username }}</p>
+                    </div>
+                  </div>
+                {% endfor %}
               </div>
             </div>
           </div>

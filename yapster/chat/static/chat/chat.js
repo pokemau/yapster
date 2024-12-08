@@ -85,15 +85,17 @@ wordleForm.addEventListener('submit', function(e) {
         console.log("INVALID WORD")
     }
 })
-
-var buffer = "@@@@";
+ 
 var messageCount = 0;
+console.log("BufferVal: " + buffer);
+var firstChat = true;
 
 // response from consumer on server
 socket.addEventListener("message", (event) => {
     
 	// event.preventDefault();
     const messageData = JSON.parse(event.data)['response_data'];
+    let chat = "";
     
     var sender = messageData['sender'];
     var sender_nickname = messageData['sender_nickname'];
@@ -120,7 +122,7 @@ socket.addEventListener("message", (event) => {
         messageDiv.innerHTML += `<div class="system-message"><p>${message}</p></div>`;
     }else{
         if (sender != user_logged_in) { 
-            if(buffer == sender){
+            if(buffer == sender_nickname){
                 messageDiv.innerHTML +=  
                 `
                 <div class="message_body" id="chatno${messageCount}">
@@ -132,14 +134,23 @@ socket.addEventListener("message", (event) => {
                 </div>
               </div>
               `
-    
-                chat = "chatno"+(messageCount-1);
-                console.log("Changing chat:" + chat);
-    
-                var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
-    
-                console.log("Does it have pfp: " + hasNoPfp.length)
-    
+                if(!firstChat){
+                    chat = "chatno"+(messageCount-1);
+                    console.log("Changing chat:" + chat);
+        
+                    var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
+        
+                    console.log("Does it have pfp: " + hasNoPfp.length)
+                }else{
+                    chat = "prevchat"+(chatCounter);
+                    console.log("Changing chat:" + chat);
+        
+                    var hasNoPfp = document.getElementById(chat).getElementsByClassName("pfp");
+        
+                    console.log("Does it have pfp: " + hasNoPfp.length)
+                }
+
+                
                 if(hasNoPfp.length > 0){
                     document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
                     document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
@@ -177,11 +188,13 @@ socket.addEventListener("message", (event) => {
                     ${messageHTML}
                 </div>`;
         }
+        scrollToBottom();
     }
 
 
-    buffer = sender;
+    buffer = sender_nickname;
     messageCount++;
+    firstChat = false;
     scrollToBottom();
 });
 

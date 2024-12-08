@@ -236,6 +236,9 @@ def message_view(request, chat_id):
 
     chat_user_object = ChatUser.objects.get(member=request.user.yapsteruser, chat_id=chat_room.id)
 
+    # for i in chat_users:
+    #     print("CHAT ID: ", i.chat.id)
+
     return render(request, 'chat.html', {
         'users': users,
         'query': query,
@@ -406,10 +409,15 @@ def get_or_create_chat(request):
         print("GAGAGAGAGAG")
         
         sender_id = request.user.yapsteruser.id
+
+        if len(user_ids) == 1:
+            if sender_id == user_ids[0]:
+                return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+                    
         if(sender_id not in user_ids):
             user_ids.append(sender_id)
         print("USER IDSSSSSSSSS: ", user_ids)
-
+        
         chat = find_chat(user_ids)
 
         if not chat:
