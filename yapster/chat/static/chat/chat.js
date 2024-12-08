@@ -218,6 +218,7 @@ socket.onclose = (event) => {
 
 document.addEventListener('DOMContentLoaded', function() {
     const editIcons = document.querySelectorAll('.edit-icon');
+
     editIcons.forEach(icon => {
         icon.addEventListener('click', function() {
             const nicknameItem = this.closest('.nickname-item');
@@ -229,7 +230,9 @@ document.addEventListener('DOMContentLoaded', function() {
             editInput.style.display = 'block';
             saveButton.style.display = 'block';
             this.style.display = 'none';
-            editInput.value = nicknameSpan.textContent;
+            editInput.value = nicknameSpan.textContent.trim();
+            editInput.focus();
+            editInput.select();
         });
     });
 
@@ -241,24 +244,95 @@ document.addEventListener('DOMContentLoaded', function() {
             const editInput = nicknameItem.querySelector('.edit-nickname-input');
             const editIcon = nicknameItem.querySelector('.edit-icon');
 
-            nicknameSpan.textContent = editInput.value;
+            const oldNickname = nicknameSpan.textContent.trim();
+            const newNickname = editInput.value.trim();
+
+            // Do nothing if the nickname hasn't changed
+            if (oldNickname === newNickname) {
+                nicknameSpan.style.display = 'block';
+                editInput.style.display = 'none';
+                this.style.display = 'none';
+                editIcon.style.display = 'block';
+                return;
+            }
+
+            // Optimistically update the UI
+            nicknameSpan.textContent = newNickname;
             nicknameSpan.style.display = 'block';
             editInput.style.display = 'none';
             this.style.display = 'none';
             editIcon.style.display = 'block';
 
-            // Optionally, send the updated nickname to the server
-            fetch('/update-nickname/', {
+            // Send the updated nickname to the server
+            const userId = nicknameItem.dataset.userId; // Assume `data-user-id` is set in each nickname-item div
+
+            fetch(changeNicknameUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ nickname: editInput.value })
-            });
+                body: JSON.stringify({ user_id: userId, new_nickname: newNickname })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        // Handle errors and revert the UI
+                        alert(data.error || "Failed to update nickname.");
+                        console.log(csrfToken)
+                        nicknameSpan.textContent = oldNickname;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error updating nickname:", error);
+                    alert("An error occurred while updating the nickname.");
+                    nicknameSpan.textContent = oldNickname;
+                });
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const resetButtons = document.querySelectorAll('.reset-nickname-btn');
+
+    resetButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const nicknameItem = this.closest('.nickname-item');
+            const userId = nicknameItem.dataset.userId; // Ensure the div has a data attribute with user ID
+
+            fetch(resetNicknameUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ user_id: userId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const nicknameSpan = nicknameItem.querySelector('.nickname');
+                        nicknameSpan.textContent = data.default_nickname;
+
+                        const editInput = nicknameItem.querySelector('.edit-nickname-input');
+                        if (editInput) {
+                            editInput.value = data.default_nickname;
+                        }
+
+                        alert("Nickname reset successfully!");
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error resetting nickname:", error);
+                });
+        });
+    });
+});
+
+
 
 function getCookie(name) {
     let cookieValue = null;

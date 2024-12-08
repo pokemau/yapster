@@ -151,7 +151,7 @@ def message_view(request, chat_id):
             'has_pfp': withPfp[counter] == 1,
             'system_message': message.system_message
         })
-        print("SYTSTEM MESSAGE: ", message.system_message)
+        # print("SYTSTEM MESSAGE: ", message.system_message)
         last_sender = message.sender
         counter += 1
     
@@ -435,7 +435,6 @@ def find_chat(user_ids):
 
     return None
 
-
 def add_members_to_group(request, chat_id):
     """Add members to a group chat."""
     if not request.user.is_authenticated:
@@ -489,7 +488,6 @@ def add_members_to_group(request, chat_id):
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
-
 @login_required
 def remove_members_from_group(request, chat_id):
     """Remove members from a group chat."""
@@ -537,6 +535,91 @@ def remove_members_from_group(request, chat_id):
         return JsonResponse({"success": True, "message": "Members removed successfully!"})
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+@login_required
+def update_nickname(request, chat_id):
+    """Update the nickname of a user in a chat."""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_id = data.get('user_id')
+            new_nickname = data.get('new_nickname')
+
+            if not user_id or not new_nickname:
+                return JsonResponse({"success": False, "error": "User ID and new nickname are required."}, status=400)
+
+            # Get the ChatUser object by user ID and chat ID
+            chat_user = get_object_or_404(ChatUser, member_id=user_id, chat_id=chat_id)
+            request_maker = get_object_or_404(ChatUser, member_id=request.user.yapsteruser.id, chat_id=chat_id)
+
+            # Check if the nickname actually changed
+            old_nickname = chat_user.nickname
+            if old_nickname == new_nickname:
+                return JsonResponse({"success": False, "error": "New nickname must be different from the current nickname."}, status=400)
+
+            # Update the nickname
+            chat_user.nickname = new_nickname
+            chat_user.save()
+
+            # Add a system message about the nickname change
+            Message.objects.create(
+                chat=chat_user.chat,
+                sender=request.user.yapsteruser.user,
+                content=f"{request_maker.nickname} set the nickname of {chat_user.member.user.first_name} {chat_user.member.user.last_name} to {new_nickname}.",
+                system_message=True,
+            )
+
+            return JsonResponse({"success": True, "message": "Nickname updated successfully!"})
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON data."}, status=400)
+        except ChatUser.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Chat user not found."}, status=404)
+    return JsonResponse({"success": False, "error": "Invalid request method."}, status=400)
+
+@login_required
+def reset_nickname(request, chat_id):
+    """Reset a user's nickname in a chat to the default (first and last name)."""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_id = data.get('user_id')
+
+            if not user_id:
+                return JsonResponse({"success": False, "error": "User ID is required."}, status=400)
+
+            # Get the ChatUser object by user ID and chat ID
+            chat_user = get_object_or_404(ChatUser, member_id=user_id, chat_id=chat_id)
+            request_maker = get_object_or_404(ChatUser, member_id=request.user.yapsteruser.id, chat_id=chat_id)
+
+            # Calculate the default nickname (first and last name)
+            default_nickname = f"{chat_user.member.user.first_name} {chat_user.member.user.last_name}".strip()
+
+            # Check if the nickname is already the default
+            if chat_user.nickname == default_nickname:
+                return JsonResponse({"success": False, "error": "Nickname is already the default."}, status=400)
+
+            # Reset the nickname
+            chat_user.nickname = default_nickname
+            chat_user.save()
+
+            # Add a system message about the nickname reset
+            Message.objects.create(
+                chat=chat_user.chat,
+                sender=request.user.yapsteruser.user,
+                content=f"{request_maker.nickname} reset the nickname of {chat_user.member.user.first_name} {chat_user.member.user.last_name}.",
+                system_message=True,
+            )
+
+            return JsonResponse({"success": True, "default_nickname": default_nickname})
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON data."}, status=400)
+        except ChatUser.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Chat user not found."}, status=404)
+    return JsonResponse({"success": False, "error": "Invalid request method."}, status=400)
+
+
+# def change_nickname()
+
 #Temp Chat for chatting unchatted user
 # def temp_chat_view(request, user_id):
 #     target_user = get_object_or_404(YapsterUser, id=user_id)

@@ -35,9 +35,6 @@ function toggleCreateChatState() {
     } else {
         resetSearchState(); // Use shared reset for consistency
     }
-    console.log("Create Chat: ", isCreateChatState);
-    console.log("Add Membeer: ", isAddMemberState);
-    console.log("Remove memer: ", isRemoveMemberState);
 }
 
 // Finalize group creation
@@ -86,9 +83,6 @@ function toggleAddMemberState() {
     } else {
         resetSearchState();
     }
-    console.log("Create Chat: ", isCreateChatState);
-    console.log("Add Membeer: ", isAddMemberState);
-    console.log("Remove memer: ", isRemoveMemberState);
 }
 
 // Add selected users to the group chat
@@ -171,9 +165,6 @@ function toggleRemoveMemberState(){
     } else {
         resetSearchState();
     }
-    console.log("Create Chat: ", isCreateChatState);
-    console.log("Add Membeer: ", isAddMemberState);
-    console.log("Remove memer: ", isRemoveMemberState);
 }
 
 function removeMemberFromGroup(){
