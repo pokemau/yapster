@@ -55,6 +55,12 @@ def get_chat_data(request, active_chat_id=None):
         else:
             display_name = f"{', '.join(nicknames_without_curruser[:2])}, and {len(nicknames_without_curruser) - 2} others"
 
+        yapster_to_display = None
+        for i in users_in_chat:
+            if i.member != request.user.yapsteruser:
+                yapster_to_display = i.member
+                break
+
         chat_data = {
             'chat_id': chat.id,
             'chat_name': display_name,
@@ -63,6 +69,7 @@ def get_chat_data(request, active_chat_id=None):
             'nicknames': nicknames,
             'current_user_nickname': current_user_nickname,
             'nicknames_without_curruser': nicknames_without_curruser,
+            'yapster_to_display': yapster_to_display
         }
 
         chat_users_mapping.append(chat_data)
@@ -161,7 +168,9 @@ def message_view(request, chat_id):
             'message': message.content,
             'is_new_sender': last_sender != message.sender,
             'has_pfp': withPfp[counter] == 1,
-            'system_message': message.system_message
+            'system_message': message.system_message,
+            'yapster_user': yapster_user,
+
         })
         # print("SYTSTEM MESSAGE: ", message.system_message)
         last_sender = message.sender
@@ -239,6 +248,23 @@ def message_view(request, chat_id):
     # for i in chat_users:
     #     print("CHAT ID: ", i.chat.id)
 
+    # Retrieve YapsterUser objects related to the chat
+    # yapster_users = YapsterUser.objects.filter(
+    #     id__in=[message.sender.id for message in Message.objects.filter(chat_id=chat_id)]
+    # ).select_related('user')
+
+    # Create a dictionary indexed by yapster_user_id
+    yapster_users_by_id = {user.member.id: user.member for user in chat_users}
+    print(yapster_users_by_id)
+
+    #para display sa gc
+    yapster_to_display = None
+    for i in chat_room_users:
+        if i.member != request.user.yapsteruser:
+            yapster_to_display = i.member
+            print("KASJDLKASJDLK: ", yapster_to_display)
+            break
+
     return render(request, 'chat.html', {
         'users': users,
         'query': query,
@@ -256,6 +282,8 @@ def message_view(request, chat_id):
         'is_pm': active_chat_data['is_pm'],
         'pm_username': pm_username,
         'validation': validation,
+        'yapster_users_by_id': yapster_users_by_id,
+        'yapster_to_display': yapster_to_display
     })
 
 def query_users(request):

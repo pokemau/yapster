@@ -152,8 +152,13 @@ socket.addEventListener("message", (event) => {
 
                 
                 if(hasNoPfp.length > 0){
-                    document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
-                    document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
+                    // document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
+                    // document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("src");
+                    // document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
+                    document.getElementById(chat).getElementsByClassName("pfp")[0].outerHTML =
+                    `
+                    <div class="empty_image"></div>
+                    `;
                 }
                     
             }else{

@@ -107,6 +107,7 @@
 	position: absolute;
 	left: 16px;
 	top: 8px;
+	object-fit: cover;
 }
 
 .name-time-msg {
@@ -423,6 +424,8 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
+	
+	object-fit: cover;
   }
 
   .empty_image{
