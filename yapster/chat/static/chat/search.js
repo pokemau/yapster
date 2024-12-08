@@ -23,6 +23,7 @@ function toggleCreateChatState() {
         selectedNames.style.display = "flex"; // Show selected names container
         searchInput.placeholder = "Add users to group...";
         searchInput.value = ""; // Clear input for new search
+        searchInput.focus();
         if (exitButton) exitButton.style.display = "inline"; // Show exit button
         if (chatList) chatList.style.display = "none"; // Hide existing chats
         if (searchResults) searchResults.innerHTML = ""; // Clear search results
@@ -73,6 +74,7 @@ function toggleAddMemberState() {
         selectedNames.style.display = "flex"; // Show selected names container
         searchInput.placeholder = "Add users to group...";
         searchInput.value = ""; // Clear input for new search
+        searchInput.focus();
         if (exitButton) exitButton.style.display = "inline"; // Show exit button
         if (chatList) chatList.style.display = "none"; // Hide existing chats
         if (searchResults) searchResults.innerHTML = ""; // Clear search results
@@ -155,6 +157,7 @@ function toggleRemoveMemberState(){
         selectedNames.style.display = "flex"; // Show selected names container
         searchInput.placeholder = "Remove users to group...";
         searchInput.value = ""; // Clear input for new search
+        searchInput.focus();
         if (exitButton) exitButton.style.display = "inline"; // Show exit button
         if (chatList) chatList.style.display = "inline"; // Hide existing chats
         if (searchResults) searchResults.innerHTML = ""; // Clear search results

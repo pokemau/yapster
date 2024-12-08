@@ -47,8 +47,11 @@ def get_chat_data(request, active_chat_id=None):
             cu.nickname for cu in nicknames_in_chat if cu.member != request.user.yapsteruser
         ]
 
-        # Generate dynamic display name for group chats without a chat_name
-        display_name = chat.chat_name or ", ".join(nicknames_without_curruser)
+        # Generate a concise display name
+        if len(nicknames_without_curruser) <= 2:
+            display_name = ", ".join(nicknames_without_curruser)
+        else:
+            display_name = f"{', '.join(nicknames_without_curruser[:2])}, and {len(nicknames_without_curruser) - 2} others"
 
         chat_data = {
             'chat_id': chat.id,
@@ -279,7 +282,11 @@ def query_users(request):
                     nicknames = [
                         cu.nickname for cu in chat.chatuser.exclude(member=request.user.yapsteruser)
                     ]
-                    display_name = ", ".join(nicknames)
+                    # Generate a concise display name
+                    if len(nicknames) <= 2:
+                        display_name = ", ".join(nicknames)
+                    else:
+                        display_name = f"{', '.join(nicknames[:2])}, and {len(nicknames) - 2} others"
                 else:
                     display_name = chat.chat_name
 

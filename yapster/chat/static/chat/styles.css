@@ -346,6 +346,9 @@ html { font-family: 'PT Sans', Georgia, serif; }
 
 	height: 85%;
 	overflow: auto;
+	
+	padding-left: 1em;
+	padding-right: 1em;
 
 	/* flex-grow: 1; */
 }

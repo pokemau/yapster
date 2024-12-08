@@ -33,9 +33,6 @@
         <div id="search-bar-container">
           <!-- Search input where selected names will appear -->
           <div id="search-bar">
-              <div id="selected-names" style="display: none;">
-                  <!-- Selected names will be dynamically added here in create-chat state -->
-              </div>
               <input
                   id="search-input"
                   type="text"
@@ -45,6 +42,9 @@
           </div>
           <p class="chat-create" onclick="toggleCreateChatState()">Create Chat</p>
           <p id="exit-create-chat" class="chat-exit" style="display: none;" onclick="toggleCreateChatState()">X</p>
+          <div id="selected-names" style="display: none;">
+            <!-- Selected names will be dynamically added here in create-chat state -->
+          </div>
         </div>
         <div class="search-container" id="users-cont">
           <div id="search-results"></div>
