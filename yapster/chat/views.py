@@ -143,9 +143,17 @@ def message_view(request, chat_id):
     for i in range(len(senders) - 1, -1, -1):
         if i == len(senders) - 1 or senders[i] != senders[i + 1]:
             withPfp[i] = 1
+
+    chat_user = None
     for message in messages:
+        print("MWESSAGE SENDER: ", message.sender)
+        print("MESSAGE CONTENT: ", message.content)
+        yapster_user = YapsterUser.objects.get(user=message.sender)
+        chat_user = ChatUser.objects.get(member=yapster_user, chat_id=chat_room.id)
+
         content_messages.append({
             'sender': message.sender,
+            'sender_nickname': chat_user.nickname,
             'message': message.content,
             'is_new_sender': last_sender != message.sender,
             'has_pfp': withPfp[counter] == 1,
@@ -153,6 +161,8 @@ def message_view(request, chat_id):
         })
         # print("SYTSTEM MESSAGE: ", message.system_message)
         last_sender = message.sender
+        if message.system_message:
+            last_sender = None
         counter += 1
     
     pm_username = None
@@ -220,11 +230,14 @@ def message_view(request, chat_id):
         block_list, created = BlockList.objects.get_or_create(user=request.user.yapsteruser)
         validation['is_blocked'] = block_list.blocked_users.filter(id=receiver.id).exists()
 
+    chat_user_object = ChatUser.objects.get(member=request.user.yapsteruser, chat_id=chat_room.id)
+
     return render(request, 'chat.html', {
         'users': users,
         'query': query,
         'chat_users_mapping': chat_users_mapping,
         'current_userID': request.user.yapsteruser.id,
+        'current_userNickname': chat_user_object.nickname,
         'content': content_messages,
         'chat_room': chat_room,
         'chat_room_users_id': chat_users_id,
@@ -616,7 +629,6 @@ def reset_nickname(request, chat_id):
         except ChatUser.DoesNotExist:
             return JsonResponse({"success": False, "error": "Chat user not found."}, status=404)
     return JsonResponse({"success": False, "error": "Invalid request method."}, status=400)
-
 
 # def change_nickname()
 

@@ -25,6 +25,7 @@
     const currentUserID = {{ current_userID }};
     const currentChatID = {{ chat_room.id }};
     const chat_users_id = {{ chat_room_users_id }};
+    const currentUserNickname = "{{ current_userNickname }}";
     {% endif %}
   </script>
   <body>
@@ -103,7 +104,7 @@
 
               <div class="flex_message">
                 {% if i.is_new_sender %}
-                  <div class="chatter_name">{{ i.sender }}</div>
+                  <div class="chatter_name">{{ i.sender_nickname }}</div>
                 {% endif %}
 
                 <div class="bubble sender">

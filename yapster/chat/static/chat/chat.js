@@ -11,7 +11,7 @@ window.onload = (event) => {
 // DO YOU WANT TO BUILD A SNOW MAN? :(
 // Determine the WebSocket protocol based on the application's URL
 const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/${chat_name}/`;
+const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/${currentChatID}/`;
 // Create a new WebSocket connection
 const socket = new WebSocket(wsEndpoint);
 // Successful connection event
@@ -33,6 +33,7 @@ document.getElementById('message-input').addEventListener('submit', function(eve
             'message': event.target.querySelector('#typed-message').value,
             'chat_name': `${chat_name}`,
             'sender': `${user_logged_in}`,
+            'sender_nickname': `${currentUserNickname}`,
         })
     );
     updateUI();
@@ -69,6 +70,7 @@ wordleForm.addEventListener('submit', function(e) {
                         'message': `[WORDLE]${data.game}`,
                         'chat_name': `${chat_name}`,
                         'sender': `${user_logged_in}`,
+                        'sender_nickname': `${currentUserNickname}`,
                 }));
                 document.getElementById("myModal").style.display = 'none';
                 document.querySelector('#word-input').value = '';
@@ -93,12 +95,13 @@ socket.addEventListener("message", (event) => {
     const messageData = JSON.parse(event.data)['response_data'];
     
     var sender = messageData['sender'];
+    var sender_nickname = messageData['sender_nickname'];
     var message = messageData['message'];
     
     console.log("sender: ", sender);
     console.log("message: ", message);
     // empty message input field after message has been sent
-    if (sender == user_logged_in){
+    if (sender_nickname == currentUserNickname){
         document.getElementById('typed-message').value = '';
     }
 
@@ -154,7 +157,7 @@ socket.addEventListener("message", (event) => {
                     <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
                     <div class="flex_message">
                         <div class="chatter_name">
-                            ${sender}
+                            ${sender_nickname}
                         </div>
                         <div class="bubble sender">
                             ${messageHTML}
@@ -282,6 +285,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert(data.error || "Failed to update nickname.");
                         console.log(csrfToken)
                         nicknameSpan.textContent = oldNickname;
+                    }else if(data.success){
+                        location.reload();
                     }
                 })
                 .catch(error => {
@@ -320,7 +325,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             editInput.value = data.default_nickname;
                         }
 
-                        alert("Nickname reset successfully!");
+                        // alert("Nickname reset successfully!");
+                        location.reload()
                     } else {
                         alert(data.error);
                     }
