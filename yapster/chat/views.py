@@ -48,8 +48,10 @@ def get_chat_data(request, active_chat_id=None):
         ]
 
         # Generate a concise display name
-        if len(nicknames_without_curruser) <= 2:
-            display_name = ", ".join(nicknames_without_curruser)
+        # print("LEN NICKNAMES: ", len(nicknames))
+        if len(nicknames) <= 2:
+            # print("MUGANA NI DPAAT")
+            display_name = "You and ".join(nicknames)
         else:
             display_name = f"{', '.join(nicknames_without_curruser[:2])}, and {len(nicknames_without_curruser) - 2} others"
 
@@ -65,7 +67,7 @@ def get_chat_data(request, active_chat_id=None):
 
         chat_users_mapping.append(chat_data)
 
-        print(f"Checking chat: {chat.id}, active_chat_id: {active_chat_id}")
+        # print(f"Checking chat: {chat.id}, active_chat_id: {active_chat_id}")
 
         # Fix: Explicitly compare with active_chat_id as an integer
         if active_chat_id and int(chat.id) == int(active_chat_id):
@@ -146,14 +148,16 @@ def message_view(request, chat_id):
 
     chat_user = None
     for message in messages:
-        print("MWESSAGE SENDER: ", message.sender)
-        print("MESSAGE CONTENT: ", message.content)
         yapster_user = YapsterUser.objects.get(user=message.sender)
-        chat_user = ChatUser.objects.get(member=yapster_user, chat_id=chat_room.id)
+        try:
+            chat_user = ChatUser.objects.get(member=yapster_user, chat_id=chat_room.id)
+            sender_nickname = chat_user.nickname
+        except ChatUser.DoesNotExist:
+            sender_nickname = f"{str(message.sender.first_name)} {str(message.sender.last_name)}"  # Fall back to sender's name
 
         content_messages.append({
             'sender': message.sender,
-            'sender_nickname': chat_user.nickname,
+            'sender_nickname': sender_nickname,
             'message': message.content,
             'is_new_sender': last_sender != message.sender,
             'has_pfp': withPfp[counter] == 1,
@@ -297,7 +301,7 @@ def query_users(request):
                     ]
                     # Generate a concise display name
                     if len(nicknames) <= 2:
-                        display_name = ", ".join(nicknames)
+                        display_name = "You and, ".join(nicknames)
                     else:
                         display_name = f"{', '.join(nicknames[:2])}, and {len(nicknames) - 2} others"
                 else:

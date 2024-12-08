@@ -41,7 +41,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def create_message(self, data):
         try:
             # Get the chat room by name
-            chat = Chat.objects.get(chat_name=data['chat_name'])
+            print("DATA CHAT_NAME: ", data['current_chatID'])
+            print("DATA CHAT_NAME: ", data['current_chatID'])
+            chat = Chat.objects.get(id=data['current_chatID'])
             
             # Get the sender User instance
             sender = User.objects.get(username=data['sender'])
@@ -64,4 +66,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return {"success": False, "message": "Sender does not exist."}
         except Exception as e:
             print(4)
+            print(str(e))
             return {"success": False, "message": str(e)}

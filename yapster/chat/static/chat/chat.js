@@ -34,6 +34,7 @@ document.getElementById('message-input').addEventListener('submit', function(eve
             'chat_name': `${chat_name}`,
             'sender': `${user_logged_in}`,
             'sender_nickname': `${currentUserNickname}`,
+            'current_chatID': `${currentChatID}`
         })
     );
     updateUI();
