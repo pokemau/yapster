@@ -36,7 +36,7 @@ def update_profile(request):
         form.fields['email'].initial = user.email
 
     return render(request, 'update_profile.html', {'form': form, 'user': user})
-"""
+
 @login_required
 def update_profile(request):
     if request.method == 'POST':
@@ -55,6 +55,28 @@ def update_profile(request):
     else:
         form = ProfileForm(instance=request.user.yapsteruser)
     return render(request, 'profile_settings.html', {'form': form})
+"""
+
+@login_required
+def update_profile(request, user_id=None):
+    user = get_object_or_404(User, id=user_id) if user_id else request.user
+    yapster_user = user.yapsteruser
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=yapster_user)
+        if form.is_valid():
+            yapster_user = form.save(commit=False)
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            if 'profile_image' in request.FILES:
+                yapster_user.profile_image = request.FILES['profile_image']
+            user.save()
+            yapster_user.save()
+            return redirect('profile_page', user_id=user.id)
+    else:
+        form = ProfileForm(instance=yapster_user)
+    return render(request, 'profile_settings.html', {'form': form, 'user': user})
 
 def landing_page_view(request):
     return render(request, 'landing_page.html')
@@ -148,7 +170,7 @@ def delete_user(request):
     user.save()
     return redirect('logout')
 
-
+"""
 def profile_page(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=request.user.yapsteruser)
@@ -159,18 +181,35 @@ def profile_page(request):
         form = ProfileForm(instance=request.user.yapsteruser)
 
     return render(request, 'profile_settings.html', {'form': form})
+"""
+
+@login_required
+def profile_page(request, user_id=None):
+    user = get_object_or_404(User, id=user_id) if user_id else request.user
+    yapster_user = get_object_or_404(YapsterUser, user__id=user_id)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=yapster_user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_settings', user_id=user.id)
+    else:
+        form = ProfileForm(instance=yapster_user)
+
+    return render(request, 'profile_settings.html', {'form': form, 'user': user})
 
 @login_required
 def view_public_profile(request):
     user = get_object_or_404(YapsterUser, user=request.user)
     return render(request, 'public_profile.html', {'yapster_user': user})
 
+# MURAG WALA NANI GAMIT ANG view_public_profile ^^^^^
+
 @login_required
 def public_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    yapster_user = user.yapsteruser
+    yapster_user = get_object_or_404(YapsterUser, user__id=user_id)
     return render(request, 'public_profile.html', {'user': user, 'yapster_user': yapster_user})
-
 
 @login_required
 def delete_account(request):
