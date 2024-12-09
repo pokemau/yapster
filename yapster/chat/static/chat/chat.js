@@ -89,7 +89,7 @@ wordleForm.addEventListener('submit', function(e) {
 })
  
 var messageCount = 0;
-console.log("BufferVal: " + buffer);
+console.log("BufferVal2: " + buffer);
 var firstChat = true;
 
 // response from consumer on server
@@ -113,7 +113,7 @@ socket.addEventListener("message", (event) => {
 
     // Here's where we append the message to the chatbox.
     var messageDiv = document.querySelector('.messages');
-    console.log("BufferVal: " + buffer);
+    console.log("BufferVal1: " + buffer);
 
     let messageHTML = ``;
     if (message.includes('[WORDLE]'))
