@@ -113,7 +113,8 @@
     }
 
     const chatName = window.localStorage.getItem('chatName')
-    if ( !chatName || '{{ game.chatroom.chat_name }}' != chatName ) {
+    // console.log("CHAT NAME: {{ game.chatroom.id }}")
+    if ( !chatName || '{{ game.chatroom.id }}' != chatName ) {
       window.location.href = `/chat/${chatName}`;
     }
   </script>

@@ -323,7 +323,7 @@
       console.log("Room:", chat_name);
       let user_logged_in = `{{ user.username }}`;
       console.log("Logged-in user:", user_logged_in);
-      window.localStorage.setItem('chatName',chat_name)
+      window.localStorage.setItem('chatName',currentChatID)
       if (!window.localStorage.getItem('guessCount'))
         window.localStorage.setItem('guessCount', 0)
 
