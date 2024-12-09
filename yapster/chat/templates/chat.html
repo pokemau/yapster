@@ -288,8 +288,8 @@
               </button>
               <div class="dropdown-content">
                 {% for user in chat_users %}
-                  <div class="user" onclick="redirectToProfile({{user.member.id}})">
-                    <div class="left-profile-pic"></div>
+                  <div class="user" onclick="redirectToProfile({{user.member.user.id}})">
+                    <img class="left-profile-pic" src="{% if user.member.profile_image %}{{  user.member.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"></img>
                     <div class="name-time-msg">
                         <p class="name">{{ user.member.user.first_name }} {{ user.member.user.last_name }}</p>
                         <p class="time-sent">@{{ user.member.user.username }}</p>
