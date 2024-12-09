@@ -112,7 +112,7 @@ span.onclick = function() {
 	document.querySelector('#word-input').value = '';
 }
 
-if (youreBlocked == 'True') {
+if (youreBlocked == 'True' || youBlocked == 'True' ) {
 	document.querySelector('#typed-message').disabled = 'disabled'
 	document.querySelector('#wordle-btn').disabled = 'disabled'
 	document.querySelector('#send-btn').disabled = 'disabled'

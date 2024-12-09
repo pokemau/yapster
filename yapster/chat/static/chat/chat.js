@@ -1,4 +1,5 @@
 import { WORDS } from './wordlist.js'
+import { socket } from './socket.js';
 
 function scrollToBottom() {
     console.log("areeee")
@@ -8,26 +9,29 @@ function scrollToBottom() {
 window.onload = (event) => {
     scrollToBottom()
 };
-// DO YOU WANT TO BUILD A SNOW MAN? :(
-// Determine the WebSocket protocol based on the application's URL
-const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/${currentChatID}/`;
-// Create a new WebSocket connection
-const socket = new WebSocket(wsEndpoint);
-// Successful connection event
-socket.onopen = (event) => {
-    console.log("WebSocket connection opened!");
-};
-// Socket disconnect event
-socket.onclose = (event) => {
-    console.log("WebSocket connection closed!");
-};
+//// DO YOU WANT TO BUILD A SNOW MAN? :(
+//// Determine the WebSocket protocol based on the application's URL
+//const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+//const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/${currentChatID}/`;
+//// Create a new WebSocket connection
+//const socket = new WebSocket(wsEndpoint);
+//// Successful connection event
+//socket.onopen = (event) => {
+//    console.log("WebSocket connection openeddddd!");
+//};
+//// Socket disconnect event
+//socket.onclose = (event) => {
+//    console.log("WebSocket connection closed!");
+//};
 // Form submit listener
 document.getElementById('message-input').addEventListener('submit', function(event){
 	event.preventDefault();
     // console.log("🪼⋆｡𖦹°", event.target.querySelector('textarea').value)
     // console.log("🪼⋆｡𖦹°", )
     // const message = document.getElementById('msg').value;
+
+    if (!event.target.querySelector('#typed-message').value.length) { return; }
+
     socket.send(
         JSON.stringify({
             'message': event.target.querySelector('#typed-message').value,
@@ -121,6 +125,10 @@ socket.addEventListener("message", (event) => {
     else 
         messageHTML = `<p>${message}</p>`
 
+    if (message.includes('[REFRESH]')) {
+        window.location.reload();
+    }
+
     if (messageData.system_message){
         messageDiv.innerHTML += `<div class="system-message"><p>${message}</p></div>`;
     }else{
@@ -169,6 +177,8 @@ socket.addEventListener("message", (event) => {
                 }
                     
             }else{
+                if (message.includes('[REFRESH]'))
+                    return;
                 let messageHTML = ``;
                 if (message.includes('[WORDLE]'))
                     messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
@@ -313,6 +323,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.log(csrfToken)
                         nicknameSpan.textContent = oldNickname;
                     }else if(data.success){
+                        socket.send(
+                            JSON.stringify({
+                                'message': '[REFRESH]',
+                                'chat_name': `${chat_name}`,
+                                'sender': `${user_logged_in}`,
+                                'sender_nickname': `${currentUserNickname}`,
+                                'current_chatID': `${currentChatID}`,
+                                'sender_id': `${currentUserID}`,
+                            })
+                        );
                         location.reload();
                     }
                 })
@@ -502,7 +522,6 @@ function updateChatList(chats) {
             : "";
 
         const yapster_to_display = chat.yapster_to_display.profile_image
-        console.log("YAPSTER TO DISPLAY: ", yapster_to_display)
         return `
             <div class="user" onclick="loadChatWithID(${chat.chat_id})">
                 <img 

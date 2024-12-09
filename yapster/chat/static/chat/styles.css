@@ -600,6 +600,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	text-decoration: none;
 	display: block;
 	font-size: 1rem;
+	cursor: pointer;
 }
 
 .dropdown-content a:hover {

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
 
     <script type="module" src="{% static 'chat/chat.js' %}" defer></script>
+    <script type="module" src="{% static 'chat/socket.js' %}" defer></script>
     <script src="{% static 'chat/index.js' %}" defer></script>
     <script src="{% static 'yapster/index.js' %}" defer></script>
     <script src="{% static 'chat/search.js' %}" defer></script>
@@ -96,7 +97,7 @@
 
                       {% if chat.latest_message_date %}
       
-                          {{ chat.latest_message_date|date:"M d, H:i" }}
+                          {{ chat.latest_message_date|date:"M j, h:i A" }}
       
                       {% else %}
       
@@ -119,41 +120,43 @@
         <section class="messages">
           <!-- Messages rendered from the server -->
           {% for i in content %}
+            
+            {% if not "[REFRESH]"|contains:i.message %}
           
-            {% if i.system_message %}
-                <div class="system-message">
-                    <p>{{ i.message }}</p>
-                    <script>buffer = "@@@@";</script>
-                </div>
-            {% else %}
-            {% if i.sender != user %}
-            <div class="message_body" id="prevchat{{ forloop.counter }}">
-              {% if i.has_pfp %}
-                <img class="pfp"
-                  src="{% if i.yapster_user and i.yapster_user.profile_image and i.yapster_user.profile_image.url %}
-                        {{ i.yapster_user.profile_image.url }}
-                    {% else %}
-                        {% static 'images/default_profile.jpg' %}
-                    {% endif %}" alt>
-                </img>
+              {% if i.system_message %}
+                  <div class="system-message">
+                      <p>{{ i.message }}</p>
+                      <script>buffer = "@@@@";</script>
+                  </div>
               {% else %}
-                <div class="empty_image"></div>
-              {% endif %}
-
-              <div class="flex_message">
-                {% if i.is_new_sender %}
-                  <div class="chatter_name">{{ i.sender_nickname }}</div>
+              {% if i.sender != user %}
+              <div class="message_body" id="prevchat{{ forloop.counter }}">
+                {% if i.has_pfp %}
+                  <img class="pfp"
+                    src="{% if i.yapster_user and i.yapster_user.profile_image and i.yapster_user.profile_image.url %}
+                          {{ i.yapster_user.profile_image.url }}
+                      {% else %}
+                          {% static 'images/default_profile.jpg' %}
+                      {% endif %}" alt>
+                  </img>
+                {% else %}
+                  <div class="empty_image"></div>
                 {% endif %}
 
-                <div class="bubble sender">
-                {% if "[WORDLE]"|contains:i.message %}
-                  <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
-                
-                <script>buffer = "{{ i.sender_nickname }}";</script>
-            {% else %}
-                <p>{{ i.message }}</p>
-                <script>buffer = "{{ i.sender_nickname }}";</script>
-            {% endif %}
+                <div class="flex_message">
+                  {% if i.is_new_sender %}
+                    <div class="chatter_name">{{ i.sender_nickname }}</div>
+                  {% endif %}
+
+                  <div class="bubble sender">
+                  {% if "[WORDLE]"|contains:i.message %}
+                    <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
+                  
+                  <script>buffer = "{{ i.sender_nickname }}";</script>
+              {% else %}
+                  <p>{{ i.message }}</p>
+                  <script>buffer = "{{ i.sender_nickname }}";</script>
+              {% endif %}
               </div>
             </div>
           </div>
@@ -168,6 +171,7 @@
             </div>
             <script>buffer = "{{ i.sender_nickname }}";</script>
           {% endif %}
+            {% endif %}
             {% endif %}
           {% endfor %}
 
@@ -195,7 +199,7 @@
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
-                <input id="typed-message" type="text" name="message" placeholder="Your message..." />
+                <input id="typed-message" type="text" name="message" placeholder="Your message..." autocomplete='off' />
                 <button id="wordle-btn" type="button">Game</button>
                 <button id="send-btn" type="submit">Send</button>
             </div>
@@ -358,6 +362,7 @@
         }
       }
       const youreBlocked = '{{ validation.you_are_blocked }}'
+      const youBlocked = '{{ validation.is_blocked }}'
     </script>
   </body>
 </html>
