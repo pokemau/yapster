@@ -34,7 +34,8 @@ document.getElementById('message-input').addEventListener('submit', function(eve
             'chat_name': `${chat_name}`,
             'sender': `${user_logged_in}`,
             'sender_nickname': `${currentUserNickname}`,
-            'current_chatID': `${currentChatID}`
+            'current_chatID': `${currentChatID}`,
+            'sender_id': `${currentUserID}`,
         })
     );
     updateUI();
@@ -60,7 +61,7 @@ wordleForm.addEventListener('submit', function(e) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: JSON.stringify({ word: inputWord, room: chat_name })
+            body: JSON.stringify({ word: inputWord, room: currentChatID })
         })
         .then(response => response.json())
         .then(data => {
@@ -72,6 +73,7 @@ wordleForm.addEventListener('submit', function(e) {
                         'chat_name': `${chat_name}`,
                         'sender': `${user_logged_in}`,
                         'sender_nickname': `${currentUserNickname}`,
+                        'sender_id': `${currentUserID}`,
                 }));
                 document.getElementById("myModal").style.display = 'none';
                 document.querySelector('#word-input').value = '';
@@ -87,7 +89,7 @@ wordleForm.addEventListener('submit', function(e) {
 })
  
 var messageCount = 0;
-console.log("BufferVal: " + buffer);
+console.log("BufferVal2: " + buffer);
 var firstChat = true;
 
 // response from consumer on server
@@ -100,6 +102,7 @@ socket.addEventListener("message", (event) => {
     var sender = messageData['sender'];
     var sender_nickname = messageData['sender_nickname'];
     var message = messageData['message'];
+    var sender_id = messageData['sender_id']
     
     console.log("sender: ", sender);
     console.log("message: ", message);
@@ -110,7 +113,7 @@ socket.addEventListener("message", (event) => {
 
     // Here's where we append the message to the chatbox.
     var messageDiv = document.querySelector('.messages');
-    console.log("BufferVal: " + buffer);
+    console.log("BufferVal1: " + buffer);
 
     let messageHTML = ``;
     if (message.includes('[WORDLE]'))
@@ -123,17 +126,21 @@ socket.addEventListener("message", (event) => {
     }else{
         if (sender != user_logged_in) { 
             if(buffer == sender_nickname){
+                console.log("Message Count: ", messageCount);
+                const profilePicURL = yaplist[sender_id]
+                console.log(profilePicURL);
                 messageDiv.innerHTML +=  
                 `
-                <div class="message_body" id="chatno${messageCount}">
-                <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-                <div class="flex_message">
-                  <div class="bubble sender">
-                    ${messageHTML}
-                  </div>
-                </div>
-              </div>
-              `
+                    <div class="message_body" id="chatno${messageCount}">
+                        <img class="pfp" src="${profilePicURL}"> </img>
+                        <div class="flex_message">
+                            <div class="bubble sender">
+                                ${messageHTML}
+                            </div>
+                        </div>
+                    </div>
+                `
+               
                 if(!firstChat){
                     chat = "chatno"+(messageCount-1);
                     console.log("Changing chat:" + chat);
@@ -152,8 +159,13 @@ socket.addEventListener("message", (event) => {
 
                 
                 if(hasNoPfp.length > 0){
-                    document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
-                    document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
+                    // document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("style");
+                    // document.getElementById(chat).getElementsByClassName("pfp")[0].removeAttribute("src");
+                    // document.getElementById(chat).getElementsByClassName("pfp")[0].className = "empty_image";
+                    document.getElementById(chat).getElementsByClassName("pfp")[0].outerHTML =
+                    `
+                    <div class="empty_image"></div>
+                    `;
                 }
                     
             }else{
@@ -162,35 +174,36 @@ socket.addEventListener("message", (event) => {
                     messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
                 else 
                     messageHTML = `<p>${message}</p>`
-    
-                messageDiv.innerHTML +=  
-                `
-                <div class="message_body" id="chatno${messageCount}">
-                    <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-                    <div class="flex_message">
-                        <div class="chatter_name">
-                            ${sender_nickname}
-                        </div>
-                        <div class="bubble sender">
-                            ${messageHTML}
+                    
+                    const profilePicURL = yaplist[sender_id] 
+                    console.log(profilePicURL);
+                    messageDiv.innerHTML +=  
+                    `
+                    <div class="message_body" id="chatno${messageCount}">
+                        <img class="pfp" src="${profilePicURL}"> </img>
+                        <div class="flex_message">
+                            <div class="chatter_name">
+                                ${sender_nickname}
+                            </div>
+                            <div class="bubble sender">
+                                ${messageHTML}
+                            </div>
                         </div>
                     </div>
-                </div>
-                `
+                    `
             }
         } else {
             if (message.includes('[WORDLE]'))
                 messageHTML = `<p>Guess my Wordle!</p>`
             else 
                 messageHTML = `<p>${message}</p>`
-            messageDiv.innerHTML += `
+                messageDiv.innerHTML += `
                 <div class="bubble recipient">
                     ${messageHTML}
                 </div>`;
         }
         scrollToBottom();
     }
-
 
     buffer = sender_nickname;
     messageCount++;
@@ -234,7 +247,7 @@ socket.onclose = (event) => {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    const editIcons = document.querySelectorAll('.edit-icon');
+    const editIcons = document.querySelectorAll('#edit-nickname-icon');
 
     editIcons.forEach(icon => {
         icon.addEventListener('click', function() {
@@ -259,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const nicknameItem = this.closest('.nickname-item');
             const nicknameSpan = nicknameItem.querySelector('.nickname');
             const editInput = nicknameItem.querySelector('.edit-nickname-input');
-            const editIcon = nicknameItem.querySelector('.edit-icon');
+            const editIcon = nicknameItem.querySelector('#edit-nickname-icon');
 
             const oldNickname = nicknameSpan.textContent.trim();
             const newNickname = editInput.value.trim();
@@ -352,19 +365,102 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const editChatIcons = document.querySelectorAll('#edit-chatname-icon');
+    const saveChatNameButtons = document.querySelectorAll('.save-chatname-btn');
+    const resetChatNameButtons = document.querySelectorAll('.reset-chatname-btn');
 
+    editChatIcons.forEach(icon => {
+        icon.addEventListener('click', function () {
+            const chatNameItem = this.closest('.chatname-item');
+            const chatNameSpan = chatNameItem.querySelector('.chatname');
+            const editInput = chatNameItem.querySelector('.edit-chatname-input');
+            const saveButton = chatNameItem.querySelector('.save-chatname-btn');
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+            chatNameSpan.style.display = 'none';
+            editInput.style.display = 'block';
+            saveButton.style.display = 'block';
+            this.style.display = 'none';
+            editInput.value = chatNameSpan.textContent.trim();
+            editInput.focus();
+            editInput.select();
+        });
+    });
+
+    saveChatNameButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const chatNameItem = this.closest('.chatname-item');
+            const chatNameSpan = chatNameItem.querySelector('.chatname');
+            const editInput = chatNameItem.querySelector('.edit-chatname-input');
+            const editIcon = chatNameItem.querySelector('#edit-chatname-icon');
+            const newChatName = editInput.value.trim();
+
+            if (newChatName === chatNameSpan.textContent.trim()) {
+                alert("Chat name is already set to this value!");
+                return;
             }
-        }
-    }
-    return cookieValue;
-}
+
+            // Update the UI immediately
+            chatNameSpan.textContent = newChatName || "Set Name";
+            chatNameSpan.style.display = 'block';
+            editInput.style.display = 'none';
+            this.style.display = 'none';
+            editIcon.style.display = 'block';
+
+            // Send the updated chat name to the server
+            fetch(`/chat/${currentChatID}/update-chat-name/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ chat_name: newChatName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Chat name updated successfully.");
+                    location.reload();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => console.error("Error updating chat name:", error));
+        });
+    });
+
+    resetChatNameButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const chatNameItem = this.closest('.chatname-item');
+            const chatNameSpan = chatNameItem.querySelector('.chatname');
+            const editInput = chatNameItem.querySelector('.edit-chatname-input');
+            const editIcon = chatNameItem.querySelector('#edit-chatname-icon');
+
+            // Reset the chat name to an empty string
+            chatNameSpan.textContent = "Set Name";
+            chatNameSpan.style.display = 'block';
+            editInput.style.display = 'none';
+            this.style.display = 'none';
+            editIcon.style.display = 'block';
+
+            fetch(`/chat/${currentChatID}/update-chat-name/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ chat_name: "" })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Chat name reset successfully.");
+                    location.reload();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => console.error("Error resetting chat name:", error));
+        });
+    });
+});

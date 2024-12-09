@@ -9,6 +9,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from django.core import serializers
+from django.templatetags.static import static
 
 
 # Helper function for shared logic
@@ -55,6 +56,12 @@ def get_chat_data(request, active_chat_id=None):
         else:
             display_name = f"{', '.join(nicknames_without_curruser[:2])}, and {len(nicknames_without_curruser) - 2} others"
 
+        yapster_to_display = None
+        for i in users_in_chat:
+            if i.member != request.user.yapsteruser:
+                yapster_to_display = i.member
+                break
+
         chat_data = {
             'chat_id': chat.id,
             'chat_name': display_name,
@@ -63,6 +70,7 @@ def get_chat_data(request, active_chat_id=None):
             'nicknames': nicknames,
             'current_user_nickname': current_user_nickname,
             'nicknames_without_curruser': nicknames_without_curruser,
+            'yapster_to_display': yapster_to_display
         }
 
         chat_users_mapping.append(chat_data)
@@ -143,9 +151,10 @@ def message_view(request, chat_id):
         senders.append(message.sender)
     withPfp = [0] * len(senders)
     for i in range(len(senders) - 1, -1, -1):
-        if i == len(senders) - 1 or senders[i] != senders[i + 1]:
+        if i == len(senders) - 1 or senders[i] != senders[i + 1] or messages[i+1].system_message == True:
             withPfp[i] = 1
 
+    print(withPfp)
     chat_user = None
     for message in messages:
         yapster_user = YapsterUser.objects.get(user=message.sender)
@@ -161,7 +170,9 @@ def message_view(request, chat_id):
             'message': message.content,
             'is_new_sender': last_sender != message.sender,
             'has_pfp': withPfp[counter] == 1,
-            'system_message': message.system_message
+            'system_message': message.system_message,
+            'yapster_user': yapster_user,
+
         })
         # print("SYTSTEM MESSAGE: ", message.system_message)
         last_sender = message.sender
@@ -239,6 +250,39 @@ def message_view(request, chat_id):
     # for i in chat_users:
     #     print("CHAT ID: ", i.chat.id)
 
+    # Retrieve YapsterUser objects related to the chat
+    # yapster_users = YapsterUser.objects.filter(
+    #     id__in=[message.sender.id for message in Message.objects.filter(chat_id=chat_id)]
+    # ).select_related('user')
+
+    # Create a dictionary indexed by yapster_user_id
+    yapster_users_by_id = {user.member.id: user.member for user in chat_users}
+    print(yapster_users_by_id)
+
+    yapster_users_by_id_pfp = {user.member.id : user.member.profile_image for user in chat_users}
+
+    # Convert ImageFieldFile objects to JSON-compatible format
+    yapster_users_by_id_pfp_json = {
+        user_id: (profile_image.url if profile_image and profile_image.name else static('images/default_profile.jpg'))
+        for user_id, profile_image in yapster_users_by_id_pfp.items()
+    }
+
+    # Serialize to JSON
+    yapster_users_by_id_pfp_json_str = json.dumps(yapster_users_by_id_pfp_json)
+
+    print("Profile pics JSON:", yapster_users_by_id_pfp_json_str)
+
+
+    print("Profile pics: ", yapster_users_by_id_pfp)
+
+    #para display sa gc
+    yapster_to_display = None
+    for i in chat_room_users:
+        if i.member != request.user.yapsteruser:
+            yapster_to_display = i.member
+            print("KASJDLKASJDLK: ", yapster_to_display)
+            break
+
     return render(request, 'chat.html', {
         'users': users,
         'query': query,
@@ -256,6 +300,9 @@ def message_view(request, chat_id):
         'is_pm': active_chat_data['is_pm'],
         'pm_username': pm_username,
         'validation': validation,
+        'yapster_users_by_id': yapster_users_by_id,
+        'yapster_pfp_urls': yapster_users_by_id_pfp_json_str,
+        'yapster_to_display': yapster_to_display
     })
 
 def query_users(request):
@@ -641,6 +688,91 @@ def reset_nickname(request, chat_id):
         except ChatUser.DoesNotExist:
             return JsonResponse({"success": False, "error": "Chat user not found."}, status=404)
     return JsonResponse({"success": False, "error": "Invalid request method."}, status=400)
+
+@login_required
+def get_profile_image(request, user_id):
+    """Fetch the profile image URL of the specified YapsterUser."""
+    try:
+        yapster_user =  YapsterUser.objects.get(id=user_id)
+        profile_image_url = yapster_user.profile_image.url if yapster_user.profile_image else static('images/default_profile.jpg')
+        return JsonResponse({"success": True, "profile_image_url": profile_image_url})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=400)
+
+@login_required
+def leave_group(request, chat_id):
+    """Allow a user to leave a group chat."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "error": "User not authenticated"}, status=401)
+
+    # Get the chat object
+    chat = get_object_or_404(Chat, id=chat_id)
+
+    # Ensure that it's a group chat (not a PM)
+    if chat.is_pm:
+        return JsonResponse({"success": False, "error": "Cannot leave a private message chat"}, status=400)
+
+    # Ensure the user is a member of the chat
+    chat_user = ChatUser.objects.filter(chat=chat, member=request.user.yapsteruser).first()
+    if not chat_user:
+        return JsonResponse({"success": False, "error": "You are not a member of this chat."}, status=403)
+
+    # Prepare system message before removing the user
+    user_nickname = chat_user.nickname or f"{request.user.first_name} {request.user.last_name}"
+    Message.objects.create(
+        chat=chat,
+        sender=request.user,
+        content=f"{user_nickname} left the group.",
+        system_message=True,
+    )
+
+    # Remove the user from the chat
+    chat_user.delete()
+
+    # Redirect to a fallback chat (if available)
+    remaining_chats = ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
+    if remaining_chats:
+        return JsonResponse({"success": True, "redirect_url": f"/chat/{remaining_chats[0]}/"})
+    else:
+        # If no other chats are available, redirect to the default chat page
+        return JsonResponse({"success": True, "redirect_url": "/chat/"})
+
+@login_required
+def update_chat_name(request, chat_id):
+    """Update the group chat name."""
+    chat = get_object_or_404(Chat, id=chat_id)
+
+    # Ensure it’s not a private message
+    if chat.is_pm:
+        return JsonResponse({"success": False, "error": "You cannot set a name for private messages."}, status=400)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        new_chat_name = data.get('chat_name', "").strip()
+
+        # Prevent blank names if necessary
+        if not new_chat_name:
+            chat.chat_name = ""  # Allow blank names for group chats
+        else:
+            chat.chat_name = new_chat_name
+
+        chat.save()
+
+        # Send a system message
+        current_user = request.user.yapsteruser.user
+        request_maker = get_object_or_404(ChatUser, member_id=request.user.yapsteruser.id, chat_id=chat_id)
+
+        Message.objects.create(
+            chat=chat,
+            sender=current_user,
+            content=f"{request_maker.nickname} set the group chat name to {new_chat_name or 'the default'}",
+            system_message=True,
+        )
+
+        return JsonResponse({"success": True, "message": "Chat name updated successfully!"})
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
 
 # def change_nickname()
 

@@ -47,12 +47,7 @@
     </div>
     <a href="{% url 'public_profile' %}">
       <!-- ako sa gi change para mu adto profile page -->
-      <div id="nav-profile-pic">
-          <img id="profileImage" src="
-                          {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
-                       width="100" height="100" alt="Profile Picture"
-                       onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';">
-      </div>
+      <img id="nav-profile-pic" style="object-fit: cover;" src="{% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"></img>
     </a>
   </div>
 </nav>

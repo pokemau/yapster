@@ -26,9 +26,13 @@
     const currentChatID = {{ chat_room.id }};
     const chat_users_id = {{ chat_room_users_id }};
     const currentUserNickname = "{{ current_userNickname }}";
+    // const currentChat = {{ chat_room }};
     {% endif %}
     let buffer = "@@@@";
     let chatCounter = {{ content|length }};
+
+    const yaplist = {{ yapster_pfp_urls|safe }};
+    console.log(yaplist)
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -58,7 +62,13 @@
             <!-- Existing Chats -->
             {% for chat in chat_users_mapping %}
             <div class="user" onclick="loadChatWithID({{ chat.chat_id }})" data-chat-id="{{ chat.chat_id }}">
-                <div class="left-profile-pic"></div>
+              <img class="left-profile-pic"
+                src="{% if chat.yapster_to_display and chat.yapster_to_display.profile_image and chat.yapster_to_display.profile_image.url %}
+                      {{ chat.yapster_to_display.profile_image.url }}
+                  {% else %}
+                      {% static 'images/default_profile.jpg' %}
+                  {% endif %}">
+              </img>
                 <div class="name-time-msg">
                     <div class="name-time">
                       <p class="name">
@@ -89,6 +99,7 @@
         <section class="messages">
           <!-- Messages rendered from the server -->
           {% for i in content %}
+          
             {% if i.system_message %}
                 <div class="system-message">
                     <p>{{ i.message }}</p>
@@ -98,9 +109,13 @@
             {% if i.sender != user %}
             <div class="message_body" id="prevchat{{ forloop.counter }}">
               {% if i.has_pfp %}
-                <div class="pfp" 
-                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
-                </div>
+                <img class="pfp"
+                  src="{% if i.yapster_user and i.yapster_user.profile_image and i.yapster_user.profile_image.url %}
+                        {{ i.yapster_user.profile_image.url }}
+                    {% else %}
+                        {% static 'images/default_profile.jpg' %}
+                    {% endif %}" alt>
+                </img>
               {% else %}
                 <div class="empty_image"></div>
               {% endif %}
@@ -131,6 +146,7 @@
               <p>{{ i.message }}</p>
             {% endif %}
             </div>
+            <script>buffer = "{{ i.sender_nickname }}";</script>
           {% endif %}
             {% endif %}
           {% endfor %}
@@ -192,7 +208,7 @@
           <div class="chat-sidebar-profile-pic">
               <div class="image">
                   <img id="profileImage" src="
-                          {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+                          {% if yapster_to_display.profile_image and yapster_to_display.profile_image.url %}{{ yapster_to_display.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
                        width="100" height="100" alt="Profile Picture"
                        onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
               </div>
@@ -228,7 +244,8 @@
                 <a onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
                 <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
                 <a class="removeMemberButton" onclick="toggleRemoveMemberState()">Remove member</a>
-                <a class="changeChatNameButton">Change Chat Name</a>
+                <a class="changeChatNameButton" onclick="togglePopup('chatname-popup')">Change Chat Name</a>
+                <a class="leaveGroupButton" onclick="leaveGroup()">Leave Group</a>
               </div>
             </div>
             <div class="dropdown">
@@ -263,6 +280,22 @@
       </div>
       {% endif %}
 
+      <div id="chatname-popup" class="chatname-popup">
+        <div class="chatname-popup-content">
+          <span class="close-chatnames" onclick="togglePopup('chatname-popup')">&times;</span>
+          <h2>Change Chat Name</h2>
+          <div class="chatname-list">
+              <div class="chatname-item">
+                  <span class="chatname">{{ chat_room.chat_name|default:"Set Name" }}</span>
+                  <input type="text" class="edit-chatname-input" style="display: none;" value="{{ chat_room.chat_name|default:"Set Name" }}">
+                  <a style="color: red;" class="reset-chatname-btn">Reset</a>
+                  <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-chatname-btn" style="display: none;">
+                  <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon" id="edit-chatname-icon">
+              </div>
+          </div>
+        </div>
+      </div>
+
       <div id="nickname-popup" class="nickname-popup">
           <div class="nickname-popup-content">
             <span class="close-nicknames" onclick="togglePopup('nickname-popup')">&times;</span>
@@ -277,7 +310,7 @@
                     <input type="text" class="edit-nickname-input" style="display: none;" value="{{ member.nickname }}">
                     <a style="color: red;" class="reset-nickname-btn">Reset</a>
                     <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
-                    <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
+                    <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon" id="edit-nickname-icon">
                 </div>
                 {% endfor %}
             </div>
@@ -290,7 +323,7 @@
       console.log("Room:", chat_name);
       let user_logged_in = `{{ user.username }}`;
       console.log("Logged-in user:", user_logged_in);
-      window.localStorage.setItem('chatName',chat_name)
+      window.localStorage.setItem('chatName',currentChatID)
       if (!window.localStorage.getItem('guessCount'))
         window.localStorage.setItem('guessCount', 0)
 

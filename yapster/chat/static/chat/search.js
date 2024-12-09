@@ -180,16 +180,6 @@ function removeMemberFromGroup(){
         alert("Please remove at least one user.");
         return;
     }
-
-    // Check for duplicates (if the user is already in the chat)
-    // for (const userId of userIds) {
-    //     if (currentMembers.includes(userId)) {
-    //         alert("This user is already a member of the group chat.");
-    //         return;
-    //     }
-    // }
-
-    // Send the request to add members
     fetch(`/chat/${chatId}/remove_members/`, {
         method: 'POST',
         headers: {
@@ -201,8 +191,6 @@ function removeMemberFromGroup(){
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // alert("Members added successfully!");
-            // Update UI or reload chat to reflect changes
             location.reload()
         } else {
             alert(data.error);
@@ -272,6 +260,29 @@ function removeUser(userId) {
         )
         .join("");
     console.log("Selected users:", selectedUsers);
+}
+
+function leaveGroup() {
+    // Get the current chat ID
+    const chatId = currentChatID; // Use your global currentChatID variable
+
+    fetch(`/chat/${chatId}/leave_group/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("You have left the group."); // Optional alert
+            window.location.href = `/chat/`; // Redirect to the default chat view
+        } else {
+            alert(data.error); // Display the error message
+        }
+    })
+    .catch(error => console.error("Error leaving group:", error));
 }
 
 // Handles input in the search bar

@@ -8,6 +8,7 @@ urlpatterns = [
     
     path('user-details/<int:user_id>/', views.get_user_details, name="user_details"),
     path('get_or_create_chat/', views.get_or_create_chat, name="get_or_create_chat"),
+    path('get-profile-image/<int:user_id>/', views.get_profile_image, name='get_profile_image'),
     
 
     #ako gi change to int basin nay naguba lain
@@ -17,9 +18,11 @@ urlpatterns = [
     path('<int:chat_id>/remove_members/', views.remove_members_from_group, name="remove_members_from_group"),
     path('<int:chat_id>/update-nickname/', views.update_nickname, name='update_nickname'),
     path('<int:chat_id>/reset-nickname/', views.reset_nickname, name='reset_nickname'),
+    path('<int:chat_id>/leave_group/', views.leave_group, name='leave_group'),
+    path('<int:chat_id>/update-chat-name/', views.update_chat_name, name='update_chat_name'),
 
-    
-    
+
+
     path('query_stuff/query_users/', views.query_users, name="query_users"),
 
     # path('search/', views.search_user, name='search_user'),
