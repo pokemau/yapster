@@ -19,20 +19,18 @@
   <script>
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
+    {% if not no_chat_open %}
     const changeNicknameUrl = "{% url 'update_nickname' chat_id=chat_room.id %}";
     const resetNicknameUrl = "{% url 'reset_nickname' chat_id=chat_room.id %}";
-    {% if not no_chat_open %}
     const currentUserID = {{ current_userID }};
     const currentChatID = {{ chat_room.id }};
     const chat_users_id = {{ chat_room_users_id }};
     const currentUserNickname = "{{ current_userNickname }}";
     // const currentChat = {{ chat_room }};
+    let chatCounter = {{ content|length }};
+    const yaplist = {{ yapster_pfp_urls|safe }};
     {% endif %}
     let buffer = "@@@@";
-    let chatCounter = {{ content|length }};
-
-    const yaplist = {{ yapster_pfp_urls|safe }};
-    console.log(yaplist)
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -194,7 +192,6 @@
           {% endif %}
 
         </section>
-        <script>console.log(chatCounter);</script>
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
