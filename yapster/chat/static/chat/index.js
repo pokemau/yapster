@@ -121,3 +121,7 @@ if (youreBlocked == 'True') {
 	document.querySelector('#wordle-btn').disabled = false
 	document.querySelector('#send-btn').disabled = false
 }
+
+function redirectToProfile(userId) {
+    window.location.href = `/public_profile/${userId}/`;
+}

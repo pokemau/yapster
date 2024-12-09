@@ -28,7 +28,7 @@
                     <h4>{{ user.first_name|default_if_none:"Enter First Name" }} {{ user.last_name|default_if_none:"Enter Last Name" }}</h4>
 
                     <div class="left-navigation">
-                        <a href="{% url 'public_profile' %}" class="btn btn-primary btn-block mt-3">View Public Profile</a>
+                        <a href="{% url 'public_profile' user.id %}" class="btn btn-primary btn-block mt-3">View Public Profile</a>
                         <a href="#" id="accountSettingsLink" class="btn btn-primary btn-block mt-3">Account Settings</a>
 
                         <a href="#" class="btn btn-primary btn-block mt-3" onclick="openModal('deleteAccountModal')">Delete Account</a>
@@ -39,7 +39,7 @@
                 <div class="profile-main">
                     <div id="accountSettingsSection" style="display: {% if not show_password_section %}block{% else %}none{% endif %};">
                         <p class="font-size">Account Settings</p>
-                        <form class="profile-form mt-3" method="POST" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+                        <form class="profile-form mt-3" method="POST" action="{% url 'update_profile' user.id %}" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="form-row">
                                 <div class="form-group col-md-5">
