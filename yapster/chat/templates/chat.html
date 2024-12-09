@@ -83,8 +83,30 @@
                         {% endif %}
                       </p>
                     </div>
-                    <p class="message">No message available</p>   
-                    <p class="time-sent">Last seen: 1:06pm</p>                      
+                    <p class="message">
+                      {% if chat.latest_message_content %}
+                          {% if chat.latest_message_sender %}
+                              {{ chat.latest_message_sender }}: {{ chat.latest_message_content }}
+                          {% else %}
+                              {{ chat.latest_message_content }}
+                          {% endif %}
+                      {% else %}
+                          No messages yet
+                      {% endif %}
+                    </p>
+                    <p class="time-sent">
+
+                      {% if chat.latest_message_date %}
+      
+                          {{ chat.latest_message_date|date:"M d, H:i" }}
+      
+                      {% else %}
+      
+                          
+      
+                      {% endif %}
+      
+                  </p>                    
                 </div>
             </div>
             {% empty %}

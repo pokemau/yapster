@@ -464,3 +464,65 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+let pollInterval = 500; // Poll every 5 seconds
+
+function pollChats() {
+    fetch('/chat/poll-chats/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateChatList(data.chats);
+            } else {
+                console.error("Polling error:", data.error);
+            }
+        })
+        .catch(error => console.error("Error polling chats:", error));
+}
+
+function updateChatList(chats) {
+    const chatList = document.getElementById("current-chats");
+    if (!chatList) return;
+
+    let chatHTML = chats.map(chat => {
+        const latestMessage = chat.latest_message_content
+            ? chat.latest_message_sender
+                ? `${chat.latest_message_sender}: ${chat.latest_message_content}`
+                : chat.latest_message_content
+            : "No messages yet";
+
+        const latestDate = chat.latest_message_date
+            ? new Date(chat.latest_message_date).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+            : "";
+
+        const yapster_to_display = chat.yapster_to_display.profile_image
+        console.log("YAPSTER TO DISPLAY: ", yapster_to_display)
+        return `
+            <div class="user" onclick="loadChatWithID(${chat.chat_id})">
+                <img 
+                class="left-profile-pic"
+                src="${chat.yapster_to_display.profile_image || '/static/images/default_profile.jpg'}" 
+                alt="Profile Picture" 
+                onerror="this.onerror=null;this.src='/static/images/default_profile.jpg';" />
+                <div class="name-time-msg">
+                    <p class="name">${chat.chat_name}</p>
+                    <p class="message">${latestMessage}</p>
+                    <p class="time-sent">${latestDate}</p>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    chatList.innerHTML = chatHTML || "<p>No chats available.</p>";
+}
+
+// Start polling on page load
+document.addEventListener('DOMContentLoaded', () => {
+    setInterval(pollChats, pollInterval);
+});

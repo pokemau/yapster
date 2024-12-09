@@ -3,13 +3,14 @@ from django.contrib.auth import logout
 from chat.models import Message, YapsterUser, Chat, ChatUser
 from user.models import User
 from friend.models import FriendRequest, FriendList, BlockList
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Max
 from django.http import JsonResponse, Http404
 import json
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from django.core import serializers
 from django.templatetags.static import static
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 # Helper function for shared logic
@@ -30,7 +31,7 @@ def get_chat_data(request, active_chat_id=None):
     
     # Get all chats involving the logged-in user
     chat_ids = ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
-    chats = Chat.objects.filter(id__in=chat_ids)
+    chats = Chat.objects.filter(id__in=chat_ids).annotate(latest_message_date=Max('message__timestamp')).order_by('-latest_message_date')  # Sort by the latest message date in descending order
 
     for chat in chats:
         users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
@@ -52,7 +53,7 @@ def get_chat_data(request, active_chat_id=None):
         # print("LEN NICKNAMES: ", len(nicknames))
         if len(nicknames) <= 2:
             # print("MUGANA NI DPAAT")
-            display_name = "You and ".join(nicknames)
+            display_name = ", ".join(nicknames_without_curruser)
         else:
             display_name = f"{', '.join(nicknames_without_curruser[:2])}, and {len(nicknames_without_curruser) - 2} others"
 
@@ -61,6 +62,20 @@ def get_chat_data(request, active_chat_id=None):
             if i.member != request.user.yapsteruser:
                 yapster_to_display = i.member
                 break
+        
+              # Fetch the latest message
+
+        latest_message = Message.objects.filter(chat=chat).order_by('-timestamp').first()
+        latest_message_content = None
+        latest_message_sender = None
+
+        if latest_message:
+            latest_message_content = latest_message.content
+            if not latest_message.system_message and latest_message.sender != request.user:
+                yapster_user = YapsterUser.objects.get(user=latest_message.sender)
+                latest_message_sender = ChatUser.objects.filter(chat=chat, member=yapster_user).first().nickname
+
+        # print("YAPSTER TO: ", yapster_to_display)
 
         chat_data = {
             'chat_id': chat.id,
@@ -70,7 +85,10 @@ def get_chat_data(request, active_chat_id=None):
             'nicknames': nicknames,
             'current_user_nickname': current_user_nickname,
             'nicknames_without_curruser': nicknames_without_curruser,
-            'yapster_to_display': yapster_to_display
+            'yapster_to_display': yapster_to_display,
+            'latest_message_date': chat.latest_message_date,
+            'latest_message_content': latest_message_content,
+            'latest_message_sender': latest_message_sender,
         }
 
         chat_users_mapping.append(chat_data)
@@ -154,7 +172,7 @@ def message_view(request, chat_id):
         if i == len(senders) - 1 or senders[i] != senders[i + 1] or messages[i+1].system_message == True:
             withPfp[i] = 1
 
-    print(withPfp)
+    # print(withPfp)
     chat_user = None
     for message in messages:
         yapster_user = YapsterUser.objects.get(user=message.sender)
@@ -257,7 +275,7 @@ def message_view(request, chat_id):
 
     # Create a dictionary indexed by yapster_user_id
     yapster_users_by_id = {user.member.id: user.member for user in chat_users}
-    print(yapster_users_by_id)
+    # print(yapster_users_by_id)
 
     yapster_users_by_id_pfp = {user.member.id : user.member.profile_image for user in chat_users}
 
@@ -270,17 +288,17 @@ def message_view(request, chat_id):
     # Serialize to JSON
     yapster_users_by_id_pfp_json_str = json.dumps(yapster_users_by_id_pfp_json)
 
-    print("Profile pics JSON:", yapster_users_by_id_pfp_json_str)
+    # print("Profile pics JSON:", yapster_users_by_id_pfp_json_str)
 
 
-    print("Profile pics: ", yapster_users_by_id_pfp)
+    # print("Profile pics: ", yapster_users_by_id_pfp)
 
     #para display sa gc
     yapster_to_display = None
     for i in chat_room_users:
         if i.member != request.user.yapsteruser:
             yapster_to_display = i.member
-            print("KASJDLKASJDLK: ", yapster_to_display)
+            # print("KASJDLKASJDLK: ", yapster_to_display)
             break
 
     return render(request, 'chat.html', {
@@ -453,7 +471,7 @@ def get_or_create_chat(request):
     # Based on users involved
     if request.method == "POST":
         user_ids = request.POST.get('target_user_ids') or json.loads(request.body).get('target_user_ids')
-        print("GAGAGAGAGAG")
+        # print("GAGAGAGAGAG")
         
         sender_id = request.user.yapsteruser.id
 
@@ -463,7 +481,7 @@ def get_or_create_chat(request):
                     
         if(sender_id not in user_ids):
             user_ids.append(sender_id)
-        print("USER IDSSSSSSSSS: ", user_ids)
+        # print("USER IDSSSSSSSSS: ", user_ids)
         
         chat = find_chat(user_ids)
 
@@ -499,8 +517,8 @@ def find_chat(user_ids):
     for chat in candidate_chats:
         participant_ids = set(chat.chatuser.values_list('member_id', flat=True))
         
-        print("Participant IDS: ", participant_ids)
-        print("USerid set: ", set(user_ids))
+        # print("Participant IDS: ", participant_ids)
+        # print("USerid set: ", set(user_ids))
 
         if participant_ids == set(user_ids):
             return chat
@@ -773,6 +791,41 @@ def update_chat_name(request, chat_id):
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
+@login_required
+def poll_chats(request):
+    """Poll for updated chat list."""
+    if request.method == "GET":
+        query, users, chat_users_mapping, _ = get_chat_data(request)
+ 
+        # Serialize chat_users_mapping to JSON
+        serialized_chats = []
+        for chat in chat_users_mapping:
+            yapster_to_display = chat.get('yapster_to_display', None)
+
+            # Resolve profile image URL or fallback to default
+            profile_image_url = ""
+            if yapster_to_display:
+                profile_image_url = (
+                    yapster_to_display.profile_image.url
+                    if yapster_to_display.profile_image
+                    else '/static/images/default_profile.jpg'
+                )
+
+            serialized_chats.append({
+                'chat_id': chat['chat_id'],
+                'chat_name': chat['chat_name'],
+                'user_ids': chat['user_ids'],
+                'latest_message_date': chat.get('latest_message_date', None),
+                'latest_message_content': chat.get('latest_message_content', None),
+                'latest_message_sender': chat.get('latest_message_sender', None),
+                'yapster_to_display': {
+                'id': yapster_to_display.id if yapster_to_display else None,
+                'profile_image': profile_image_url,
+                 },
+            })
+
+        return JsonResponse({"success": True, "chats": serialized_chats}, safe=False)
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
 # def change_nickname()
 

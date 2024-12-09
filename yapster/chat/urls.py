@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.chat_view, name='chat'),
     path('logout/', views.logout_user, name='logout'),
     
+    path('poll-chats/', views.poll_chats, name='poll_chats'),
     path('user-details/<int:user_id>/', views.get_user_details, name="user_details"),
     path('get_or_create_chat/', views.get_or_create_chat, name="get_or_create_chat"),
     path('get-profile-image/<int:user_id>/', views.get_profile_image, name='get_profile_image'),
