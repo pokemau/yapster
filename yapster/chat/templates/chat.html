@@ -249,7 +249,7 @@
               </button>
               <div class="dropdown-content">
                 {% for user in chat_users %}
-                  <div class="user" onclick="loadChat({{user.member.id}})">
+                  <div class="user" onclick="redirectToProfile({{user.member.id}})">
                     <div class="left-profile-pic"></div>
                     <div class="name-time-msg">
                         <p class="name">{{ user.member.user.first_name }} {{ user.member.user.last_name }}</p>
