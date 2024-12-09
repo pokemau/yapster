@@ -151,9 +151,10 @@ def message_view(request, chat_id):
         senders.append(message.sender)
     withPfp = [0] * len(senders)
     for i in range(len(senders) - 1, -1, -1):
-        if i == len(senders) - 1 or senders[i] != senders[i + 1]:
+        if i == len(senders) - 1 or senders[i] != senders[i + 1] or messages[i+1].system_message == True:
             withPfp[i] = 1
 
+    print(withPfp)
     chat_user = None
     for message in messages:
         yapster_user = YapsterUser.objects.get(user=message.sender)
@@ -697,6 +698,82 @@ def get_profile_image(request, user_id):
         return JsonResponse({"success": True, "profile_image_url": profile_image_url})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=400)
+
+@login_required
+def leave_group(request, chat_id):
+    """Allow a user to leave a group chat."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "error": "User not authenticated"}, status=401)
+
+    # Get the chat object
+    chat = get_object_or_404(Chat, id=chat_id)
+
+    # Ensure that it's a group chat (not a PM)
+    if chat.is_pm:
+        return JsonResponse({"success": False, "error": "Cannot leave a private message chat"}, status=400)
+
+    # Ensure the user is a member of the chat
+    chat_user = ChatUser.objects.filter(chat=chat, member=request.user.yapsteruser).first()
+    if not chat_user:
+        return JsonResponse({"success": False, "error": "You are not a member of this chat."}, status=403)
+
+    # Prepare system message before removing the user
+    user_nickname = chat_user.nickname or f"{request.user.first_name} {request.user.last_name}"
+    Message.objects.create(
+        chat=chat,
+        sender=request.user,
+        content=f"{user_nickname} left the group.",
+        system_message=True,
+    )
+
+    # Remove the user from the chat
+    chat_user.delete()
+
+    # Redirect to a fallback chat (if available)
+    remaining_chats = ChatUser.objects.filter(member=request.user.yapsteruser).values_list('chat_id', flat=True)
+    if remaining_chats:
+        return JsonResponse({"success": True, "redirect_url": f"/chat/{remaining_chats[0]}/"})
+    else:
+        # If no other chats are available, redirect to the default chat page
+        return JsonResponse({"success": True, "redirect_url": "/chat/"})
+
+@login_required
+def update_chat_name(request, chat_id):
+    """Update the group chat name."""
+    chat = get_object_or_404(Chat, id=chat_id)
+
+    # Ensure it’s not a private message
+    if chat.is_pm:
+        return JsonResponse({"success": False, "error": "You cannot set a name for private messages."}, status=400)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        new_chat_name = data.get('chat_name', "").strip()
+
+        # Prevent blank names if necessary
+        if not new_chat_name:
+            chat.chat_name = ""  # Allow blank names for group chats
+        else:
+            chat.chat_name = new_chat_name
+
+        chat.save()
+
+        # Send a system message
+        current_user = request.user.yapsteruser.user
+        request_maker = get_object_or_404(ChatUser, member_id=request.user.yapsteruser.id, chat_id=chat_id)
+
+        Message.objects.create(
+            chat=chat,
+            sender=current_user,
+            content=f"{request_maker.nickname} set the group chat name to {new_chat_name or 'the default'}",
+            system_message=True,
+        )
+
+        return JsonResponse({"success": True, "message": "Chat name updated successfully!"})
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+
 # def change_nickname()
 
 #Temp Chat for chatting unchatted user

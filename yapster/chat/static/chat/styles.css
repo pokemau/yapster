@@ -792,3 +792,96 @@ html { font-family: 'PT Sans', Georgia, serif; }
   color: #000;
   text-decoration: none;
 }
+
+
+.chatname-popup {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 300px;
+	top: 0;
+	width: 60%;
+	height: 100%;
+	overflow: auto;
+  }
+  
+.chatname-popup-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+}
+
+.chatname-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.chatname-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    position: relative;
+}
+.chatname-item .profile-pic {
+    margin-right: 10px;
+}
+.chatname-item .chatname {
+    flex-grow: 1;
+}
+.chatname-item .edit-icon,
+.chatname-item .save-chatname-btn {
+    width: 20px;
+    height: 20px;
+    margin-left: auto;
+    cursor: pointer;
+}
+.chatname-item .edit-chatname-input {
+    width: 400px;
+	height: 30px;
+	font-size: 16px;
+    margin-left: 10px;
+    flex-grow: 0;
+}
+.chatname-item .save-chatname-btn {
+    width: 20px;
+    height: 20px;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.profile-pic {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+}
+
+.edit-icon {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+.save-chatname-btn {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.close-chatnames {
+  position: absolute;
+  top: 160px;
+  right: 130px;
+  color: #aaaaaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-chatnames:hover,
+.close-chatnames:focus {
+  color: #000;
+  text-decoration: none;
+}

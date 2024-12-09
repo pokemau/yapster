@@ -197,7 +197,7 @@ socket.addEventListener("message", (event) => {
                 messageHTML = `<p>Guess my Wordle!</p>`
             else 
                 messageHTML = `<p>${message}</p>`
-            messageDiv.innerHTML += `
+                messageDiv.innerHTML += `
                 <div class="bubble recipient">
                     ${messageHTML}
                 </div>`;
@@ -247,7 +247,7 @@ socket.onclose = (event) => {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    const editIcons = document.querySelectorAll('.edit-icon');
+    const editIcons = document.querySelectorAll('#edit-nickname-icon');
 
     editIcons.forEach(icon => {
         icon.addEventListener('click', function() {
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const nicknameItem = this.closest('.nickname-item');
             const nicknameSpan = nicknameItem.querySelector('.nickname');
             const editInput = nicknameItem.querySelector('.edit-nickname-input');
-            const editIcon = nicknameItem.querySelector('.edit-icon');
+            const editIcon = nicknameItem.querySelector('#edit-nickname-icon');
 
             const oldNickname = nicknameSpan.textContent.trim();
             const newNickname = editInput.value.trim();
@@ -365,17 +365,102 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+document.addEventListener('DOMContentLoaded', function () {
+    const editChatIcons = document.querySelectorAll('#edit-chatname-icon');
+    const saveChatNameButtons = document.querySelectorAll('.save-chatname-btn');
+    const resetChatNameButtons = document.querySelectorAll('.reset-chatname-btn');
+
+    editChatIcons.forEach(icon => {
+        icon.addEventListener('click', function () {
+            const chatNameItem = this.closest('.chatname-item');
+            const chatNameSpan = chatNameItem.querySelector('.chatname');
+            const editInput = chatNameItem.querySelector('.edit-chatname-input');
+            const saveButton = chatNameItem.querySelector('.save-chatname-btn');
+
+            chatNameSpan.style.display = 'none';
+            editInput.style.display = 'block';
+            saveButton.style.display = 'block';
+            this.style.display = 'none';
+            editInput.value = chatNameSpan.textContent.trim();
+            editInput.focus();
+            editInput.select();
+        });
+    });
+
+    saveChatNameButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const chatNameItem = this.closest('.chatname-item');
+            const chatNameSpan = chatNameItem.querySelector('.chatname');
+            const editInput = chatNameItem.querySelector('.edit-chatname-input');
+            const editIcon = chatNameItem.querySelector('#edit-chatname-icon');
+            const newChatName = editInput.value.trim();
+
+            if (newChatName === chatNameSpan.textContent.trim()) {
+                alert("Chat name is already set to this value!");
+                return;
             }
-        }
-    }
-    return cookieValue;
-}
+
+            // Update the UI immediately
+            chatNameSpan.textContent = newChatName || "Set Name";
+            chatNameSpan.style.display = 'block';
+            editInput.style.display = 'none';
+            this.style.display = 'none';
+            editIcon.style.display = 'block';
+
+            // Send the updated chat name to the server
+            fetch(`/chat/${currentChatID}/update-chat-name/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ chat_name: newChatName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Chat name updated successfully.");
+                    location.reload();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => console.error("Error updating chat name:", error));
+        });
+    });
+
+    resetChatNameButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const chatNameItem = this.closest('.chatname-item');
+            const chatNameSpan = chatNameItem.querySelector('.chatname');
+            const editInput = chatNameItem.querySelector('.edit-chatname-input');
+            const editIcon = chatNameItem.querySelector('#edit-chatname-icon');
+
+            // Reset the chat name to an empty string
+            chatNameSpan.textContent = "Set Name";
+            chatNameSpan.style.display = 'block';
+            editInput.style.display = 'none';
+            this.style.display = 'none';
+            editIcon.style.display = 'block';
+
+            fetch(`/chat/${currentChatID}/update-chat-name/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ chat_name: "" })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Chat name reset successfully.");
+                    location.reload();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => console.error("Error resetting chat name:", error));
+        });
+    });
+});
