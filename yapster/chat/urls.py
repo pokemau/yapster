@@ -8,6 +8,7 @@ urlpatterns = [
     
     path('user-details/<int:user_id>/', views.get_user_details, name="user_details"),
     path('get_or_create_chat/', views.get_or_create_chat, name="get_or_create_chat"),
+    path('get-profile-image/<int:user_id>/', views.get_profile_image, name='get_profile_image'),
     
 
     #ako gi change to int basin nay naguba lain

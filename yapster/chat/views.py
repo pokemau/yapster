@@ -9,6 +9,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from django.core import serializers
+from django.templatetags.static import static
 
 
 # Helper function for shared logic
@@ -257,6 +258,22 @@ def message_view(request, chat_id):
     yapster_users_by_id = {user.member.id: user.member for user in chat_users}
     print(yapster_users_by_id)
 
+    yapster_users_by_id_pfp = {user.member.id : user.member.profile_image for user in chat_users}
+
+    # Convert ImageFieldFile objects to JSON-compatible format
+    yapster_users_by_id_pfp_json = {
+        user_id: (profile_image.url if profile_image and profile_image.name else static('images/default_profile.jpg'))
+        for user_id, profile_image in yapster_users_by_id_pfp.items()
+    }
+
+    # Serialize to JSON
+    yapster_users_by_id_pfp_json_str = json.dumps(yapster_users_by_id_pfp_json)
+
+    print("Profile pics JSON:", yapster_users_by_id_pfp_json_str)
+
+
+    print("Profile pics: ", yapster_users_by_id_pfp)
+
     #para display sa gc
     yapster_to_display = None
     for i in chat_room_users:
@@ -283,6 +300,7 @@ def message_view(request, chat_id):
         'pm_username': pm_username,
         'validation': validation,
         'yapster_users_by_id': yapster_users_by_id,
+        'yapster_pfp_urls': yapster_users_by_id_pfp_json_str,
         'yapster_to_display': yapster_to_display
     })
 
@@ -670,6 +688,15 @@ def reset_nickname(request, chat_id):
             return JsonResponse({"success": False, "error": "Chat user not found."}, status=404)
     return JsonResponse({"success": False, "error": "Invalid request method."}, status=400)
 
+@login_required
+def get_profile_image(request, user_id):
+    """Fetch the profile image URL of the specified YapsterUser."""
+    try:
+        yapster_user =  YapsterUser.objects.get(id=user_id)
+        profile_image_url = yapster_user.profile_image.url if yapster_user.profile_image else static('images/default_profile.jpg')
+        return JsonResponse({"success": True, "profile_image_url": profile_image_url})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=400)
 # def change_nickname()
 
 #Temp Chat for chatting unchatted user

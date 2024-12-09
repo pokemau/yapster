@@ -34,7 +34,8 @@ document.getElementById('message-input').addEventListener('submit', function(eve
             'chat_name': `${chat_name}`,
             'sender': `${user_logged_in}`,
             'sender_nickname': `${currentUserNickname}`,
-            'current_chatID': `${currentChatID}`
+            'current_chatID': `${currentChatID}`,
+            'sender_id': `${currentUserID}`,
         })
     );
     updateUI();
@@ -72,6 +73,7 @@ wordleForm.addEventListener('submit', function(e) {
                         'chat_name': `${chat_name}`,
                         'sender': `${user_logged_in}`,
                         'sender_nickname': `${currentUserNickname}`,
+                        'sender_id': `${currentUserID}`,
                 }));
                 document.getElementById("myModal").style.display = 'none';
                 document.querySelector('#word-input').value = '';
@@ -100,6 +102,7 @@ socket.addEventListener("message", (event) => {
     var sender = messageData['sender'];
     var sender_nickname = messageData['sender_nickname'];
     var message = messageData['message'];
+    var sender_id = messageData['sender_id']
     
     console.log("sender: ", sender);
     console.log("message: ", message);
@@ -123,17 +126,21 @@ socket.addEventListener("message", (event) => {
     }else{
         if (sender != user_logged_in) { 
             if(buffer == sender_nickname){
+                console.log("Message Count: ", messageCount);
+                const profilePicURL = yaplist[sender_id]
+                console.log(profilePicURL);
                 messageDiv.innerHTML +=  
                 `
-                <div class="message_body" id="chatno${messageCount}">
-                <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-                <div class="flex_message">
-                  <div class="bubble sender">
-                    ${messageHTML}
-                  </div>
-                </div>
-              </div>
-              `
+                    <div class="message_body" id="chatno${messageCount}">
+                        <img class="pfp" src="${profilePicURL}"> </img>
+                        <div class="flex_message">
+                            <div class="bubble sender">
+                                ${messageHTML}
+                            </div>
+                        </div>
+                    </div>
+                `
+               
                 if(!firstChat){
                     chat = "chatno"+(messageCount-1);
                     console.log("Changing chat:" + chat);
@@ -167,21 +174,23 @@ socket.addEventListener("message", (event) => {
                     messageHTML = `<a href='/games/wordle/${message.slice(8)}'>Guess my Wordle!</a>`
                 else 
                     messageHTML = `<p>${message}</p>`
-    
-                messageDiv.innerHTML +=  
-                `
-                <div class="message_body" id="chatno${messageCount}">
-                    <div class="pfp" style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');"></div>
-                    <div class="flex_message">
-                        <div class="chatter_name">
-                            ${sender_nickname}
-                        </div>
-                        <div class="bubble sender">
-                            ${messageHTML}
+                    
+                    const profilePicURL = yaplist[sender_id] 
+                    console.log(profilePicURL);
+                    messageDiv.innerHTML +=  
+                    `
+                    <div class="message_body" id="chatno${messageCount}">
+                        <img class="pfp" src="${profilePicURL}"> </img>
+                        <div class="flex_message">
+                            <div class="chatter_name">
+                                ${sender_nickname}
+                            </div>
+                            <div class="bubble sender">
+                                ${messageHTML}
+                            </div>
                         </div>
                     </div>
-                </div>
-                `
+                    `
             }
         } else {
             if (message.includes('[WORDLE]'))
@@ -195,7 +204,6 @@ socket.addEventListener("message", (event) => {
         }
         scrollToBottom();
     }
-
 
     buffer = sender_nickname;
     messageCount++;
@@ -356,8 +364,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
-
 
 function getCookie(name) {
     let cookieValue = null;

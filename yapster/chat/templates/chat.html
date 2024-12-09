@@ -29,6 +29,9 @@
     {% endif %}
     let buffer = "@@@@";
     let chatCounter = {{ content|length }};
+
+    const yaplist = {{ yapster_pfp_urls|safe }};
+    console.log(yaplist)
   </script>
   <body>
     {% include 'html/navbar.html' %}
