@@ -207,7 +207,7 @@ function loadChatMembersForRemoval() {
             .map((user) => {
                 return `
                     <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
-                        <div class="left-profile-pic"></div>
+                        <img class="left-profile-pic" src="${user.pfp}"></img>
                         <div class="name-time-msg">
                             <p class="name">${user.first_name} ${user.last_name}</p>
                             <p class="time-sent">@${user.username}</p>

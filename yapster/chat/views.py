@@ -481,6 +481,7 @@ def get_chat_members(request, chat_id):
                 'last_name': chat_user.member.user.last_name,
                 'username': chat_user.member.user.username,
                 'nickname': chat_user.nickname,  # Use nickname if available
+                'pfp': chat_user.member.profile_image.url if chat_user.member.profile_image else static('images/default_profile.jpg')
             }
             for chat_user in chat_users
         ]
