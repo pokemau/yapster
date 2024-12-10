@@ -5,6 +5,21 @@ let isAddMemberState = false; // Tracks the state for Add Member
 let isRemoveMemberState = false;
 let selectedUsers = []; // Stores selected users in create-chat state
 
+window.addMemberToGroup = addMemberToGroup;
+window.removeMemberFromGroup = removeMemberFromGroup;
+window.toggleCreateChatState = toggleCreateChatState;
+window.createGroupChat = createGroupChat;
+window.toggleAddMemberState = toggleAddMemberState;
+window.toggleRemoveMemberState = toggleRemoveMemberState;
+window.loadChatMembersForRemoval = loadChatMembersForRemoval;
+window.addUser = addUser;
+window.removeUser = removeUser;
+window.leaveGroup = leaveGroup;
+window.handleSearchInput = handleSearchInput;
+window.filterUsers = filterUsers;
+window.resetSearchState = resetSearchState;
+window.fetchChatMembers = fetchChatMembers;
+
 // Add selected users to the group chat
 function addMemberToGroup() {
     // Extract user IDs from selectedUsers
@@ -101,7 +116,6 @@ function removeMemberFromGroup(){
     })
     .catch(error => console.error("Error removing members:", error));
 }
-
 
 function toggleCreateChatState() {
     isCreateChatState = !isCreateChatState;
