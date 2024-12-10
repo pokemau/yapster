@@ -273,10 +273,12 @@
               </button>
               <div class="dropdown-content">
                 <a onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
+                {% if not is_pm %}
                 <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
                 <a class="removeMemberButton" onclick="toggleRemoveMemberState()">Remove member</a>
                 <a class="changeChatNameButton" onclick="togglePopup('chatname-popup')">Change Chat Name</a>
                 <a class="leaveGroupButton" onclick="leaveGroup()">Leave Group</a>
+                {% endif %}
               </div>
             </div>
             <div class="dropdown">
