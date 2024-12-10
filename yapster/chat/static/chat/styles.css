@@ -15,6 +15,7 @@
 #left-sidebar {
 	width: 22rem;
 	border-right: 1px solid #cdd5de;
+	overflow: auto;
 }
 
 #search-bar {
