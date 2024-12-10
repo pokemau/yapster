@@ -50,7 +50,6 @@ def accept_friend_request(request, request_id):
     receiver_friend_list, _ = FriendList.objects.get_or_create(user=request.user.yapsteruser)
     sender_friend_list, _ = FriendList.objects.get_or_create(user=friend_request.sender)
 
-    print('=======')
     print(type(friend_request))
     friend_request.accept()
     return redirect('friend:friend_requests')
