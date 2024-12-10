@@ -23,7 +23,8 @@
                         <img id="profileImage" src="
                                 {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
                              width="100" height="100" alt="Profile Picture"
-                             onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
+                             onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';">
+                    </div>
                     <input type="file" id="profileImageInput" style="display: none;" accept="image/*">
                     <h4>{{ user.first_name|default_if_none:"Enter First Name" }} {{ user.last_name|default_if_none:"Enter Last Name" }}</h4>
 

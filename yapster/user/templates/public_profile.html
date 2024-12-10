@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
     <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <link rel="stylesheet" href="{%  static 'public-profile.css' %}">
@@ -32,7 +31,11 @@
         </div>
     </div>
         
-
+    <div class="back-button-container">
+        <a href="{% url 'chat' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Chat
+        </a>
+    </div>
 
     <div class="container">
         <div class="card">
@@ -63,6 +66,8 @@
                         <a href="#" id="seeMoreLink" style="display: none;text-decoration: none;"> see more</a>
                         <a href="#" id="seeLessLink" style="display: none;text-decoration: none;"> see less...</a>
                     </div>
+
+                <!--                                                        ;<<
                     {% if request.user.id != user.id %}
                         <div class="buttons-wrap">
                             <div class="follow-wrap">
@@ -72,7 +77,7 @@
                                 <a href="#" class="message">Message</a>
                             </div>
                         </div>
-                    {% endif %}
+                    {% endif %} -->
                 </div>
                 <!--
                 <div class="right">
