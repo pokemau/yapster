@@ -234,7 +234,7 @@ socket.onopen = (event) => {
     console.log("WebSocket connection opened!");
     const localStorageChatName = window.localStorage.getItem('chatName')
     const guessCount = window.localStorage.getItem('guessCount')
-    if (chat_name == localStorageChatName
+    if (currentChatID == localStorageChatName
         && guessCount != 0) {
             console.log("HERE")
         if (socket.readyState === WebSocket.OPEN) {

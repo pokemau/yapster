@@ -30,6 +30,11 @@
     // const currentChat = {{ chat_room }};
     let chatCounter = {{ content|length }};
     const yaplist = {{ yapster_pfp_urls|safe }};
+    {% else %}
+    const currentUserID = 0;
+    const currentChatID = 0;
+    const chat_users_id = 0;
+    const currentUserNickname = "0";
     {% endif %}
     let buffer = "@@@@";
   </script>

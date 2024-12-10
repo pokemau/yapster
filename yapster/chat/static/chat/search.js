@@ -5,6 +5,7 @@ let isAddMemberState = false; // Tracks the state for Add Member
 let isRemoveMemberState = false;
 let selectedUsers = []; // Stores selected users in create-chat state
 
+window.handleSearchInput = handleSearchInput 
 window.addMemberToGroup = addMemberToGroup;
 window.removeMemberFromGroup = removeMemberFromGroup;
 window.toggleCreateChatState = toggleCreateChatState;
@@ -15,7 +16,6 @@ window.loadChatMembersForRemoval = loadChatMembersForRemoval;
 window.addUser = addUser;
 window.removeUser = removeUser;
 window.leaveGroup = leaveGroup;
-window.handleSearchInput = handleSearchInput;
 window.filterUsers = filterUsers;
 window.resetSearchState = resetSearchState;
 window.fetchChatMembers = fetchChatMembers;
