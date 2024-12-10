@@ -85,9 +85,17 @@
                     <p class="message">
                       {% if chat.latest_message_content %}
                           {% if chat.latest_message_sender %}
-                              {{ chat.latest_message_sender }}: {{ chat.latest_message_content }}
+                              {% if "[WORDLE]"|contains:chat.latest_message_content %}
+                                {{ chat.latest_message_sender }}: Guess my Wordle!
+                              {% else %}
+                                {{ chat.latest_message_sender }}: {{ chat.latest_message_content }}
+                              {% endif %}
                           {% else %}
-                              {{ chat.latest_message_content }}
+                              {% if "[WORDLE]"|contains:chat.latest_message_content %}
+                                Guess my Wordle!
+                              {% else %}
+                                {{ chat.latest_message_content }}
+                              {% endif %}
                           {% endif %}
                       {% else %}
                           No messages yet

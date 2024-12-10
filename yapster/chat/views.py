@@ -36,7 +36,7 @@ def get_chat_data(request, active_chat_id=None):
     for chat in chats:
         users_in_chat = ChatUser.objects.filter(chat=chat).select_related('member')
         user_ids = [cu.member.id for cu in users_in_chat]
-        is_PM = len(user_ids) == 2
+        is_PM = chat.is_pm
         nicknames_in_chat = ChatUser.objects.filter(chat=chat)
         nicknames = [
             f"{cu.nickname}" for cu in nicknames_in_chat
@@ -50,11 +50,15 @@ def get_chat_data(request, active_chat_id=None):
         ]
 
         # Generate a concise display name
-        # print("LEN NICKNAMES: ", len(nicknames))
-        if len(nicknames) <= 2:
-            # print("MUGANA NI DPAAT")
-            display_name = ", ".join(nicknames_without_curruser)
-        else:
+        if is_PM:
+            display_name = nicknames_without_curruser[0]
+        elif len(nicknames) == 1:
+            display_name = "It's just you, Always been you"
+        elif len(nicknames) == 2:
+            display_name = f"You and {nicknames_without_curruser[0]}"
+        elif len(nicknames) == 3 or len(nicknames) == 4:
+            display_name = f"{', '.join(nicknames_without_curruser[:3])}"
+        else: 
             display_name = f"{', '.join(nicknames_without_curruser[:2])}, and {len(nicknames_without_curruser) - 2} others"
 
         yapster_to_display = None
@@ -65,7 +69,7 @@ def get_chat_data(request, active_chat_id=None):
         
               # Fetch the latest message
 
-        latest_message = Message.objects.filter(chat=chat).order_by('-timestamp').first()
+        latest_message = Message.objects.filter(chat=chat).exclude(content__icontains="[REFRESH]").order_by('-timestamp').first()
         latest_message_content = None
         latest_message_sender = None
 

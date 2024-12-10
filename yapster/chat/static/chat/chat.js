@@ -1,6 +1,11 @@
 import { WORDS } from './wordlist.js'
 import { socket } from './socket.js';
 
+// Start polling on page load
+document.addEventListener('DOMContentLoaded', () => {
+    setInterval(pollChats, pollInterval);
+});
+
 function scrollToBottom() {
     console.log("areeee")
     var chatContainer = document.querySelector(".messages");
@@ -77,6 +82,7 @@ wordleForm.addEventListener('submit', function(e) {
                         'chat_name': `${chat_name}`,
                         'sender': `${user_logged_in}`,
                         'sender_nickname': `${currentUserNickname}`,
+                        'current_chatID': `${currentChatID}`,
                         'sender_id': `${currentUserID}`,
                 }));
                 document.getElementById("myModal").style.display = 'none';
@@ -234,6 +240,9 @@ socket.onopen = (event) => {
                     'message': `I guessed your word in ${guessCount} ${guessCount==1? 'try':'tries'}`,
                     'chat_name': chat_name,
                     'sender': user_logged_in,
+                    'current_chatID': `${currentChatID}`,
+                    'sender_nickname': `${currentUserNickname}`,
+                    'sender_id': `${currentUserID}`,
                 })
             );
 
@@ -511,15 +520,23 @@ function updateChatList(chats) {
     if (!chatList) return;
 
     let chatHTML = chats.map(chat => {
-        const latestMessage = chat.latest_message_content
+        let latestMessage = chat.latest_message_content
             ? chat.latest_message_sender
                 ? `${chat.latest_message_sender}: ${chat.latest_message_content}`
                 : chat.latest_message_content
             : "No messages yet";
+        
+        if(latestMessage.includes("[WORDLE]")){
+            if (chat.latest_message_sender)
+                latestMessage = `${chat.latest_message_sender}: Guess my Wordle!`
+            else
+                latestMessage = `Guess my Wordle!`
+            
+        }
 
         const latestDate = chat.latest_message_date
             ? new Date(chat.latest_message_date).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
-            : "";
+            : "       ";
 
         const yapster_to_display = chat.yapster_to_display.profile_image
         return `
@@ -540,8 +557,3 @@ function updateChatList(chats) {
 
     chatList.innerHTML = chatHTML || "<p>No chats available.</p>";
 }
-
-// Start polling on page load
-document.addEventListener('DOMContentLoaded', () => {
-    setInterval(pollChats, pollInterval);
-});
