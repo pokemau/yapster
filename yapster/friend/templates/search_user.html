@@ -30,13 +30,13 @@
     <div class="users-cont">
       {% for searched_user in users %}
       <div class="user">
-        <!-- <a href="/public_profile/{{ searched_user.id }}"> -->
+        <a href="/public_profile/{{ searched_user.id }}">
         <div class="user-details">
           <!-- <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" /> -->
           <img class="user__profile-image" src="{% if searched_user.profile_image %}{{  searched_user.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"></img>
           <p class="user__name">{{ searched_user.first_name }} {{ searched_user.last_name }}</p>
         </div>
-        <!-- </a> -->
+        </a>
         <div class="user__actions">
           {% if searched_user.is_blocked %}
           <a href="/friend/unblock_user/{{ searched_user.id }}">Unblock</a>
