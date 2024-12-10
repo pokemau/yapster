@@ -37,7 +37,7 @@
     <div class="container">
         <div class="card">
             <div class="header">
-                <a href="{% url 'profile_page' user.id %}" class="settings">
+                <a href="{% url 'profile_page' user.id %}" class="settings" {% if request.user.id != user.id %}style="display:none;"{% endif %}>
                     <i class="fas fa-cog"></i>
                 </a>
                 <div class="main">
@@ -63,14 +63,16 @@
                         <a href="#" id="seeMoreLink" style="display: none;text-decoration: none;"> see more</a>
                         <a href="#" id="seeLessLink" style="display: none;text-decoration: none;"> see less...</a>
                     </div>
-                    <div class="buttons-wrap">
-                        <div class="follow-wrap">
-                            <a href="#" class="follow">Follow</a>
+                    {% if request.user.id != user.id %}
+                        <div class="buttons-wrap">
+                            <div class="follow-wrap">
+                                <a href="#" class="follow">Follow</a>
+                            </div>
+                            <div class="message-wrap">
+                                <a href="#" class="message">Message</a>
+                            </div>
                         </div>
-                        <div class="message-wrap">
-                            <a href="#" class="message">Message</a>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
                 <!--
                 <div class="right">

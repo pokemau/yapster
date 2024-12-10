@@ -188,8 +188,8 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: auto;
     padding: 20px;
+    margin: auto;
     border: 1px solid #888;
     width: 50%;
     height: 60%;
@@ -199,7 +199,7 @@
     align-items: center;
     animation: openSesame 1s forwards;
     z-index: 10;
-
+    position: relative;
 }
 
 @keyframes openSesame {
@@ -223,13 +223,13 @@
     animation: openSesame 1s forwards;
 }
 
-.close {
-    color: #aaa;
+.modal-content .close {
     position: absolute;
-    top: 20px;
-    font-size: 28px;
-    font-weight: bold;
+    top: 30px;
+    right: 30px;
+    font-size: 30px;
     cursor: pointer;
+    z-index: 1001;
 }
 
 .close:hover,

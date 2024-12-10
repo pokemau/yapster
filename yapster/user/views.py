@@ -211,6 +211,7 @@ def public_profile(request, user_id):
     yapster_user = get_object_or_404(YapsterUser, user__id=user_id)
     return render(request, 'public_profile.html', {'user': user, 'yapster_user': yapster_user})
 
+
 @login_required
 def delete_account(request):
     if request.method == 'POST':
