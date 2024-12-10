@@ -23,12 +23,13 @@
                         <img id="profileImage" src="
                                 {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
                              width="100" height="100" alt="Profile Picture"
-                             onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
+                             onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';">
+                    </div>
                     <input type="file" id="profileImageInput" style="display: none;" accept="image/*">
                     <h4>{{ user.first_name|default_if_none:"Enter First Name" }} {{ user.last_name|default_if_none:"Enter Last Name" }}</h4>
 
                     <div class="left-navigation">
-                        <a href="{% url 'public_profile' %}" class="btn btn-primary btn-block mt-3">View Public Profile</a>
+                        <a href="{% url 'public_profile' user.id %}" class="btn btn-primary btn-block mt-3">View Public Profile</a>
                         <a href="#" id="accountSettingsLink" class="btn btn-primary btn-block mt-3">Account Settings</a>
 
                         <a href="#" class="btn btn-primary btn-block mt-3" onclick="openModal('deleteAccountModal')">Delete Account</a>
@@ -39,7 +40,7 @@
                 <div class="profile-main">
                     <div id="accountSettingsSection" style="display: {% if not show_password_section %}block{% else %}none{% endif %};">
                         <p class="font-size">Account Settings</p>
-                        <form class="profile-form mt-3" method="POST" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+                        <form class="profile-form mt-3" method="POST" action="{% url 'update_profile' user.id %}" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="form-row">
                                 <div class="form-group col-md-5">
@@ -128,7 +129,7 @@
                             </div>
                             <div class="d-flex justify-content-center group-margin">
                                 <button type="submit" class="btn btn-primary2">Change Password</button>
-                                <button type="button" class="btn btn-secondary ml-2" onclick="toggleSections()">Cancel</button>
+                                <!-- <button type="button" class="btn btn-secondary ml-2" onclick="toggleSections()">Cancel</button> -->
                             </div>
                         </form>
                     </div>

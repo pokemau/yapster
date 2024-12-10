@@ -45,9 +45,8 @@
         </div>
       </div>
     </div>
-    <a href="{% url 'public_profile' %}">
-      <!-- ako sa gi change para mu adto profile page -->
-      <div id="nav-profile-pic"></div>
+    <a href="javascript:redirectToProfile('{{ user.id }}')">
+      <img id="nav-profile-pic" style="object-fit: cover;" src="{% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}" alt="img">
     </a>
   </div>
 </nav>

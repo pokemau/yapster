@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="{% static 'yapster/styles.css' %}" />
 
     <script type="module" src="{% static 'chat/chat.js' %}" defer></script>
+    <script type="module" src="{% static 'chat/socket.js' %}" defer></script>
     <script src="{% static 'chat/index.js' %}" defer></script>
     <script src="{% static 'yapster/index.js' %}" defer></script>
-    <script src="{% static 'chat/search.js' %}" defer></script>
+    <script type="module" src="{% static 'chat/search.js' %}" defer></script>
 
     <title>Chat</title>
   </head>
@@ -20,10 +21,22 @@
     const csrfToken = "{{ csrf_token }}";
     const getOrCreateChatUrl = "{% url 'get_or_create_chat' %}";
     {% if not no_chat_open %}
+    const changeNicknameUrl = "{% url 'update_nickname' chat_id=chat_room.id %}";
+    const resetNicknameUrl = "{% url 'reset_nickname' chat_id=chat_room.id %}";
     const currentUserID = {{ current_userID }};
     const currentChatID = {{ chat_room.id }};
     const chat_users_id = {{ chat_room_users_id }};
+    const currentUserNickname = "{{ current_userNickname }}";
+    // const currentChat = {{ chat_room }};
+    let chatCounter = {{ content|length }};
+    const yaplist = {{ yapster_pfp_urls|safe }};
+    {% else %}
+    const currentUserID = 0;
+    const currentChatID = 0;
+    const chat_users_id = 0;
+    const currentUserNickname = "0";
     {% endif %}
+    let buffer = "@@@@";
   </script>
   <body>
     {% include 'html/navbar.html' %}
@@ -53,7 +66,13 @@
             <!-- Existing Chats -->
             {% for chat in chat_users_mapping %}
             <div class="user" onclick="loadChatWithID({{ chat.chat_id }})" data-chat-id="{{ chat.chat_id }}">
-                <div class="left-profile-pic"></div>
+              <img class="left-profile-pic"
+                src="{% if chat.yapster_to_display and chat.yapster_to_display.profile_image and chat.yapster_to_display.profile_image.url %}
+                      {{ chat.yapster_to_display.profile_image.url }}
+                  {% else %}
+                      {% static 'images/default_profile.jpg' %}
+                  {% endif %}">
+              </img>
                 <div class="name-time-msg">
                     <div class="name-time">
                       <p class="name">
@@ -68,8 +87,38 @@
                         {% endif %}
                       </p>
                     </div>
-                    <p class="message">No message available</p>   
-                    <p class="time-sent">Last seen: 1:06pm</p>                      
+                    <p class="message">
+                      {% if chat.latest_message_content %}
+                          {% if chat.latest_message_sender %}
+                              {% if "[WORDLE]"|contains:chat.latest_message_content %}
+                                {{ chat.latest_message_sender }}: Guess my Wordle!
+                              {% else %}
+                                {{ chat.latest_message_sender }}: {{ chat.latest_message_content }}
+                              {% endif %}
+                          {% else %}
+                              {% if "[WORDLE]"|contains:chat.latest_message_content %}
+                                Guess my Wordle!
+                              {% else %}
+                                {{ chat.latest_message_content }}
+                              {% endif %}
+                          {% endif %}
+                      {% else %}
+                          No messages yet
+                      {% endif %}
+                    </p>
+                    <p class="time-sent">
+
+                      {% if chat.latest_message_date %}
+      
+                          {{ chat.latest_message_date|date:"M j, h:i A" }}
+      
+                      {% else %}
+      
+                          
+      
+                      {% endif %}
+      
+                  </p>                    
                 </div>
             </div>
             {% empty %}
@@ -84,32 +133,43 @@
         <section class="messages">
           <!-- Messages rendered from the server -->
           {% for i in content %}
-            {% if i.system_message %}
-                <div class="system-message">
-                    <p>{{ i.message }}</p>
-                </div>
-            {% else %}
-            {% if i.sender != user %}
-            <div class="message_body" id="prevchat{{ forloop.counter }}">
-              {% if i.has_pfp %}
-                <div class="pfp" 
-                  style="background-image: url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/25497918317b8cb2029e51cc6c76c3bdfc91b702-1920x1133.jpg');">
-                </div>
+            
+            {% if not "[REFRESH]"|contains:i.message %}
+          
+              {% if i.system_message %}
+                  <div class="system-message">
+                      <p>{{ i.message }}</p>
+                      <script>buffer = "@@@@";</script>
+                  </div>
               {% else %}
-                <div class="empty_image"></div>
-              {% endif %}
-
-              <div class="flex_message">
-                {% if i.is_new_sender %}
-                  <div class="chatter_name">{{ i.sender }}</div>
+              {% if i.sender != user %}
+              <div class="message_body" id="prevchat{{ forloop.counter }}">
+                {% if i.has_pfp %}
+                  <img class="pfp"
+                    src="{% if i.yapster_user and i.yapster_user.profile_image and i.yapster_user.profile_image.url %}
+                          {{ i.yapster_user.profile_image.url }}
+                      {% else %}
+                          {% static 'images/default_profile.jpg' %}
+                      {% endif %}" alt>
+                  </img>
+                {% else %}
+                  <div class="empty_image"></div>
                 {% endif %}
 
-                <div class="bubble sender">
-                {% if "[WORDLE]"|contains:i.message %}
-                  <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
-                {% else %}
+                <div class="flex_message">
+                  {% if i.is_new_sender %}
+                    <div class="chatter_name">{{ i.sender_nickname }}</div>
+                  {% endif %}
+
+                  <div class="bubble sender">
+                  {% if "[WORDLE]"|contains:i.message %}
+                    <a href="/games/wordle/{{ i.message|slice }}">Guess my Wordle!</a>
+                  
+                  <script>buffer = "{{ i.sender_nickname }}";</script>
+              {% else %}
                   <p>{{ i.message }}</p>
-            {% endif %}
+                  <script>buffer = "{{ i.sender_nickname }}";</script>
+              {% endif %}
               </div>
             </div>
           </div>
@@ -122,7 +182,9 @@
               <p>{{ i.message }}</p>
             {% endif %}
             </div>
+            <script>buffer = "{{ i.sender_nickname }}";</script>
           {% endif %}
+            {% endif %}
             {% endif %}
           {% endfor %}
 
@@ -147,11 +209,10 @@
           {% endif %}
 
         </section>
-
         <form action="" id="message-input" method="POST">
             {% csrf_token %}
             <div id="mid-message">
-                <input id="typed-message" type="text" name="message" placeholder="Your message..." />
+                <input id="typed-message" type="text" name="message" placeholder="Your message..." autocomplete='off' />
                 <button id="wordle-btn" type="button">Game</button>
                 <button id="send-btn" type="submit">Send</button>
             </div>
@@ -183,7 +244,7 @@
           <div class="chat-sidebar-profile-pic">
               <div class="image">
                   <img id="profileImage" src="
-                          {% if user.yapsteruser.profile_image and user.yapsteruser.profile_image.url %}{{ user.yapsteruser.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
+                          {% if yapster_to_display.profile_image and yapster_to_display.profile_image.url %}{{ yapster_to_display.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"
                        width="100" height="100" alt="Profile Picture"
                        onerror="this.onerror=null;this.src='{% static 'images/default_profile.jpg' %}';"></div>
               </div>
@@ -217,19 +278,12 @@
               </button>
               <div class="dropdown-content">
                 <a onclick="togglePopup('nickname-popup')">Edit Nicknames</a>
+                {% if not is_pm %}
                 <a class="addMemberButton" onclick="toggleAddMemberState()">Add member</a>
                 <a class="removeMemberButton" onclick="toggleRemoveMemberState()">Remove member</a>
-              </div>
-            </div>
-            <div class="dropdown">
-              <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                Customize chat
-                <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
-              </button>
-              <div class="dropdown-content">
-                <a href="#">Option 1</a>
-                <a href="#">Option 2</a>
-                <a href="#">Option 3</a>
+                <a class="changeChatNameButton" onclick="togglePopup('chatname-popup')">Change Chat Name</a>
+                <a class="leaveGroupButton" onclick="leaveGroup()">Leave Group</a>
+                {% endif %}
               </div>
             </div>
             <div class="dropdown">
@@ -238,14 +292,36 @@
                 <img src="{% static 'chat/images/arrow-down.png' %}" alt="Arrow Down Icon" />
               </button>
               <div class="dropdown-content">
-                <a href="#">Option 1</a>
-                <a href="#">Option 2</a>
-                <a href="#">Option 3</a>
+                {% for user in chat_users %}
+                  <div class="user" onclick="redirectToProfile({{user.member.user.id}})">
+                    <img class="left-profile-pic" src="{% if user.member.profile_image %}{{  user.member.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"></img>
+                    <div class="name-time-msg">
+                        <p class="name">{{ user.member.user.first_name }} {{ user.member.user.last_name }}</p>
+                        <p class="time-sent">@{{ user.member.user.username }}</p>
+                    </div>
+                  </div>
+                {% endfor %}
               </div>
             </div>
           </div>
       </div>
       {% endif %}
+
+      <div id="chatname-popup" class="chatname-popup">
+        <div class="chatname-popup-content">
+          <span class="close-chatnames" onclick="togglePopup('chatname-popup')">&times;</span>
+          <h2>Change Chat Name</h2>
+          <div class="chatname-list">
+              <div class="chatname-item">
+                  <span class="chatname">{{ chat_room.chat_name|default:"Set Name" }}</span>
+                  <input type="text" class="edit-chatname-input" style="display: none;" value="{{ chat_room.chat_name|default:"Set Name" }}">
+                  <a style="color: red;" class="reset-chatname-btn">Reset</a>
+                  <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-chatname-btn" style="display: none;">
+                  <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon" id="edit-chatname-icon">
+              </div>
+          </div>
+        </div>
+      </div>
 
       <div id="nickname-popup" class="nickname-popup">
           <div class="nickname-popup-content">
@@ -253,14 +329,15 @@
             <h2>Edit Nicknames</h2>
             <div class="nickname-list">
                 {% for member in chat_room_users %}
-                <div class="nickname-item">
+                <div class="nickname-item" data-user-id="{{ member.member.id }}">
                     <img 
                         src="{% if member.member.user.profile_image %}{{ member.member.user.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}" 
                         alt="Profile Picture" class="profile-pic">
                     <span class="nickname">{{ member.nickname }}</span>
                     <input type="text" class="edit-nickname-input" style="display: none;" value="{{ member.nickname }}">
+                    <a style="color: red;" class="reset-nickname-btn">Reset</a>
                     <img src="{% static 'chat/images/save-nickname.png' %}" alt="Save Icon" class="save-nickname-btn" style="display: none;">
-                    <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon">
+                    <img src="{% static 'chat/images/edit-icon.png' %}" alt="Edit Icon" class="edit-icon" id="edit-nickname-icon">
                 </div>
                 {% endfor %}
             </div>
@@ -273,7 +350,7 @@
       console.log("Room:", chat_name);
       let user_logged_in = `{{ user.username }}`;
       console.log("Logged-in user:", user_logged_in);
-      window.localStorage.setItem('chatName',chat_name)
+      window.localStorage.setItem('chatName',currentChatID)
       if (!window.localStorage.getItem('guessCount'))
         window.localStorage.setItem('guessCount', 0)
 
@@ -289,6 +366,7 @@
         }
       }
       const youreBlocked = '{{ validation.you_are_blocked }}'
+      const youBlocked = '{{ validation.is_blocked }}'
     </script>
   </body>
 </html>

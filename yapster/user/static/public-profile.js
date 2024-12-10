@@ -137,3 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function redirectToProfile(userId) {
+    window.location.href = `/public_profile/${userId}/`;
+}

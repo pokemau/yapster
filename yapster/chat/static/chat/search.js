@@ -1,8 +1,121 @@
+import { socket } from './socket.js';
+
 let isCreateChatState = false; // Tracks the state of the search bar
 let isAddMemberState = false; // Tracks the state for Add Member
 let isRemoveMemberState = false;
 let selectedUsers = []; // Stores selected users in create-chat state
 
+window.handleSearchInput = handleSearchInput 
+window.addMemberToGroup = addMemberToGroup;
+window.removeMemberFromGroup = removeMemberFromGroup;
+window.toggleCreateChatState = toggleCreateChatState;
+window.createGroupChat = createGroupChat;
+window.toggleAddMemberState = toggleAddMemberState;
+window.toggleRemoveMemberState = toggleRemoveMemberState;
+window.loadChatMembersForRemoval = loadChatMembersForRemoval;
+window.addUser = addUser;
+window.removeUser = removeUser;
+window.leaveGroup = leaveGroup;
+window.filterUsers = filterUsers;
+window.resetSearchState = resetSearchState;
+window.fetchChatMembers = fetchChatMembers;
+
+// Add selected users to the group chat
+function addMemberToGroup() {
+    // Extract user IDs from selectedUsers
+    const userIds = selectedUsers.map(user => user.id);
+
+    // Get the chat ID and current members
+    const chatId = currentChatID; // Use your global currentChatID variable
+    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
+
+    // Check if at least one user is selected
+    if (selectedUsers.length === 0) {
+        alert("Please add at least one user.");
+        return;
+    }
+
+    // Check for duplicates (if the user is already in the chat)
+    for (const userId of userIds) {
+        if (currentMembers.includes(userId)) {
+            alert("This user is already a member of the group chat.");
+            return;
+        }
+    }
+
+    // Send the request to add members
+    fetch(`/chat/${chatId}/add_members/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // alert("Members added successfully!");
+            // Update UI or reload chat to reflect changes
+            socket.send(
+                JSON.stringify({
+                    'message': '[REFRESH]',
+                    'chat_name': `${chat_name}`,
+                    'sender': `${user_logged_in}`,
+                    'sender_nickname': `${currentUserNickname}`,
+                    'current_chatID': `${currentChatID}`,
+                    'sender_id': `${currentUserID}`,
+                })
+            );
+            location.reload()
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error("Error adding members:", error));
+}
+
+function removeMemberFromGroup(){
+    // Extract user IDs from selectedUsers
+    const userIds = selectedUsers.map(user => user.id);
+
+    // Get the chat ID and current members
+    const chatId = currentChatID; // Use your global currentChatID variable
+    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
+
+    // Check if at least one user is selected
+    if (selectedUsers.length === 0) {
+        alert("Please remove at least one user.");
+        return;
+    }
+    fetch(`/chat/${chatId}/remove_members/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            socket.send(
+                JSON.stringify({
+                    'message': '[REFRESH]',
+                    'chat_name': `${chat_name}`,
+                    'sender': `${user_logged_in}`,
+                    'sender_nickname': `${currentUserNickname}`,
+                    'current_chatID': `${currentChatID}`,
+                    'sender_id': `${currentUserID}`,
+                })
+            );
+            location.reload();
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error("Error removing members:", error));
+}
 
 function toggleCreateChatState() {
     isCreateChatState = !isCreateChatState;
@@ -35,9 +148,6 @@ function toggleCreateChatState() {
     } else {
         resetSearchState(); // Use shared reset for consistency
     }
-    console.log("Create Chat: ", isCreateChatState);
-    console.log("Add Membeer: ", isAddMemberState);
-    console.log("Remove memer: ", isRemoveMemberState);
 }
 
 // Finalize group creation
@@ -86,54 +196,6 @@ function toggleAddMemberState() {
     } else {
         resetSearchState();
     }
-    console.log("Create Chat: ", isCreateChatState);
-    console.log("Add Membeer: ", isAddMemberState);
-    console.log("Remove memer: ", isRemoveMemberState);
-}
-
-// Add selected users to the group chat
-function addMemberToGroup() {
-    // Extract user IDs from selectedUsers
-    const userIds = selectedUsers.map(user => user.id);
-
-    // Get the chat ID and current members
-    const chatId = currentChatID; // Use your global currentChatID variable
-    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
-
-    // Check if at least one user is selected
-    if (selectedUsers.length === 0) {
-        alert("Please add at least one user.");
-        return;
-    }
-
-    // Check for duplicates (if the user is already in the chat)
-    for (const userId of userIds) {
-        if (currentMembers.includes(userId)) {
-            alert("This user is already a member of the group chat.");
-            return;
-        }
-    }
-
-    // Send the request to add members
-    fetch(`/chat/${chatId}/add_members/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // alert("Members added successfully!");
-            // Update UI or reload chat to reflect changes
-            location.reload()
-        } else {
-            alert(data.error);
-        }
-    })
-    .catch(error => console.error("Error adding members:", error));
 }
 
 function toggleRemoveMemberState(){
@@ -171,53 +233,6 @@ function toggleRemoveMemberState(){
     } else {
         resetSearchState();
     }
-    console.log("Create Chat: ", isCreateChatState);
-    console.log("Add Membeer: ", isAddMemberState);
-    console.log("Remove memer: ", isRemoveMemberState);
-}
-
-function removeMemberFromGroup(){
-    // Extract user IDs from selectedUsers
-    const userIds = selectedUsers.map(user => user.id);
-
-    // Get the chat ID and current members
-    const chatId = currentChatID; // Use your global currentChatID variable
-    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
-
-    // Check if at least one user is selected
-    if (selectedUsers.length === 0) {
-        alert("Please remove at least one user.");
-        return;
-    }
-
-    // Check for duplicates (if the user is already in the chat)
-    // for (const userId of userIds) {
-    //     if (currentMembers.includes(userId)) {
-    //         alert("This user is already a member of the group chat.");
-    //         return;
-    //     }
-    // }
-
-    // Send the request to add members
-    fetch(`/chat/${chatId}/remove_members/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // alert("Members added successfully!");
-            // Update UI or reload chat to reflect changes
-            location.reload()
-        } else {
-            alert(data.error);
-        }
-    })
-    .catch(error => console.error("Error removing members:", error));
 }
 
 function loadChatMembersForRemoval() {
@@ -228,7 +243,7 @@ function loadChatMembersForRemoval() {
             .map((user) => {
                 return `
                     <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
-                        <div class="left-profile-pic"></div>
+                        <img class="left-profile-pic" src="${user.pfp}"></img>
                         <div class="name-time-msg">
                             <p class="name">${user.first_name} ${user.last_name}</p>
                             <p class="time-sent">@${user.username}</p>
@@ -281,6 +296,29 @@ function removeUser(userId) {
         )
         .join("");
     console.log("Selected users:", selectedUsers);
+}
+
+function leaveGroup() {
+    // Get the current chat ID
+    const chatId = currentChatID; // Use your global currentChatID variable
+
+    fetch(`/chat/${chatId}/leave_group/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("You have left the group."); // Optional alert
+            window.location.href = `/chat/`; // Redirect to the default chat view
+        } else {
+            alert(data.error); // Display the error message
+        }
+    })
+    .catch(error => console.error("Error leaving group:", error));
 }
 
 // Handles input in the search bar
@@ -341,7 +379,7 @@ function filterUsers(query, isAddingToGroup) {
                         // Add user functionality for Create GC state
                         return `
                             <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
-                                <div class="left-profile-pic"></div>
+                                <img class="left-profile-pic" src="${user.pfp}"></img>
                                 <div class="name-time-msg">
                                     <p class="name">${user.first_name} ${user.last_name}</p>
                                     <p class="time-sent">@${user.username}</p>
@@ -352,7 +390,7 @@ function filterUsers(query, isAddingToGroup) {
                         // Load private chat functionality for normal search
                         return `
                             <div class="user" onclick="loadChat(${user.id})">
-                                <div class="left-profile-pic"></div>
+                                <img class="left-profile-pic" src="${user.pfp}"></img>
                                 <div class="name-time-msg">
                                     <p class="name">${user.first_name} ${user.last_name}</p>
                                     <p class="time-sent">@${user.username}</p>
@@ -369,7 +407,7 @@ function filterUsers(query, isAddingToGroup) {
                     const chatResults = data.group_chats.map((chat) => {
                         return `
                             <div class="user" onclick="loadChatWithID(${chat.chat_id})">
-                                <div class="left-profile-pic"></div>
+                                <img class="left-profile-pic" src="${chat.pfp}"></img>
                                 <div class="name-time-msg">
                                     <p class="name">${chat.chat_name}</p>
                                     <p class="time-sent">${chat.member_count} members</p>
