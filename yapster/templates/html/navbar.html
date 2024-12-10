@@ -12,12 +12,6 @@
     <div id="dots" class="option">
       <img src="{% static 'chat/images/dots.png' %}" alt="Triple Dots Icon" />
       <div id="dots-options" class="hidden">
-        <div class="dots-option" id="dots-logout">
-          {% if user.is_authenticated %}
-          <a href="{% url 'logout' %}">Logout</a>
-          {% endif %}
-        </div>
-
         <div class="dots-option" id="dots-search">
           {% if user.is_authenticated %}
           <a href="{% url 'friend:search' %}">Search</a>
@@ -40,9 +34,12 @@
           {% endif %}
         </div>
 
-        <div class="dots-option" id="dots-wordle">
-          <a href="{% url 'wordle:wordle_main' %}">Wordle</a>
+        <div class="dots-option" id="dots-logout">
+          {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}">Logout</a>
+          {% endif %}
         </div>
+
       </div>
     </div>
     <a href="javascript:redirectToProfile('{{ user.id }}')">
