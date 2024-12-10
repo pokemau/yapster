@@ -1,7 +1,106 @@
+import { socket } from './socket.js';
+
 let isCreateChatState = false; // Tracks the state of the search bar
 let isAddMemberState = false; // Tracks the state for Add Member
 let isRemoveMemberState = false;
 let selectedUsers = []; // Stores selected users in create-chat state
+
+// Add selected users to the group chat
+function addMemberToGroup() {
+    // Extract user IDs from selectedUsers
+    const userIds = selectedUsers.map(user => user.id);
+
+    // Get the chat ID and current members
+    const chatId = currentChatID; // Use your global currentChatID variable
+    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
+
+    // Check if at least one user is selected
+    if (selectedUsers.length === 0) {
+        alert("Please add at least one user.");
+        return;
+    }
+
+    // Check for duplicates (if the user is already in the chat)
+    for (const userId of userIds) {
+        if (currentMembers.includes(userId)) {
+            alert("This user is already a member of the group chat.");
+            return;
+        }
+    }
+
+    // Send the request to add members
+    fetch(`/chat/${chatId}/add_members/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // alert("Members added successfully!");
+            // Update UI or reload chat to reflect changes
+            socket.send(
+                JSON.stringify({
+                    'message': '[REFRESH]',
+                    'chat_name': `${chat_name}`,
+                    'sender': `${user_logged_in}`,
+                    'sender_nickname': `${currentUserNickname}`,
+                    'current_chatID': `${currentChatID}`,
+                    'sender_id': `${currentUserID}`,
+                })
+            );
+            location.reload()
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error("Error adding members:", error));
+}
+
+function removeMemberFromGroup(){
+    // Extract user IDs from selectedUsers
+    const userIds = selectedUsers.map(user => user.id);
+
+    // Get the chat ID and current members
+    const chatId = currentChatID; // Use your global currentChatID variable
+    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
+
+    // Check if at least one user is selected
+    if (selectedUsers.length === 0) {
+        alert("Please remove at least one user.");
+        return;
+    }
+    fetch(`/chat/${chatId}/remove_members/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            socket.send(
+                JSON.stringify({
+                    'message': '[REFRESH]',
+                    'chat_name': `${chat_name}`,
+                    'sender': `${user_logged_in}`,
+                    'sender_nickname': `${currentUserNickname}`,
+                    'current_chatID': `${currentChatID}`,
+                    'sender_id': `${currentUserID}`,
+                })
+            );
+            location.reload();
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error("Error removing members:", error));
+}
 
 
 function toggleCreateChatState() {
@@ -85,51 +184,6 @@ function toggleAddMemberState() {
     }
 }
 
-// Add selected users to the group chat
-function addMemberToGroup() {
-    // Extract user IDs from selectedUsers
-    const userIds = selectedUsers.map(user => user.id);
-
-    // Get the chat ID and current members
-    const chatId = currentChatID; // Use your global currentChatID variable
-    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
-
-    // Check if at least one user is selected
-    if (selectedUsers.length === 0) {
-        alert("Please add at least one user.");
-        return;
-    }
-
-    // Check for duplicates (if the user is already in the chat)
-    for (const userId of userIds) {
-        if (currentMembers.includes(userId)) {
-            alert("This user is already a member of the group chat.");
-            return;
-        }
-    }
-
-    // Send the request to add members
-    fetch(`/chat/${chatId}/add_members/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // alert("Members added successfully!");
-            // Update UI or reload chat to reflect changes
-            location.reload()
-        } else {
-            alert(data.error);
-        }
-    })
-    .catch(error => console.error("Error adding members:", error));
-}
-
 function toggleRemoveMemberState(){
     isRemoveMemberState = !isRemoveMemberState;
     
@@ -165,38 +219,6 @@ function toggleRemoveMemberState(){
     } else {
         resetSearchState();
     }
-}
-
-function removeMemberFromGroup(){
-    // Extract user IDs from selectedUsers
-    const userIds = selectedUsers.map(user => user.id);
-
-    // Get the chat ID and current members
-    const chatId = currentChatID; // Use your global currentChatID variable
-    const currentMembers = chat_users_id; // List of current members in the chat (user IDs)
-
-    // Check if at least one user is selected
-    if (selectedUsers.length === 0) {
-        alert("Please remove at least one user.");
-        return;
-    }
-    fetch(`/chat/${chatId}/remove_members/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({ user_ids: userIds, chat_id: chatId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload()
-        } else {
-            alert(data.error);
-        }
-    })
-    .catch(error => console.error("Error removing members:", error));
 }
 
 function loadChatMembersForRemoval() {
