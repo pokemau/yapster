@@ -104,6 +104,7 @@ body {
 
 .user__name {
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .user__actions a {
