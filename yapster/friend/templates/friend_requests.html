@@ -17,12 +17,14 @@
     <div class="users-cont">
       {% for request in friend_requests %}
       <div class="user">
-        <div class="user-details">
-          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
-          <p class="user__name">
-            {{ request.sender.user.first_name }} {{ request.sender.user.last_name }}
-          </p>
-        </div>
+        <a href="/public_profile/{{ request.sender.user.id }}">
+          <div class="user-details">
+            <img class="user__profile-image" src="{% if request.sender.profile_image %}{{  request.sender.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"></img>
+            <p class="user__name">
+              {{ request.sender.user.first_name }} {{ request.sender.user.last_name }}
+            </p>
+          </div>
+        </a>
         <div class="user__actions">
           <a href="{% url 'friend:accept_friend_request' request.id %}">Accept</a>
           <a href="{% url 'friend:decline_friend_request' request.id %}">Decline</a>
