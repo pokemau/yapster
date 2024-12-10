@@ -56,16 +56,21 @@
 
 <!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
-## [🗓️ Gantt Chart](https://docs.google.com/spreadsheets/d/16AcbicEaAtJmluKYG7YEEOi3xc_qryj9jhbu7KlheE0/edit?usp=sharing)
+## [🗓️ Gantt Chart](documentation/Gantt_Chart.pdf)
+![ERD](documentation/images/Gantt.png)
 
-## [🌐 Entity Relationship Diagram](https://lucid.app/lucidchart/f8956de1-f18f-4610-8dc7-64e7ad19f165/edit?viewport_loc=-1060%2C-756%2C4440%2C2084%2C0_0&invitationId=inv_68b0612f-d029-4172-9423-3c0dc9e8fe67)
+## [🌐 Entity Relationship Diagram](documentation/ERD_File.pdf)
 
-## [🎨 UI/UX Design](https://www.figma.com/design/9P7QkfXWb5f7ttSXoD1U7Z/Yapster-UI%2FUX?node-id=0-1&t=1SvnCTdPj49qbJpu-1)
+![ERD](documentation/images/ERD.png)
 
+## [🎨 UI/UX Design](documentation/UIUX.pdf)
+
+![1](documentation/images/1.png)
+![2](documentation/images/2.png)
+![3](documentation/images/3.png)
+![4](documentation/images/4.png)
 
 ## 🛠️ Built With
-
-
 * [![Django][Django]][Django-url]
 
 
