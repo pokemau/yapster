@@ -343,7 +343,7 @@ function filterUsers(query, isAddingToGroup) {
                         // Add user functionality for Create GC state
                         return `
                             <div class="user" onclick="addUser('${user.id}', '${user.first_name}', '${user.last_name}')">
-                                <div class="left-profile-pic"></div>
+                                <img class="left-profile-pic" src="${user.pfp}"></img>
                                 <div class="name-time-msg">
                                     <p class="name">${user.first_name} ${user.last_name}</p>
                                     <p class="time-sent">@${user.username}</p>
@@ -354,7 +354,7 @@ function filterUsers(query, isAddingToGroup) {
                         // Load private chat functionality for normal search
                         return `
                             <div class="user" onclick="loadChat(${user.id})">
-                                <div class="left-profile-pic"></div>
+                                <img class="left-profile-pic" src="${user.pfp}"></img>
                                 <div class="name-time-msg">
                                     <p class="name">${user.first_name} ${user.last_name}</p>
                                     <p class="time-sent">@${user.username}</p>
@@ -371,7 +371,7 @@ function filterUsers(query, isAddingToGroup) {
                     const chatResults = data.group_chats.map((chat) => {
                         return `
                             <div class="user" onclick="loadChatWithID(${chat.chat_id})">
-                                <div class="left-profile-pic"></div>
+                                <img class="left-profile-pic" src="${chat.pfp}"></img>
                                 <div class="name-time-msg">
                                     <p class="name">${chat.chat_name}</p>
                                     <p class="time-sent">${chat.member_count} members</p>

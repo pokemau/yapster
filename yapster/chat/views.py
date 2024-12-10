@@ -52,6 +52,8 @@ def get_chat_data(request, active_chat_id=None):
         # Generate a concise display name
         if is_PM:
             display_name = nicknames_without_curruser[0]
+        elif chat.chat_name:
+            display_name = chat.chat_name
         elif len(nicknames) == 1:
             display_name = "It's just you, Always been you"
         elif len(nicknames) == 2:
@@ -349,16 +351,17 @@ def query_users(request):
                 is_pm=False,
                 chatuser__member=request.user.yapsteruser
             ).filter(
-                chatuser__member_id__in=user_ids
+                Q(chat_name__icontains=query) |
+                Q(chatuser__member_id__in=user_ids)
             ).distinct()
 
-            # Serialize users
             users_data = [
                 {
                     'id': user.id,
                     'username': user.user.username,
                     'first_name': user.user.first_name,
                     'last_name': user.user.last_name,
+                    'pfp': user.profile_image.url if user.profile_image else static('images/default_profile.jpg'),
                 }
                 for user in users
             ]
@@ -371,18 +374,33 @@ def query_users(request):
                     nicknames = [
                         cu.nickname for cu in chat.chatuser.exclude(member=request.user.yapsteruser)
                     ]
+
                     # Generate a concise display name
-                    if len(nicknames) <= 2:
-                        display_name = "You and, ".join(nicknames)
-                    else:
+                    if chat.is_pm:
+                        display_name = nicknames[0]
+                    elif len(nicknames)+1 == 1:
+                        display_name = "It's just you, Always been you"
+                    elif len(nicknames)+1 == 2:
+                        display_name = f"You and {nicknames[0]}"
+                    elif len(nicknames)+1 == 3 or len(nicknames)+1 == 4:
+                        display_name = f"{', '.join(nicknames[:3])}"
+                    else: 
                         display_name = f"{', '.join(nicknames[:2])}, and {len(nicknames) - 2} others"
                 else:
                     display_name = chat.chat_name
+
+                chat_users = ChatUser.objects.filter(chat=chat)
+                user_to_display = None
+                for i in chat_users:
+                    if i.member != request.user.yapsteruser:
+                        user_to_display = i.member
+                        break
 
                 chats_data.append({
                     'chat_id': chat.id,
                     'chat_name': display_name,
                     'member_count': chat.chatuser.count(),
+                    'pfp': user_to_display.profile_image.url if user_to_display.profile_image else static('images/default_profile.jpg'),
                 })
 
             return JsonResponse({"users": users_data, "group_chats": chats_data})
@@ -485,7 +503,7 @@ def get_or_create_chat(request):
                     
         if(sender_id not in user_ids):
             user_ids.append(sender_id)
-        # print("USER IDSSSSSSSSS: ", user_ids)
+        print("USER IDSSSSSSSSS: ", user_ids)
         
         chat = find_chat(user_ids)
 
@@ -493,7 +511,7 @@ def get_or_create_chat(request):
             if len(user_ids) > 2:
                 chat = Chat.objects.create(is_pm = False)
             else:    
-                chat = Chat.objects.create()
+                chat = Chat.objects.create(is_pm = True)
             for user_id in user_ids:
                 user = YapsterUser.objects.get(id=user_id)
                 ChatUser.objects.create(chat=chat, member=user)
