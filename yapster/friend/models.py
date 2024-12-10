@@ -21,7 +21,7 @@ class FriendList(models.Model):
     def unfriend(self, target_account):
         remover_friends_list = self
         remover_friends_list.remove_friend(target_account)
-        friends_list = FriendList.objects.get_or_create(user=target_account)
+        friends_list, _ = FriendList.objects.get_or_create(user=target_account)
         friends_list.remove_friend(self.user)
 
     def is_mutual_friend(self, friend):
