@@ -97,11 +97,14 @@ body {
 
 .user__profile-image {
   width: 100px;
+  height: 100px;
   border-radius: 50px;
+  object-fit: cover;
 }
 
 .user__name {
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .user__actions a {

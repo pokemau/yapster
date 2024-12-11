@@ -17,10 +17,12 @@
     <div class="users-cont">
       {% for blocked in blocked_list %}
       <div class="user">
-        <div class="user-details">
-          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
-          <p class="user__name">{{ blocked.user.first_name }} {{ blocked.user.last_name }}</p>
-        </div>
+        <a href="/public_profile/{{ blocked.user.id }}">
+          <div class="user-details">
+            <img class="user__profile-image" src="{% if blocked.profile_image %}{{  blocked.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"></img>
+            <p class="user__name">{{ blocked.user.first_name }} {{ blocked.user.last_name }}</p>
+          </div>
+        </a>
         <div class="user__actions">
           <a href="{% url 'friend:unblock_user' blocked.user.id %}">Unblock</a>
         </div>

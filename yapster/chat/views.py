@@ -50,7 +50,9 @@ def get_chat_data(request, active_chat_id=None):
         ]
 
         # Generate a concise display name
-        if is_PM:
+        if len(nicknames_without_curruser) == 0:
+            display_name = "Deleted User"
+        elif is_PM:
             display_name = nicknames_without_curruser[0]
         elif chat.chat_name:
             display_name = chat.chat_name

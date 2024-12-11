@@ -18,14 +18,16 @@
     <div class="users-cont">
       {% for friend in friend_list %}
       <div class="user">
-        <div class="user-details">
-          <img class="user__profile-image" src="{% static 'images/default_profile.jpg' %}" alt="" />
-          <p class="user__name">{{ friend.user.first_name }} {{ friend.user.last_name }}</p>
-        </div>
-        <div class="user__actions">
-          <a href="{% url 'friend:remove_friend' friend.user.id %}">Unfriend</a>
-          <a href="{% url 'friend:block_user' friend.user.id %}">Block</a>
-        </div>
+        <a href="/public_profile/{{ friend.id }}">
+          <div class="user-details">
+          <img class="user__profile-image" src="{% if friend.profile_image %}{{  friend.profile_image.url }}{% else %}{% static 'images/default_profile.jpg' %}{% endif %}"></img>
+            <p class="user__name">{{ friend.user.first_name }} {{ friend.user.last_name }}</p>
+          </div>
+        </a>
+          <div class="user__actions">
+            <a href="{% url 'friend:remove_friend' friend.user.id %}">Unfriend</a>
+            <a href="{% url 'friend:block_user' friend.user.id %}">Block</a>
+          </div>
       </div>
       {% empty %}
       <p>No users found.</p>

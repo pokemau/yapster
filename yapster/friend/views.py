@@ -47,8 +47,8 @@ def cancel_friend_request(request, receiver_id):
 @login_required
 def accept_friend_request(request, request_id):
     friend_request = get_object_or_404(FriendRequest, id=request_id, receiver=request.user.yapsteruser)
-    FriendList.objects.get_or_create(user=request.user.yapsteruser)
-    FriendList.objects.get_or_create(user=friend_request.sender)
+    receiver_friend_list, _ = FriendList.objects.get_or_create(user=request.user.yapsteruser)
+    sender_friend_list, _ = FriendList.objects.get_or_create(user=friend_request.sender)
     friend_request.accept()
     return redirect('friend:friend_requests')
 
