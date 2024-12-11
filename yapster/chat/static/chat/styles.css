@@ -494,6 +494,7 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	flex-direction: column;
 	gap: 15px;
 	margin-top: 20px;
+	overflow: auto;
 }
 
 .chat-sidebar-option {
